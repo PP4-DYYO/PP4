@@ -1,9 +1,9 @@
-﻿////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //2017/5/16～
-//製作者　京都コンピュータ学院　ゲーム学科　３回生　奥田裕也
+//作成者　京都コンピュータ学院京都駅前校　ゲーム学科　4回生　奥田裕也
 //
-////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 using System;
 using System.Collections;
@@ -94,6 +94,28 @@ public class MyNetworkManager : NetworkManager
 			m_match.CreateMatch(matchName, matchSize, true, "", "", "", 0, 0, OnMatchCreate);
 			m_isIGotIntoTheRoom = true;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// サーバとして接続が切れた
+	/// </summary>
+	/// <param name="connectionInfo">接続情報</param>
+	public override void OnServerDisconnect(NetworkConnection connectionInfo)
+	{
+		base.OnServerDisconnect(connectionInfo);
+		Debug.Log("クライアントの接続が切れました");
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// クライアントとして接続が切れた
+	/// </summary>
+	/// <param name="connectionInfo">接続情報</param>
+	public override void OnClientDisconnect(NetworkConnection connectionInfo)
+	{
+		base.OnClientDisconnect(connectionInfo);
+		Debug.Log("サーバとの接続が切れました");
 	}
 
 	//----------------------------------------------------------------------------------------------------

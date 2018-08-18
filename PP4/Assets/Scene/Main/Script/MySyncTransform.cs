@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 using System.Collections.Generic;
 
 /// <summary>
-/// プレイヤーのTransformを同期するクラス
+/// Transformを同期するクラス
 /// </summary>
 [NetworkSettings(channel = 1, sendInterval = 0.033f)]
 public class MySyncTransform : NetworkBehaviour
@@ -36,7 +36,7 @@ public class MySyncTransform : NetworkBehaviour
 	/// <summary>
 	/// 普通の補間間隔
 	/// </summary>
-	const float NORMAL_LERP_RATE = 15;
+	const float NORMAL_LERP_RATE = 10;
 
 	/// <summary>
 	/// 早い補間間隔
@@ -56,7 +56,7 @@ public class MySyncTransform : NetworkBehaviour
 	/// <summary>
 	/// しきい値（境目の値）
 	/// </summary>
-	const float THRESHOLD = 0.5f;
+	const float THRESHOLD = 0.125f;
 
 	/// <summary>
 	/// しきい値（境目の回転値）

@@ -34,7 +34,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//必要な設定
 		Game = GameObject.Find("Game").GetComponent<MyGame>();
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
-		transform.parent = Game.PlayersTrans;
+		transform.parent = Game.PlayersScript.transform;
 	}
 
 	//----------------------------------------------------------------------------------------------------

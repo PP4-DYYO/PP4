@@ -18,8 +18,8 @@ public class MyGame : MonoBehaviour
 	/// プレイヤーの収集物
 	/// </summary>
 	[SerializeField]
-	Transform Players;
-	public Transform PlayersTrans
+	MyPlayers Players;
+	public MyPlayers PlayersScript
 	{
 		get { return Players; }
 	}

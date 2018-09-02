@@ -16,6 +16,12 @@ using UnityEngine.Networking;
 public class MyNetPlayerSetting : NetworkBehaviour
 {
 	/// <summary>
+	/// パラメータを取得するためのプレイヤー
+	/// </summary>
+	[SerializeField]
+	MyPlayer PlayerToAcquireParameters;
+
+	/// <summary>
 	/// ゲーム
 	/// </summary>
 	MyGame Game;
@@ -28,10 +34,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		base.OnStartLocalPlayer();
 
-		//必要スクリプトの追加
+		//必要スクリプトの追加と設定
 		gameObject.AddComponent<MyPlayer>();
+		GetComponent<MyPlayer>().SetPlayerParameters(PlayerToAcquireParameters);
 
-		//必要な設定
+		//ゲームに必要な設定
 		Game = GameObject.Find("Game").GetComponent<MyGame>();
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;

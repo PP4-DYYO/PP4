@@ -371,6 +371,21 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 重なり続ける判定
+	/// </summary>
+	/// <param name="other">重なったもの</param>
+	void OnTriggerStay(Collider other)
+	{
+		//ジェットウォーターに当たる
+		if (other.tag.Equals(JetWaterInfo.TAG))
+		{
+			//相手のジェットウォータ―で下降する
+			transform.position -= Vector3.up * m_risingForce * Time.deltaTime;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// プレイヤーパラメータを設定
 	/// </summary>
 	/// <param name="player">設定したいプレイヤー</param>

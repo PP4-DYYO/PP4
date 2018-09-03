@@ -143,6 +143,11 @@ public class MyPlayer : MonoBehaviour
 	/// 飛んでいる
 	/// </summary>
 	bool m_isFly;
+
+	/// <summary>
+	/// 落下している
+	/// </summary>
+	bool m_isFalling;
 	#endregion
 
 	#region 足関係
@@ -167,14 +172,14 @@ public class MyPlayer : MonoBehaviour
 	#region キーボード関係
 	[Header("キーボード関係")]
 	/// <summary>
-	/// Aボタンを押しっぱなし
+	/// Lボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingAButton;
+	bool m_isKeepPressingLButton;
 
 	/// <summary>
-	/// Yボタンを押しっぱなし
+	/// Rボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingYButton;
+	bool m_isKeepPressingRButton;
 	#endregion
 
 	#region 作業用
@@ -218,8 +223,8 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
-		m_isKeepPressingAButton = Input.GetButton("AButton");
-		m_isKeepPressingYButton = Input.GetButton("YButton");
+		m_isKeepPressingLButton = Input.GetButton("LButton");
+		m_isKeepPressingRButton = Input.GetButton("RButton");
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -258,11 +263,11 @@ public class MyPlayer : MonoBehaviour
 		if (Physics.Raycast(m_scaffoldRay, out m_footInfo, m_footHeight) && m_footInfo.transform.tag == StageInfo.GROUND_TAG)
 			m_isFly = false;
 
-		//Yボタンを押している間は飛ぶ
-		if (m_isKeepPressingYButton)
+		//Rボタンを押している間は飛ぶ
+		if (m_isKeepPressingRButton)
 			m_isFly = true;
 
-		Rb.useGravity = !m_isFly;
+		Rb.useGravity = !m_isFly || m_isFalling;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -273,17 +278,21 @@ public class MyPlayer : MonoBehaviour
 	{
 		m_posPrev = transform.position;
 
-		//Aボタンでジェット下降
-		if (m_isKeepPressingAButton)
-			transform.position -= Vector3.up * m_descendingForce * Time.deltaTime;
-
-		//Yボタンでジェット上昇
-		if (m_isKeepPressingYButton)
-			transform.position += Vector3.up * m_risingForce * Time.deltaTime;
-
-		//ジェット上昇下降なし
-		if (!m_isKeepPressingAButton && !m_isKeepPressingYButton)
+		//落ちていない
+		if (!m_isFalling)
 		{
+			//Lボタンでジェット下降
+			if (m_isKeepPressingLButton)
+				transform.position -= Vector3.up * m_descendingForce * Time.deltaTime;
+
+			//Rボタンでジェット上昇
+			if (m_isKeepPressingRButton)
+				transform.position += Vector3.up * m_risingForce * Time.deltaTime;
+
+			//ジェット上昇下降なし
+			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
+			{
+			}
 		}
 
 		//カメラの向きに対応した移動
@@ -367,6 +376,32 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		transform.eulerAngles = m_workVector3;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 重なり続ける判定
+	/// </summary>
+	/// <param name="other">重なったもの</param>
+	void OnTriggerStay(Collider other)
+	{
+		//ジェットウォーターに当たる
+		if (other.tag.Equals(JetWaterInfo.TAG))
+		{
+			//相手のジェットウォータ―で下降する
+			transform.position -= Vector3.up * m_risingForce * Time.deltaTime;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 当たり判定
+	/// </summary>
+	/// <param name="other">当たったもの</param>
+	void OnCollisionEnter(Collision other)
+	{
+		//地面以外の衝突
+		m_isFalling = !other.transform.tag.Equals(StageInfo.GROUND_TAG);
 	}
 
 	//----------------------------------------------------------------------------------------------------

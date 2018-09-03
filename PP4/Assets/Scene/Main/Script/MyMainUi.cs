@@ -8,6 +8,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// メインのUI
@@ -22,6 +23,56 @@ public class MyMainUi : MonoBehaviour
 	public MyGame GameScript
 	{
 		get { return Game; }
+	}
+
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	[SerializeField]
+	Text Timer;
+	public Text TimerText
+	{
+		get { return Timer; }
+	}
+
+	/// <summary>
+	/// カウントダウン
+	/// </summary>
+	[SerializeField]
+	Text Countdown;
+	public Text CountdownText
+	{
+		get { return Countdown; }
+	}
+
+	/// <summary>
+	/// 結果画面
+	/// </summary>
+	[SerializeField]
+	GameObject ResultScreen;
+	public GameObject ResultScreenObj
+	{
+		get { return ResultScreen; }
+	}
+
+	/// <summary>
+	/// チーム１のスコア
+	/// </summary>
+	[SerializeField]
+	Text ScoreOfTeam1;
+	public Text ScoreOfTeam1Text
+	{
+		get { return ScoreOfTeam1; }
+	}
+
+	/// <summary>
+	/// チーム２のスコア
+	/// </summary>
+	[SerializeField]
+	Text ScoreOfTeam2;
+	public Text ScoreOfTeam2Text
+	{
+		get { return ScoreOfTeam2; }
 	}
 
 	// Use this for initialization

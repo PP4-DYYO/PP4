@@ -167,14 +167,14 @@ public class MyPlayer : MonoBehaviour
 	#region キーボード関係
 	[Header("キーボード関係")]
 	/// <summary>
-	/// Aボタンを押しっぱなし
+	/// Lボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingAButton;
+	bool m_isKeepPressingLButton;
 
 	/// <summary>
-	/// Yボタンを押しっぱなし
+	/// Rボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingYButton;
+	bool m_isKeepPressingRButton;
 	#endregion
 
 	#region 作業用
@@ -218,8 +218,8 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
-		m_isKeepPressingAButton = Input.GetButton("AButton");
-		m_isKeepPressingYButton = Input.GetButton("YButton");
+		m_isKeepPressingLButton = Input.GetButton("LButton");
+		m_isKeepPressingRButton = Input.GetButton("RButton");
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -258,8 +258,8 @@ public class MyPlayer : MonoBehaviour
 		if (Physics.Raycast(m_scaffoldRay, out m_footInfo, m_footHeight) && m_footInfo.transform.tag == StageInfo.GROUND_TAG)
 			m_isFly = false;
 
-		//Yボタンを押している間は飛ぶ
-		if (m_isKeepPressingYButton)
+		//Rボタンを押している間は飛ぶ
+		if (m_isKeepPressingRButton)
 			m_isFly = true;
 
 		Rb.useGravity = !m_isFly;
@@ -273,16 +273,16 @@ public class MyPlayer : MonoBehaviour
 	{
 		m_posPrev = transform.position;
 
-		//Aボタンでジェット下降
-		if (m_isKeepPressingAButton)
+		//Lボタンでジェット下降
+		if (m_isKeepPressingLButton)
 			transform.position -= Vector3.up * m_descendingForce * Time.deltaTime;
 
-		//Yボタンでジェット上昇
-		if (m_isKeepPressingYButton)
+		//Rボタンでジェット上昇
+		if (m_isKeepPressingRButton)
 			transform.position += Vector3.up * m_risingForce * Time.deltaTime;
 
 		//ジェット上昇下降なし
-		if (!m_isKeepPressingAButton && !m_isKeepPressingYButton)
+		if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
 		{
 		}
 

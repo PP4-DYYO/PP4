@@ -35,22 +35,6 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 水攻撃の収集物
-	/// </summary>
-	[SerializeField]
-	Transform WaterAttacks;
-
-	/// <summary>
-	/// ボールの収集物
-	/// </summary>
-	[SerializeField]
-	Transform Balls;
-	public Transform BallsTrans
-	{
-		get { return Balls; }
-	}
-
-	/// <summary>
 	/// ステージ
 	/// </summary>
 	[SerializeField]

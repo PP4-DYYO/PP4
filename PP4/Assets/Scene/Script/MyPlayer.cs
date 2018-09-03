@@ -143,6 +143,11 @@ public class MyPlayer : MonoBehaviour
 	/// 飛んでいる
 	/// </summary>
 	bool m_isFly;
+
+	/// <summary>
+	/// 落下している
+	/// </summary>
+	bool m_isFalling;
 	#endregion
 
 	#region 足関係
@@ -262,7 +267,7 @@ public class MyPlayer : MonoBehaviour
 		if (m_isKeepPressingRButton)
 			m_isFly = true;
 
-		Rb.useGravity = !m_isFly;
+		Rb.useGravity = !m_isFly || m_isFalling;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -273,17 +278,21 @@ public class MyPlayer : MonoBehaviour
 	{
 		m_posPrev = transform.position;
 
-		//Lボタンでジェット下降
-		if (m_isKeepPressingLButton)
-			transform.position -= Vector3.up * m_descendingForce * Time.deltaTime;
-
-		//Rボタンでジェット上昇
-		if (m_isKeepPressingRButton)
-			transform.position += Vector3.up * m_risingForce * Time.deltaTime;
-
-		//ジェット上昇下降なし
-		if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
+		//落ちていない
+		if (!m_isFalling)
 		{
+			//Lボタンでジェット下降
+			if (m_isKeepPressingLButton)
+				transform.position -= Vector3.up * m_descendingForce * Time.deltaTime;
+
+			//Rボタンでジェット上昇
+			if (m_isKeepPressingRButton)
+				transform.position += Vector3.up * m_risingForce * Time.deltaTime;
+
+			//ジェット上昇下降なし
+			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
+			{
+			}
 		}
 
 		//カメラの向きに対応した移動
@@ -382,6 +391,17 @@ public class MyPlayer : MonoBehaviour
 			//相手のジェットウォータ―で下降する
 			transform.position -= Vector3.up * m_risingForce * Time.deltaTime;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 当たり判定
+	/// </summary>
+	/// <param name="other">当たったもの</param>
+	void OnCollisionEnter(Collision other)
+	{
+		//地面以外の衝突
+		m_isFalling = !other.transform.tag.Equals(StageInfo.GROUND_TAG);
 	}
 
 	//----------------------------------------------------------------------------------------------------

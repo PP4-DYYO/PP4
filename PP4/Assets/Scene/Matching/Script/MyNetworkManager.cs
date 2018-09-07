@@ -117,6 +117,7 @@ public class MyNetworkManager : NetworkManager
 	{
 		base.OnClientDisconnect(connectionInfo);
 		Debug.Log("サーバとの接続が切れました");
+		Debug.Log("サーバ番号は" + connectionInfo.connectionId + "です");
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -177,6 +177,7 @@ public class MySyncTransform : NetworkBehaviour
 		{
 			CmdProvidePositionToServer(transform.position);
 			m_lastPos = transform.position;
+			Debug.Log(netId);
 		}
 	}
 

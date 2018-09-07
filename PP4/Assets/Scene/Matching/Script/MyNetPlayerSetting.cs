@@ -76,9 +76,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void Update()
 	{
-		//人数が揃う
-		if (NetPlayerSettingList.Count >= NUM_OF_PLAYERS)
-			Game.IsEndPeopleRecruitment = true;
+		//権限のあるプレイヤーのプレイヤー人数が揃う
+		if (isLocalPlayer)
+			if (NetPlayerSettingList.Count >= NUM_OF_PLAYERS)
+				Game.IsEndPeopleRecruitment = true;
 
 		//権限がないプレイヤーの親設定
 		if (!isLocalPlayer && isClient)

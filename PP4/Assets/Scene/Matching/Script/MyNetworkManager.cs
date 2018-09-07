@@ -105,6 +105,7 @@ public class MyNetworkManager : NetworkManager
 	{
 		base.OnServerDisconnect(connectionInfo);
 		Debug.Log("クライアントの接続が切れました");
+		Debug.Log("クライアント番号は" + connectionInfo.connectionId + "です");
 	}
 
 	//----------------------------------------------------------------------------------------------------

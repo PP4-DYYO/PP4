@@ -84,9 +84,5 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//権限がないプレイヤーの親設定
 		if (!isLocalPlayer && isClient)
 			transform.parent = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript.transform;
-
-		//(設定完了or不必要なクライアント)だと削除
-		if (m_isSettingComplete || (!isLocalPlayer && isClient))
-			Destroy(this);
 	}
 }

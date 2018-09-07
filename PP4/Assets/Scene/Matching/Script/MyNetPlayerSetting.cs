@@ -16,6 +16,11 @@ using UnityEngine.Networking;
 public class MyNetPlayerSetting : NetworkBehaviour
 {
 	/// <summary>
+	/// ネットワークプレイヤーセッティングクラスのリスト
+	/// </summary>
+	static List<MyNetPlayerSetting> NetPlayerSettingList = new List<MyNetPlayerSetting>();
+
+	/// <summary>
 	/// パラメータを取得するためのプレイヤー
 	/// </summary>
 	[SerializeField]
@@ -25,6 +30,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// ゲーム
 	/// </summary>
 	MyGame Game;
+
+	/// <summary>
+	/// 設定完了フラグ
+	/// </summary>
+	bool m_isSettingComplete;
+
+	/// <summary>
+	/// プレイヤー人数
+	/// </summary>
+	const int NUM_OF_PLAYERS = 2;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -42,6 +57,17 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		Game = GameObject.Find("Game").GetComponent<MyGame>();
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;
+
+		m_isSettingComplete = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// クライアントの初期
+	/// </summary>
+	public override void OnStartClient()
+	{
+		NetPlayerSettingList.Add(this);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -50,8 +76,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void Update()
 	{
-		//ローカルプレイヤーになると削除
-		if (isLocalPlayer)
+		//人数が揃う
+		if (NetPlayerSettingList.Count >= NUM_OF_PLAYERS)
+			Game.IsEndPeopleRecruitment = true;
+
+		//権限がないプレイヤーの親設定
+		if (!isLocalPlayer && isClient)
+			transform.parent = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript.transform;
+
+		//(設定完了or不必要なクライアント)だと削除
+		if (m_isSettingComplete || (!isLocalPlayer && isClient))
 			Destroy(this);
 	}
 }

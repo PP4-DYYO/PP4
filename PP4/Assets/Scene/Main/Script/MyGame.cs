@@ -20,6 +20,10 @@ using UnityEngine;
 enum GameStatus
 {
 	/// <summary>
+	/// 人を募集
+	/// </summary>
+	RecruitPeople,
+	/// <summary>
 	/// ゲーム開始
 	/// </summary>
 	GameStart,
@@ -139,6 +143,15 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	float m_scoreOfTeam2;
 
+	/// <summary>
+	/// 人数募集の終了フラグ
+	/// </summary>
+	bool m_isEndPeopleRecruitment;
+	public bool IsEndPeopleRecruitment
+	{
+		set { m_isEndPeopleRecruitment = value; }
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 初期
@@ -163,6 +176,9 @@ public class MyGame : MonoBehaviour
 		//状態
 		switch (m_state)
 		{
+			case GameStatus.RecruitPeople:
+				RecruitPeopleStateProcess();
+				break;
 			case GameStatus.GameStart:
 				GameStartStateProcess();
 				break;
@@ -176,6 +192,23 @@ public class MyGame : MonoBehaviour
 
 		//時間経過
 		m_countTheTimeOfTheState += Time.deltaTime;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人を募集する状態の処理
+	/// </summary>
+	void RecruitPeopleStateProcess()
+	{
+		//状態初期設定
+		if (m_state != m_statePrev)
+		{
+			m_statePrev = m_state;
+		}
+
+		//人数募集の終了
+		if (m_isEndPeopleRecruitment)
+			m_state = GameStatus.GameStart;
 	}
 
 	//----------------------------------------------------------------------------------------------------

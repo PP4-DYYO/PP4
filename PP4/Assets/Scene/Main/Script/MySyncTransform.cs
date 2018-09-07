@@ -163,6 +163,7 @@ public class MySyncTransform : NetworkBehaviour
 	void CmdProvideRotationsToServer(float playerRot)
 	{
 		m_syncRotation = playerRot;
+		Debug.Log(netId);
 	}
 
 	//----------------------------------------------------------------------------------------------------

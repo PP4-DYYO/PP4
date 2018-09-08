@@ -46,6 +46,16 @@ public class MyMainUi : MonoBehaviour
 	}
 
 	/// <summary>
+	/// ゲームを開始するメッセージ
+	/// </summary>
+	[SerializeField]
+	Text MessageToStartGame;
+	public Text MessageToStartGameText
+	{
+		get { return MessageToStartGame; }
+	}
+
+	/// <summary>
 	/// タイマー
 	/// </summary>
 	[SerializeField]

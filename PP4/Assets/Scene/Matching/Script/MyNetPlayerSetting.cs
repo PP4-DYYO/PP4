@@ -16,9 +16,13 @@ using UnityEngine.Networking;
 public class MyNetPlayerSetting : NetworkBehaviour
 {
 	/// <summary>
-	/// ネットワークプレイヤーセッティングクラスのリスト
+	/// ネットワークプレイヤーセッティングクラス達
 	/// </summary>
-	static List<MyNetPlayerSetting> NetPlayerSettingList = new List<MyNetPlayerSetting>();
+	static List<MyNetPlayerSetting> m_netPlayerSettings = new List<MyNetPlayerSetting>();
+	public static List<MyNetPlayerSetting> NetPlayerSettings
+	{
+		get { return m_netPlayerSettings; }
+	}
 
 	/// <summary>
 	/// パラメータを取得するためのプレイヤー
@@ -30,16 +34,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// ゲーム
 	/// </summary>
 	MyGame Game;
-
-	/// <summary>
-	/// 設定完了フラグ
-	/// </summary>
-	bool m_isSettingComplete;
-
+	
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
 	const int NUM_OF_PLAYERS = 2;
+
+	/// <summary>
+	/// プレイヤー番号
+	/// </summary>
+	int m_playerNum;
 
 	/// <summary>
 	/// プレイヤー名
@@ -50,6 +54,21 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// プレイヤー名
 	/// </summary>
 	const string PLAYER_NAME = "Player";
+
+	/// <summary>
+	/// メンバーが変わったフラグ
+	/// </summary>
+	bool m_isMemberChanged;
+
+	/// <summary>
+	/// チーム番号
+	/// </summary>
+	Team m_teamNum;
+	public Team TeamNum
+	{
+		get { return m_teamNum; }
+		set { m_teamNum = value; }
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -70,8 +89,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//ゲームに必要な設定
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;
-
-		m_isSettingComplete = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -84,11 +101,41 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
-		NetPlayerSettingList.Add(this);
+		//接続が切れているプレイヤー確認
+		m_isMemberChanged = false;
+		for (var i = 0; i < m_netPlayerSettings.Count;)
+		{
+			//存在していない
+			if (!m_netPlayerSettings[i])
+			{
+				m_netPlayerSettings.RemoveAt(i);
+				m_isMemberChanged = true;
+			}
+			else
+			{
+				i++;
+			}
+		}
+
+		m_netPlayerSettings.Add(this);
 
 		//名前の登録
-		m_playerName = PLAYER_NAME + NetPlayerSettingList.Count.ToString();
-		Game.MainUiScript.PlayerNamesTexts[NetPlayerSettingList.Count - 1].text = m_playerName;
+		m_playerName = PLAYER_NAME + m_netPlayerSettings.Count.ToString();
+
+		//メンバーが入れ替わった
+		if (m_isMemberChanged)
+		{
+			//プレイヤー名を初めから登録
+			for (var i = 0; i < m_netPlayerSettings.Count; i++)
+			{
+				Game.MainUiScript.PlayerNamesTexts[i].text = m_netPlayerSettings[i].m_playerName;
+			}
+		}
+		else
+		{
+			//追加されたプレイヤー名を登録
+			Game.MainUiScript.PlayerNamesTexts[m_netPlayerSettings.Count - 1].text = m_playerName;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -101,13 +148,31 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
-		//権限のあるプレイヤーのプレイヤー人数が揃う
-		if (isLocalPlayer)
-			if (NetPlayerSettingList.Count >= NUM_OF_PLAYERS)
-				Game.IsEndPeopleRecruitment = true;
+		if (Game.State == GameStatus.RecruitPeople)
+		{
+			//権限のあるプレイヤーを実行するタイミングで、プレイヤー人数が揃う
+			if (isLocalPlayer)
+				if (m_netPlayerSettings.Count >= NUM_OF_PLAYERS)
+					Game.IsEndPeopleRecruitment = true;
 
-		//権限がないプレイヤーの親設定
-		if (!isLocalPlayer && isClient)
-			transform.parent = Game.PlayersScript.transform;
+			//権限がないプレイヤー
+			if (!isLocalPlayer && isClient)
+			{
+				//親設定と不要なものを取り除く
+				transform.parent = Game.PlayersScript.transform;
+				GetComponent<Rigidbody>().isKinematic = true;
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤー番号を取得
+	/// </summary>
+	/// <returns>更新されたプレイヤー番号</returns>
+	public int GetPlayerNum()
+	{
+		m_playerNum = m_netPlayerSettings.IndexOf(this);
+		return m_playerNum;
 	}
 }

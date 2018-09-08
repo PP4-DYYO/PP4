@@ -17,12 +17,16 @@ using UnityEngine;
 /// <summary>
 /// ゲームの状態
 /// </summary>
-enum GameStatus
+public enum GameStatus
 {
 	/// <summary>
 	/// 人を募集
 	/// </summary>
 	RecruitPeople,
+	/// <summary>
+	/// ゲーム設定
+	/// </summary>
+	GameSetting,
 	/// <summary>
 	/// ゲーム開始
 	/// </summary>
@@ -70,6 +74,11 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
+	/// 操作しているネットワークプレイヤー設定
+	/// </summary>
+	MyNetPlayerSetting OperatingNetPlayerSetting;
+
+	/// <summary>
 	/// ステージ
 	/// </summary>
 	[SerializeField]
@@ -106,6 +115,10 @@ public class MyGame : MonoBehaviour
 	/// 状態
 	/// </summary>
 	GameStatus m_state;
+	public GameStatus State
+	{
+		get { return m_state; }
+	}
 
 	/// <summary>
 	/// フレーム前の状態
@@ -115,6 +128,12 @@ public class MyGame : MonoBehaviour
 
 	#region 時間
 	[Header("時間")]
+	/// <summary>
+	/// ゲーム設定時間
+	/// </summary>
+	[SerializeField]
+	float m_gameSettingTime;
+
 	/// <summary>
 	/// 初めのカウントダウン時間
 	/// </summary>
@@ -152,6 +171,11 @@ public class MyGame : MonoBehaviour
 		set { m_isEndPeopleRecruitment = value; }
 	}
 
+	/// <summary>
+	/// 操作しているプレイヤーの番号
+	/// </summary>
+	int m_operatingPlayerNum;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 初期
@@ -179,6 +203,9 @@ public class MyGame : MonoBehaviour
 			case GameStatus.RecruitPeople:
 				RecruitPeopleStateProcess();
 				break;
+			case GameStatus.GameSetting:
+				GameSettingStateProcess();
+				break;
 			case GameStatus.GameStart:
 				GameStartStateProcess();
 				break;
@@ -204,14 +231,76 @@ public class MyGame : MonoBehaviour
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
+
+			m_isEndPeopleRecruitment = false;
+			MainUi.RecruitPeopleScreenObj.SetActive(true);
 		}
 
 		//人数募集の終了
 		if (m_isEndPeopleRecruitment)
 		{
-			m_state = GameStatus.GameStart;
-			MainUi.RecruitPeopleScreenObj.SetActive(false);
+			//ゲームの開始設定
+			m_state = GameStatus.GameSetting;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ゲーム設定状態の処理
+	/// </summary>
+	void GameSettingStateProcess()
+	{
+		//状態初期設定
+		if (m_state != m_statePrev)
+		{
+			m_statePrev = m_state;
+
+			//設定
+			PlayerGameSettings();
+			UiGameSettings();
+		}
+
+		//設定時間が過ぎた
+		if (m_countTheTimeOfTheState >= m_gameSettingTime)
+		{
+			//状態遷移
+			m_state = GameStatus.GameStart;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤーのゲーム設定
+	/// </summary>
+	void PlayerGameSettings()
+	{
+		OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
+
+		//動きを無効
+		OperatingPlayer.enabled = false;
+
+		//チーム分け
+		m_operatingPlayerNum = OperatingNetPlayerSetting.GetPlayerNum();
+		Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray());
+
+		//位置
+		if (OperatingNetPlayerSetting.TeamNum == Team.Team1)
+			OperatingPlayer.transform.position =
+				Stage.CurrentFieldScript.Team1StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// UIのゲーム設定
+	/// </summary>
+	void UiGameSettings()
+	{
+		//人材募集画面
+		MainUi.MessageToStartGameText.enabled = true;
+
+		//ゲーム画面
+		MainUi.CountdownText.text = "";
+		MainUi.TimerText.text = ((int)m_battleTime).ToString();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -224,9 +313,7 @@ public class MyGame : MonoBehaviour
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
-
-			//プレイヤーの停止
-			OperatingPlayer.enabled = false;
+			MainUi.RecruitPeopleScreenObj.SetActive(false);
 		}
 
 		//カウントダウン時間が過ぎた
@@ -294,7 +381,7 @@ public class MyGame : MonoBehaviour
 		if(Input.GetButtonDown("AButton"))
 		{
 			MainUi.ResultScreenObj.SetActive(false);
-			m_state = GameStatus.GameStart;
+			m_state = GameStatus.RecruitPeople;
 		}
 		else if(Input.GetButtonDown("BButton"))
 		{

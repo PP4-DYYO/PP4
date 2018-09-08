@@ -50,4 +50,12 @@ public class MyStage : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyField[] Fields;
+
+	/// <summary>
+	/// 稼働中のフィールド
+	/// </summary>
+	public MyField CurrentFieldScript
+	{
+		get { return Fields[0]; }
+	}
 }

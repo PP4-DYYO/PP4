@@ -9,6 +9,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//----------------------------------------------------------------------------------------------------
+//Enum・Struct
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// チーム
+/// </summary>
+public enum Team
+{
+	Team1,
+	Team2,
+}
+
+//----------------------------------------------------------------------------------------------------
+//クラス
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
 /// <summary>
 /// プレイヤーの収集物
 /// </summary>
@@ -35,7 +54,36 @@ public class MyPlayers : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject Team2;
-	
+
+	/// <summary>
+	/// ネットワークプレイヤー設定たち
+	/// </summary>
+	MyNetPlayerSetting[] NetPlayerSettings;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// チームを決める
+	/// </summary>
+	public void DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
+	{
+		NetPlayerSettings = netPlayerSettings;
+
+		for (var i = 0; i < NetPlayerSettings.Length; i++)
+		{
+			//交互にチーム分け
+			if (i % 2 == 0)
+			{
+				NetPlayerSettings[i].transform.parent = Team1.transform;
+				NetPlayerSettings[i].TeamNum = Team.Team1;
+			}
+			else
+			{
+				NetPlayerSettings[i].transform.parent = Team2.transform;
+				NetPlayerSettings[i].TeamNum = Team.Team2;
+			}
+		}
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// チーム１の高さ合計を取得

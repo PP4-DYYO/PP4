@@ -406,6 +406,18 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 当たり続ける判定
+	/// </summary>
+	/// <param name="other">当たったもの</param>
+	void OnCollisionStay(Collision other)
+	{
+		//地面に触れている間は落下しない
+		if (other.transform.tag.Equals(StageInfo.GROUND_TAG))
+			m_isFalling = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// プレイヤーパラメータを設定
 	/// </summary>
 	/// <param name="player">設定したいプレイヤー</param>

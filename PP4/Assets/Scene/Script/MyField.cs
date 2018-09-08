@@ -14,6 +14,25 @@ using UnityEngine;
 /// </summary>
 public class MyField : MonoBehaviour
 {
+	/// <summary>
+	/// チーム１の開始位置たち
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_team1StartPositions;
+	public Vector3[] Team1StartPositions
+	{
+		get { return m_team1StartPositions; }
+	}
+
+	/// <summary>
+	/// チーム２の開始位置たち
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_team2StartPositions;
+	public Vector3[] Team2StartPositions
+	{
+		get { return m_team2StartPositions; }
+	}
 
 	// Use this for initialization
 	void Start()

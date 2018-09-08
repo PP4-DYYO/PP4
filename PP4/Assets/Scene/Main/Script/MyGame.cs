@@ -208,7 +208,10 @@ public class MyGame : MonoBehaviour
 
 		//人数募集の終了
 		if (m_isEndPeopleRecruitment)
+		{
 			m_state = GameStatus.GameStart;
+			MainUi.RecruitPeopleScreenObj.SetActive(false);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

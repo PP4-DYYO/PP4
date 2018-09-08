@@ -26,6 +26,26 @@ public class MyMainUi : MonoBehaviour
 	}
 
 	/// <summary>
+	/// 人材募集の画面
+	/// </summary>
+	[SerializeField]
+	GameObject RecruitPeopleScreen;
+	public GameObject RecruitPeopleScreenObj
+	{
+		get { return RecruitPeopleScreen; }
+	}
+
+	/// <summary>
+	/// プレイヤー名
+	/// </summary>
+	[SerializeField]
+	Text[] PlayerNames;
+	public Text[] PlayerNamesTexts
+	{
+		get { return PlayerNames; }
+	}
+
+	/// <summary>
 	/// タイマー
 	/// </summary>
 	[SerializeField]

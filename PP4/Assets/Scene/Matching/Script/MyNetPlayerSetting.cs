@@ -41,6 +41,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	const int NUM_OF_PLAYERS = 2;
 
+	/// <summary>
+	/// プレイヤー名
+	/// </summary>
+	string m_playerName;
+
+	/// <summary>
+	/// プレイヤー名
+	/// </summary>
+	const string PLAYER_NAME = "Player";
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// ローカルプレイヤーの初期
@@ -49,12 +59,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		base.OnStartLocalPlayer();
 
+		//インスタンスの取得
+		if (!Game)
+			Game = GameObject.Find("Game").GetComponent<MyGame>();
+
 		//必要スクリプトの追加と設定
 		gameObject.AddComponent<MyPlayer>();
 		GetComponent<MyPlayer>().SetPlayerParameters(PlayerToAcquireParameters);
 
 		//ゲームに必要な設定
-		Game = GameObject.Find("Game").GetComponent<MyGame>();
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;
 
@@ -67,7 +80,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	public override void OnStartClient()
 	{
+		//インスタンスの取得
+		if (!Game)
+			Game = GameObject.Find("Game").GetComponent<MyGame>();
+
 		NetPlayerSettingList.Add(this);
+
+		//名前の登録
+		m_playerName = PLAYER_NAME + NetPlayerSettingList.Count.ToString();
+		Game.MainUiScript.PlayerNamesTexts[NetPlayerSettingList.Count - 1].text = m_playerName;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -76,6 +97,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void Update()
 	{
+		//インスタンスの取得
+		if (!Game)
+			Game = GameObject.Find("Game").GetComponent<MyGame>();
+
 		//権限のあるプレイヤーのプレイヤー人数が揃う
 		if (isLocalPlayer)
 			if (NetPlayerSettingList.Count >= NUM_OF_PLAYERS)
@@ -83,6 +108,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//権限がないプレイヤーの親設定
 		if (!isLocalPlayer && isClient)
-			transform.parent = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript.transform;
+			transform.parent = Game.PlayersScript.transform;
 	}
 }

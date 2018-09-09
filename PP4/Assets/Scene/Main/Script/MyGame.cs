@@ -233,11 +233,15 @@ public class MyGame : MonoBehaviour
 			m_statePrev = m_state;
 
 			m_isEndPeopleRecruitment = false;
-			MainUi.RecruitPeopleScreenObj.SetActive(true);
+
+			//UIの初期設定
+			MainUi.ResetRecruitPeopleScreen();
+			if (OperatingPlayer)
+				OperatingNetPlayerSetting.ListConnectedPlayers();
 		}
 
-		//人数募集の終了
-		if (m_isEndPeopleRecruitment)
+		//人数募集の終了and全プレイヤーが準備完了
+		if (m_isEndPeopleRecruitment && OperatingNetPlayerSetting.AreAllPlayersReady())
 		{
 			//ゲームの開始設定
 			m_state = GameStatus.GameSetting;
@@ -375,13 +379,17 @@ public class MyGame : MonoBehaviour
 
 			//勝敗を決める
 			DecideOnWinningOrLosing();
+
+			//勝敗確認のため
+			OperatingNetPlayerSetting.CmdNotifyOfIsReady(false);
 		}
 
 		//もう一度か終了か
-		if(Input.GetButtonDown("AButton"))
+		if (Input.GetButtonDown("AButton"))
 		{
 			MainUi.ResultScreenObj.SetActive(false);
 			m_state = GameStatus.RecruitPeople;
+			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		}
 		else if(Input.GetButtonDown("BButton"))
 		{

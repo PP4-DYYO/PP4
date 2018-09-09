@@ -46,6 +46,11 @@ public class MyMainUi : MonoBehaviour
 	}
 
 	/// <summary>
+	/// 募集中のメッセージ
+	/// </summary>
+	const string WANTED_MESSAGE = "募集中...";
+
+	/// <summary>
 	/// ゲームを開始するメッセージ
 	/// </summary>
 	[SerializeField]
@@ -115,5 +120,20 @@ public class MyMainUi : MonoBehaviour
 	void Update()
 	{
 
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人材募集画面のリセット
+	/// </summary>
+	public void ResetRecruitPeopleScreen()
+	{
+		RecruitPeopleScreen.SetActive(true);
+
+		MessageToStartGame.enabled = false;
+		foreach (var playerName in PlayerNames)
+		{
+			playerName.text = WANTED_MESSAGE;
+		}
 	}
 }

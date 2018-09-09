@@ -227,6 +227,10 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void RecruitPeopleStateProcess()
 	{
+		//操作しているプレイヤーが登録されていない
+		if (!OperatingPlayer)
+			return;
+
 		//状態初期設定
 		if (m_state != m_statePrev)
 		{
@@ -234,10 +238,12 @@ public class MyGame : MonoBehaviour
 
 			m_isEndPeopleRecruitment = false;
 
+			//必要なインスタンス
+			OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
+
 			//UIの初期設定
 			MainUi.ResetRecruitPeopleScreen();
-			if (OperatingPlayer)
-				OperatingNetPlayerSetting.ListConnectedPlayers();
+			OperatingNetPlayerSetting.ListConnectedPlayers();
 		}
 
 		//人数募集の終了and全プレイヤーが準備完了
@@ -278,8 +284,6 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void PlayerGameSettings()
 	{
-		OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
-
 		//動きを無効
 		OperatingPlayer.enabled = false;
 

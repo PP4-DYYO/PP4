@@ -131,8 +131,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			//存在していない
 			if (!m_netPlayerSettings[i])
 			{
+				//接続が切れた設定
 				m_netPlayerSettings.RemoveAt(i);
 				m_isMemberChanged = true;
+				Game.IsEndPeopleRecruitment = false;
 			}
 			else
 			{
@@ -147,6 +149,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	public void ListConnectedPlayers()
 	{
+		//表示のリセット
+		Game.MainUiScript.ResetRecruitPeopleScreen();
+
 		//プレイヤー名を初めから登録
 		for (var i = 0; i < m_netPlayerSettings.Count; i++)
 		{

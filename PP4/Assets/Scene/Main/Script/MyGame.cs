@@ -168,7 +168,14 @@ public class MyGame : MonoBehaviour
 	bool m_isEndPeopleRecruitment;
 	public bool IsEndPeopleRecruitment
 	{
-		set { m_isEndPeopleRecruitment = value; }
+		set
+		{
+			m_isEndPeopleRecruitment = value;
+
+			//UIの整理
+			if(!m_isEndPeopleRecruitment)
+				OperatingNetPlayerSetting.ListConnectedPlayers();
+		}
 	}
 
 	/// <summary>
@@ -242,7 +249,6 @@ public class MyGame : MonoBehaviour
 			OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
 			//UIの初期設定
-			MainUi.ResetRecruitPeopleScreen();
 			OperatingNetPlayerSetting.ListConnectedPlayers();
 		}
 

@@ -56,7 +56,7 @@ public class MySyncTransform : NetworkBehaviour
 	/// <summary>
 	/// しきい値（境目の値）
 	/// </summary>
-	const float THRESHOLD = 0.125f;
+	const float THRESHOLD = 0.0078125f;
 
 	/// <summary>
 	/// しきい値（境目の回転値）

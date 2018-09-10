@@ -421,7 +421,7 @@ public class MyGame : MonoBehaviour
 
 		//表示
 		MainUi.ResultScreenObj.SetActive(true);
-		MainUi.ScoreOfTeam1Text.text = m_scoreOfTeam1.ToString();
-		MainUi.ScoreOfTeam2Text.text = m_scoreOfTeam2.ToString();
+		MainUi.ScoreOfTeam1Text.text = m_scoreOfTeam1.ToString("F2") + StageInfo.UNIT_SYMBOL;
+		MainUi.ScoreOfTeam2Text.text = m_scoreOfTeam2.ToString("F2") + StageInfo.UNIT_SYMBOL;
 	}
 }

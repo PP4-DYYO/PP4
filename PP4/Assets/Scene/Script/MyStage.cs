@@ -23,6 +23,11 @@ public struct StageInfo
 	/// 地のタグ
 	/// </summary>
 	public const string GROUND_TAG = "Ground";
+
+	/// <summary>
+	/// 単位の記号
+	/// </summary>
+	public const string UNIT_SYMBOL = "m";
 }
 
 //----------------------------------------------------------------------------------------------------

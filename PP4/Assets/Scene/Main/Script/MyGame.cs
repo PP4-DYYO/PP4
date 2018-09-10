@@ -291,10 +291,18 @@ public class MyGame : MonoBehaviour
 		m_operatingPlayerNum = OperatingNetPlayerSetting.GetPlayerNum();
 		Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray());
 
-		//位置
-		if (OperatingNetPlayerSetting.TeamNum == Team.Team1)
-			OperatingPlayer.transform.position =
-				Stage.CurrentFieldScript.Team1StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
+		//チームによる位置
+		switch (OperatingNetPlayerSetting.TeamNum)
+		{
+			case Team.Team1:
+				OperatingPlayer.transform.position =
+					Stage.CurrentFieldScript.Team1StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
+				break;
+			case Team.Team2:
+				OperatingPlayer.transform.position =
+					Stage.CurrentFieldScript.Team2StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
+				break;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -395,7 +403,7 @@ public class MyGame : MonoBehaviour
 			m_state = GameStatus.RecruitPeople;
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		}
-		else if(Input.GetButtonDown("BButton"))
+		else if (Input.GetButtonDown("BButton"))
 		{
 			Debug.Log("終了");
 		}

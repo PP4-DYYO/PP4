@@ -5,6 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -64,6 +65,7 @@ public class MyPlayers : MonoBehaviour
 	/// <summary>
 	/// チームを決める
 	/// </summary>
+	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>
 	public void DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
 	{
 		NetPlayerSettings = netPlayerSettings;
@@ -88,15 +90,21 @@ public class MyPlayers : MonoBehaviour
 	/// <summary>
 	/// チーム１の高さ合計を取得
 	/// </summary>
+	/// <param name="scoreArray">得点配列</param>
 	/// <returns>高さ合計</returns>
-	public float GetTeam1HeightTotal()
+	public float GetTeam1HeightTotal(ref float[] scoreArray)
 	{
+		//配列要素数が違う
+		if (!scoreArray.Length.Equals(Team1.transform.childCount))
+			scoreArray = new float[Team1.transform.childCount];
+
 		var totalHeight = 0f;
 
 		//全子供
-		foreach(Transform child in Team1.transform)
+		for(var i = 0; i < Team1.transform.childCount; i++)
 		{
-			totalHeight += child.position.y;
+			totalHeight += Team1.transform.GetChild(i).position.y;
+			scoreArray[i] = Team1.transform.GetChild(i).position.y;
 		}
 
 		return totalHeight;
@@ -106,15 +114,21 @@ public class MyPlayers : MonoBehaviour
 	/// <summary>
 	/// チーム２の高さ合計を取得
 	/// </summary>
+	/// <param name="scoreArray">得点配列</param>
 	/// <returns>高さ合計</returns>
-	public float GetTeam2HeightTotal()
+	public float GetTeam2HeightTotal(ref float[] scoreArray)
 	{
+		//配列要素数が違う
+		if (!scoreArray.Length.Equals(Team2.transform.childCount))
+			scoreArray = new float[Team2.transform.childCount];
+
 		var totalHeight = 0f;
 
 		//全子供
-		foreach (Transform child in Team2.transform)
+		for (var i = 0; i < Team2.transform.childCount; i++)
 		{
-			totalHeight += child.position.y;
+			totalHeight += Team2.transform.GetChild(i).position.y;
+			scoreArray[i] = Team2.transform.GetChild(i).position.y;
 		}
 
 		return totalHeight;

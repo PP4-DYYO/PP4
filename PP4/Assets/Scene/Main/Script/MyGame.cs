@@ -39,6 +39,10 @@ public enum GameStatus
 	/// ゲーム終了
 	/// </summary>
 	GameEnd,
+	/// <summary>
+	/// 結果
+	/// </summary>
+	Result,
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -126,8 +130,8 @@ public class MyGame : MonoBehaviour
 	GameStatus m_statePrev;
 	#endregion
 
-	#region 時間
-	[Header("時間")]
+	#region ゲームの情報
+	[Header("ゲームの情報")]
 	/// <summary>
 	/// ゲーム設定時間
 	/// </summary>
@@ -145,11 +149,26 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_battleTime;
+	public float BattleTime
+	{
+		get { return m_battleTime; }
+	}
+
+	/// <summary>
+	/// ゲームが終了して停止する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeWhenTheGameEndsAndStops;
 
 	/// <summary>
 	/// 状態の時間を数える
 	/// </summary>
 	float m_countTheTimeOfTheState;
+
+	/// <summary>
+	/// プレイヤー人数
+	/// </summary>
+	public const int NUM_OF_PLAYERS = 2;
 	#endregion
 
 	/// <summary>
@@ -158,25 +177,19 @@ public class MyGame : MonoBehaviour
 	float m_scoreOfTeam1;
 
 	/// <summary>
+	/// チーム１のスコア配列
+	/// </summary>
+	float[] m_scoreOfTeam1Array = new float[(NUM_OF_PLAYERS + 1) / 2];
+
+	/// <summary>
 	/// チーム２のスコア
 	/// </summary>
 	float m_scoreOfTeam2;
 
 	/// <summary>
-	/// 人数募集の終了フラグ
+	/// チーム２のスコア配列
 	/// </summary>
-	bool m_isEndPeopleRecruitment;
-	public bool IsEndPeopleRecruitment
-	{
-		set
-		{
-			m_isEndPeopleRecruitment = value;
-
-			//UIの整理
-			if(!m_isEndPeopleRecruitment)
-				OperatingNetPlayerSetting.ListConnectedPlayers();
-		}
-	}
+	float[] m_scoreOfTeam2Array = new float[(NUM_OF_PLAYERS + 1) / 2];
 
 	/// <summary>
 	/// 操作しているプレイヤーの番号
@@ -189,7 +202,7 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void Start()
 	{
-		m_statePrev = GameStatus.GameEnd;
+		m_statePrev = GameStatus.Result;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -222,6 +235,9 @@ public class MyGame : MonoBehaviour
 			case GameStatus.GameEnd:
 				GameEndStateProcess();
 				break;
+			case GameStatus.Result:
+				ResultStateProcess();
+				break;
 		}
 
 		//時間経過
@@ -243,17 +259,16 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			m_isEndPeopleRecruitment = false;
-
 			//必要なインスタンス
-			OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
+			if (!OperatingNetPlayerSetting)
+				OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
 			//UIの初期設定
-			OperatingNetPlayerSetting.ListConnectedPlayers();
+			MainUi.WantedRecruitment();
 		}
 
-		//人数募集の終了and全プレイヤーが準備完了
-		if (m_isEndPeopleRecruitment && OperatingNetPlayerSetting.AreAllPlayersReady())
+		//ゲームが開始できるか
+		if (OperatingNetPlayerSetting.IsGameStart())
 		{
 			//ゲームの開始設定
 			m_state = GameStatus.GameSetting;
@@ -273,7 +288,7 @@ public class MyGame : MonoBehaviour
 
 			//設定
 			PlayerGameSettings();
-			UiGameSettings();
+			MainUi.GameStartSetting();
 		}
 
 		//設定時間が過ぎた
@@ -310,21 +325,7 @@ public class MyGame : MonoBehaviour
 				break;
 		}
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// UIのゲーム設定
-	/// </summary>
-	void UiGameSettings()
-	{
-		//人材募集画面
-		MainUi.MessageToStartGameText.enabled = true;
-
-		//ゲーム画面
-		MainUi.CountdownText.text = "";
-		MainUi.TimerText.text = ((int)m_battleTime).ToString();
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// ゲームスタート状態の処理
@@ -335,7 +336,8 @@ public class MyGame : MonoBehaviour
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
-			MainUi.RecruitPeopleScreenObj.SetActive(false);
+
+			MainUi.GameStart();
 		}
 
 		//カウントダウン時間が過ぎた
@@ -346,12 +348,12 @@ public class MyGame : MonoBehaviour
 			OperatingPlayer.enabled = true;
 
 			//カウントダウン反映
-			MainUi.CountdownText.text = "";
+			MainUi.SetCountdown();
 		}
 		else
 		{
 			//カウントダウン反映
-			MainUi.CountdownText.text = ((int)(m_initialCountdownTime - m_countTheTimeOfTheState) + 1).ToString();
+			MainUi.SetCountdown(m_initialCountdownTime - m_countTheTimeOfTheState);
 		}
 	}
 
@@ -372,18 +374,18 @@ public class MyGame : MonoBehaviour
 		{
 			//状態遷移
 			m_state = GameStatus.GameEnd;
-			MainUi.TimerText.text = 0.ToString();
+			MainUi.SetTimer();
 		}
 		else
 		{
 			//タイマー反映
-			MainUi.TimerText.text = ((int)(m_battleTime - m_countTheTimeOfTheState)).ToString();
+			MainUi.SetTimer(m_battleTime - m_countTheTimeOfTheState);
 		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲーム終了状態の処理
+	/// ゲーム終了の処理
 	/// </summary>
 	void GameEndStateProcess()
 	{
@@ -394,6 +396,29 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーの停止
 			OperatingPlayer.enabled = false;
+			OperatingPlayer.GetComponent<Rigidbody>().useGravity = false;
+
+			//UI
+			MainUi.EndBattle();
+		}
+
+		//ゲーム終了時間が過ぎた
+		if (m_countTheTimeOfTheState >= m_timeWhenTheGameEndsAndStops)
+		{
+			m_state = GameStatus.Result;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 結果状態の処理
+	/// </summary>
+	void ResultStateProcess()
+	{
+		//状態初期設定
+		if (m_state != m_statePrev)
+		{
+			m_statePrev = m_state;
 
 			//勝敗を決める
 			DecideOnWinningOrLosing();
@@ -405,7 +430,6 @@ public class MyGame : MonoBehaviour
 		//もう一度か終了か
 		if (Input.GetButtonDown("AButton"))
 		{
-			MainUi.ResultScreenObj.SetActive(false);
 			m_state = GameStatus.RecruitPeople;
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		}
@@ -421,13 +445,13 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void DecideOnWinningOrLosing()
 	{
-		//スコアの取得
-		m_scoreOfTeam1 = Players.GetTeam1HeightTotal();
-		m_scoreOfTeam2 = Players.GetTeam2HeightTotal();
+		//高さの取得
+		m_scoreOfTeam1 = Players.GetTeam1HeightTotal(ref m_scoreOfTeam1Array);
+		m_scoreOfTeam2 = Players.GetTeam2HeightTotal(ref m_scoreOfTeam2Array);
 
 		//表示
-		MainUi.ResultScreenObj.SetActive(true);
-		MainUi.ScoreOfTeam1Text.text = m_scoreOfTeam1.ToString("F2") + StageInfo.UNIT_SYMBOL;
-		MainUi.ScoreOfTeam2Text.text = m_scoreOfTeam2.ToString("F2") + StageInfo.UNIT_SYMBOL;
+		MainUi.Result();
+		MainUi.CalculateScoreOfTeam1(m_scoreOfTeam1Array);
+		MainUi.CalculateScoreOfTeam2(m_scoreOfTeam2Array);
 	}
 }

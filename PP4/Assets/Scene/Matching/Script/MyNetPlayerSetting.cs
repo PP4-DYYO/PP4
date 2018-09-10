@@ -50,11 +50,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
-	/// プレイヤー人数
-	/// </summary>
-	const int NUM_OF_PLAYERS = 2;
-
-	/// <summary>
 	/// プレイヤー番号
 	/// </summary>
 	int m_playerNum;
@@ -63,6 +58,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// プレイヤー名
 	/// </summary>
 	string m_playerName;
+	public string PlayerName
+	{
+		get { return m_playerName; }
+	}
 
 	/// <summary>
 	/// プレイヤー名
@@ -109,12 +108,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (m_isMemberChanged)
 		{
 			//登録されているプレイヤー名を初めから再登録
-			ListConnectedPlayers();
+			Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
 		}
 		else
 		{
 			//追加されたプレイヤー名を登録
-			Game.MainUiScript.PlayerNamesTexts[m_netPlayerSettings.Count - 1].text = m_playerName;
+			Game.MainUiScript.RegisterPlayerName(m_netPlayerSettings.Count - 1, m_playerName);
 		}
 	}
 
@@ -133,29 +132,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			{
 				//接続が切れた設定
 				m_netPlayerSettings.RemoveAt(i);
+				Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
 				m_isMemberChanged = true;
-				Game.IsEndPeopleRecruitment = false;
 			}
 			else
 			{
 				i++;
 			}
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 接続しているプレイヤーを一覧表示
-	/// </summary>
-	public void ListConnectedPlayers()
-	{
-		//表示のリセット
-		Game.MainUiScript.ResetRecruitPeopleScreen();
-
-		//プレイヤー名を初めから登録
-		for (var i = 0; i < m_netPlayerSettings.Count; i++)
-		{
-			Game.MainUiScript.PlayerNamesTexts[i].text = m_netPlayerSettings[i].m_playerName;
 		}
 	}
 
@@ -207,17 +190,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//ゲームが人材募集状態
 		if (Game.State == GameStatus.RecruitPeople)
 		{
-			//接続が切れているプレイヤー確認
-			ConfirmationOfPlayersWhoAreDisconnected();
-
-			//権限のあるプレイヤー
-			if (isLocalPlayer)
-			{
-				//プレイヤー人数が揃う
-				if (m_netPlayerSettings.Count >= NUM_OF_PLAYERS)
-					Game.IsEndPeopleRecruitment = true;
-			}
-
 			//権限がないプレイヤー
 			if (!isLocalPlayer && isClient)
 			{
@@ -252,11 +224,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 全てのプレイヤーが準備完了か
+	/// ゲームスタートできるかか
 	/// </summary>
-	/// <returns>準備完了か</returns>
-	public bool AreAllPlayersReady()
+	/// <returns>ゲーム開始できる</returns>
+	public bool IsGameStart()
 	{
+		//接続が切れているプレイヤー確認
+		ConfirmationOfPlayersWhoAreDisconnected();
+
 		//全てのプレイヤーにアクセス
 		for (var i = 0; i < m_netPlayerSettings.Count; i++)
 		{
@@ -264,6 +239,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			if (!m_netPlayerSettings[i].m_isReady)
 				return false;
 		}
-		return true;
+
+		//プレイヤー人数が揃うか
+		return (m_netPlayerSettings.Count >= MyGame.NUM_OF_PLAYERS);
+
 	}
 }

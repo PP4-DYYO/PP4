@@ -15,6 +15,8 @@ using UnityEngine.UI;
 /// </summary>
 public class MyMainUi : MonoBehaviour
 {
+	#region 外部のインスタンス
+	[Header("外部のインスタンス")]
 	/// <summary>
 	/// ゲーム
 	/// </summary>
@@ -30,20 +32,55 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject RecruitPeopleScreen;
-	public GameObject RecruitPeopleScreenObj
-	{
-		get { return RecruitPeopleScreen; }
-	}
 
 	/// <summary>
 	/// プレイヤー名
 	/// </summary>
 	[SerializeField]
 	Text[] PlayerNames;
-	public Text[] PlayerNamesTexts
-	{
-		get { return PlayerNames; }
-	}
+
+	/// <summary>
+	/// ゲームを開始するメッセージ
+	/// </summary>
+	[SerializeField]
+	Text MessageToStartGame;
+
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	[SerializeField]
+	Text Timer;
+
+	/// <summary>
+	/// カウントダウン
+	/// </summary>
+	[SerializeField]
+	Text Countdown;
+
+	/// <summary>
+	/// バトル終了
+	/// </summary>
+	[SerializeField]
+	GameObject BattleEnd;
+	
+	/// <summary>
+	/// 結果画面
+	/// </summary>
+	[SerializeField]
+	GameObject ResultScreen;
+
+	/// <summary>
+	/// チーム１のスコア
+	/// </summary>
+	[SerializeField]
+	Text ScoreOfTeam1;
+
+	/// <summary>
+	/// チーム２のスコア
+	/// </summary>
+	[SerializeField]
+	Text ScoreOfTeam2;
+	#endregion
 
 	/// <summary>
 	/// 募集中のメッセージ
@@ -51,64 +88,14 @@ public class MyMainUi : MonoBehaviour
 	const string WANTED_MESSAGE = "募集中...";
 
 	/// <summary>
-	/// ゲームを開始するメッセージ
+	/// ネットワークプレイヤー設定たち
 	/// </summary>
-	[SerializeField]
-	Text MessageToStartGame;
-	public Text MessageToStartGameText
-	{
-		get { return MessageToStartGame; }
-	}
+	MyNetPlayerSetting[] NetPlayerSettings;
 
 	/// <summary>
-	/// タイマー
+	/// 作業用のFloat
 	/// </summary>
-	[SerializeField]
-	Text Timer;
-	public Text TimerText
-	{
-		get { return Timer; }
-	}
-
-	/// <summary>
-	/// カウントダウン
-	/// </summary>
-	[SerializeField]
-	Text Countdown;
-	public Text CountdownText
-	{
-		get { return Countdown; }
-	}
-
-	/// <summary>
-	/// 結果画面
-	/// </summary>
-	[SerializeField]
-	GameObject ResultScreen;
-	public GameObject ResultScreenObj
-	{
-		get { return ResultScreen; }
-	}
-
-	/// <summary>
-	/// チーム１のスコア
-	/// </summary>
-	[SerializeField]
-	Text ScoreOfTeam1;
-	public Text ScoreOfTeam1Text
-	{
-		get { return ScoreOfTeam1; }
-	}
-
-	/// <summary>
-	/// チーム２のスコア
-	/// </summary>
-	[SerializeField]
-	Text ScoreOfTeam2;
-	public Text ScoreOfTeam2Text
-	{
-		get { return ScoreOfTeam2; }
-	}
+	float m_workFloat;
 
 	// Use this for initialization
 	void Start()
@@ -124,9 +111,41 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 人材募集をする
+	/// </summary>
+	public void WantedRecruitment()
+	{
+		RecruitPeopleScreen.SetActive(true);
+
+		MessageToStartGame.enabled = false;
+		BattleEnd.SetActive(false);
+		ResultScreen.SetActive(false);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 接続しているプレイヤーを一覧表示
+	/// </summary>
+	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>
+	public void ListConnectedPlayers(MyNetPlayerSetting[] netPlayerSettings)
+	{
+		NetPlayerSettings = netPlayerSettings;
+
+		//表示のリセット
+		ResetRecruitPeopleScreen();
+
+		//プレイヤー名を初めから登録
+		for (var i = 0; i < NetPlayerSettings.Length; i++)
+		{
+			RegisterPlayerName(i, NetPlayerSettings[i].PlayerName);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 人材募集画面のリセット
 	/// </summary>
-	public void ResetRecruitPeopleScreen()
+	void ResetRecruitPeopleScreen()
 	{
 		RecruitPeopleScreen.SetActive(true);
 
@@ -135,5 +154,118 @@ public class MyMainUi : MonoBehaviour
 		{
 			playerName.text = WANTED_MESSAGE;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤー名を登録
+	/// </summary>
+	/// <param name="num">プレイヤー番号</param>
+	/// <param name="name">名前</param>
+	public void RegisterPlayerName(int num, string name)
+	{
+		if (num >= PlayerNames.Length)
+			return;
+
+		PlayerNames[num].text = name;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ゲーム開始設定
+	/// </summary>
+	public void GameStartSetting()
+	{
+		//人材募集画面
+		MessageToStartGame.enabled = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ゲーム開始
+	/// </summary>
+	public void GameStart()
+	{
+		RecruitPeopleScreen.SetActive(false);
+
+		Timer.text = Game.BattleTime.ToString("F0");
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// カウントダウンを設定する
+	/// </summary>
+	/// <param name="time">時間</param>
+	public void SetCountdown(float time = 0)
+	{
+		//表示・非表示
+		if (time == 0)
+			Countdown.enabled = false;
+		else
+			Countdown.enabled = true;
+
+		Countdown.text = time.ToString("F0");
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// タイマーを設定する
+	/// </summary>
+	/// <param name="time">時間</param>
+	public void SetTimer(float time = 0)
+	{
+		Timer.text = time.ToString("F0");
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルを終了
+	/// </summary>
+	public void EndBattle()
+	{
+		BattleEnd.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 結果
+	/// </summary>
+	public void Result()
+	{
+		ResultScreen.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// チーム１スコアの計算
+	/// </summary>
+	/// <param name="scores">得点たち</param>
+	public void CalculateScoreOfTeam1(float[] scores)
+	{
+		m_workFloat = 0;
+
+		foreach(var score in scores)
+		{
+			m_workFloat += score;
+		}
+
+		ScoreOfTeam1.text = m_workFloat.ToString("F2") + StageInfo.UNIT_SYMBOL;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// チーム２スコアの計算
+	/// </summary>
+	/// <param name="scores">得点たち</param>
+	public void CalculateScoreOfTeam2(float[] scores)
+	{
+		m_workFloat = 0;
+
+		foreach (var score in scores)
+		{
+			m_workFloat += score;
+		}
+
+		ScoreOfTeam2.text = m_workFloat.ToString("F2") + StageInfo.UNIT_SYMBOL;
 	}
 }

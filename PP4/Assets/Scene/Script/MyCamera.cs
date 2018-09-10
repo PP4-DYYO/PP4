@@ -87,6 +87,17 @@ public class MyCamera : MonoBehaviour
 	/// </summary>
 	RaycastHit m_hit;
 
+#if DEBUG
+	#region Debug
+	[Header("Debug")]
+	/// <summary>
+	/// ターゲットを自分自身で取得する
+	/// </summary>
+	[SerializeField]
+	bool m_isSearchForTheTargetOnYourOwn_debug;
+	#endregion
+#endif
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -103,6 +114,14 @@ public class MyCamera : MonoBehaviour
 	/// </summary>
 	void SearchTarget()
 	{
+#if DEBUG
+		//自分自身でターゲットを探す
+		if (m_isSearchForTheTargetOnYourOwn_debug)
+		{
+			m_target = FindObjectOfType<MyPlayer>();
+			return;
+		}
+#endif
 		m_target = Game.OperatingPlayerScript;
 	}
 
@@ -125,8 +144,6 @@ public class MyCamera : MonoBehaviour
 			SetPosition(-m_target.transform.forward + Vector3.up * 1.75f);
 
 		//カメラの回転量
-		//m_rotX = Input.GetAxis("HorizontalR") * Time.deltaTime * m_rotationSensitivity;
-		//m_rotY = Input.GetAxis("VerticalR") * Time.deltaTime * m_rotationSensitivity;
 		m_rotX = Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity;
 		m_rotY = Input.GetAxis("Mouse Y") * Time.deltaTime * m_rotationSensitivity;
 

@@ -56,7 +56,7 @@ public class MyJetWater : MonoBehaviour
 	/// プレイヤーのオブジェクト
 	/// </summary>
 	[SerializeField]
-	MyPlayer Player;
+	MonoBehaviour Player;
 
 	/// <summary>
 	/// 水発射点のオブジェクト1
@@ -105,7 +105,7 @@ public class MyJetWater : MonoBehaviour
 		}
 
 		CheckDirection();
-		RotationJetWater();	
+		//RotationJetWater();	
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -187,68 +187,68 @@ public class MyJetWater : MonoBehaviour
 	/// <summary>
 	/// ジェットウォーターの回転
 	/// </summary>	
-	void RotationJetWater()
-	{
-		switch (m_jetDirection)
-		{
-			//↑移動時
-			case JetDirection.UP:
-				float upAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_xrotate);
-				if (m_xrotate <= 0.5)
-				{
-					m_xrotate += 0.05f;
-				}
-				Water1.transform.eulerAngles = new Vector3(upAngle, 0, 0);
-				Water2.transform.eulerAngles = new Vector3(upAngle, 0, 0);
-				break;
-			//↓移動時
-			case JetDirection.DOWN:
-				float downAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_xrotate);
-				if (m_xrotate <= 0.5)
-				{
-					m_xrotate += 0.05f;
-				}
-				Water1.transform.eulerAngles = new Vector3(-downAngle, 0, 0);
-				Water2.transform.eulerAngles = new Vector3(-downAngle, 0, 0);
-				break;
-			//→移動時
-			case JetDirection.RIGHT:
-				float rightAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_zrotate);
-				if (m_zrotate <= 0.5)
-				{
-					m_zrotate += 0.05f;
-				}
-				Water1.transform.eulerAngles = new Vector3(0, 0, -rightAngle);
-				Water2.transform.eulerAngles = new Vector3(0, 0, -rightAngle);
-				break;
-			//←移動時
-			case JetDirection.LEFT:
-				float leftAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_zrotate);
-				if (m_zrotate <= 0.5)
-				{
-					m_zrotate += 0.05f;
-				}
-				Water1.transform.eulerAngles = new Vector3(0, 0, leftAngle);
-				Water2.transform.eulerAngles = new Vector3(0, 0, leftAngle);
-				break;
-			//↑→移動時
-			case JetDirection.UP_RIGHT:			
-				break;
-			//停止時
-			case JetDirection.NON:
-				float angle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_xrotate);
-				float angle_ = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_zrotate);
-				if (m_xrotate > 0)
-				{
-					m_xrotate -= 0.05f;
-				}
-				if (m_zrotate > 0)
-				{
-					m_zrotate -= 0.05f;
-				}
-				Water1.transform.eulerAngles = new Vector3(angle, 0, angle_);
-				Water2.transform.eulerAngles = new Vector3(angle, 0, angle_);
-				break;
-		}
-	}
+	//void RotationJetWater()
+	//{
+	//	switch (m_jetDirection)
+	//	{
+	//		//↑移動時
+	//		case JetDirection.UP:
+	//			float upAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_xrotate);
+	//			if (m_xrotate <= 0.5)
+	//			{
+	//				m_xrotate += 0.05f;
+	//			}
+	//			Water1.transform.eulerAngles = new Vector3(upAngle, 0, 0);
+	//			Water2.transform.eulerAngles = new Vector3(upAngle, 0, 0);
+	//			break;
+	//		//↓移動時
+	//		case JetDirection.DOWN:
+	//			float downAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_xrotate);
+	//			if (m_xrotate <= 0.5)
+	//			{
+	//				m_xrotate += 0.05f;
+	//			}
+	//			Water1.transform.eulerAngles = new Vector3(-downAngle, 0, 0);
+	//			Water2.transform.eulerAngles = new Vector3(-downAngle, 0, 0);
+	//			break;
+	//		//→移動時
+	//		case JetDirection.RIGHT:
+	//			float rightAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_zrotate);
+	//			if (m_zrotate <= 0.5)
+	//			{
+	//				m_zrotate += 0.05f;
+	//			}
+	//			Water1.transform.eulerAngles = new Vector3(0, 0, -rightAngle);
+	//			Water2.transform.eulerAngles = new Vector3(0, 0, -rightAngle);
+	//			break;
+	//		//←移動時
+	//		case JetDirection.LEFT:
+	//			float leftAngle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_zrotate);
+	//			if (m_zrotate <= 0.5)
+	//			{
+	//				m_zrotate += 0.05f;
+	//			}
+	//			Water1.transform.eulerAngles = new Vector3(0, 0, leftAngle);
+	//			Water2.transform.eulerAngles = new Vector3(0, 0, leftAngle);
+	//			break;
+	//		//↑→移動時
+	//		case JetDirection.UP_RIGHT:			
+	//			break;
+	//		//停止時
+	//		case JetDirection.NON:
+	//			float angle = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_xrotate);
+	//			float angle_ = Mathf.LerpAngle(MIN_ANGLE, MAX_ANGLE, m_zrotate);
+	//			if (m_xrotate > 0)
+	//			{
+	//				m_xrotate -= 0.05f;
+	//			}
+	//			if (m_zrotate > 0)
+	//			{
+	//				m_zrotate -= 0.05f;
+	//			}
+	//			Water1.transform.eulerAngles = new Vector3(angle, 0, angle_);
+	//			Water2.transform.eulerAngles = new Vector3(angle, 0, angle_);
+	//			break;
+	//	}
+	//}
 }

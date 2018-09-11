@@ -150,13 +150,37 @@ public class MyPlayer : MonoBehaviour
 	bool m_isFalling;
 	#endregion
 
-	#region 足関係
-	[Header("足関係")]
+	#region 浮遊関係
+	[Header("浮遊関係")]
 	/// <summary>
 	/// 足の高さ
 	/// </summary>
 	[SerializeField]
 	float m_footHeight;
+
+	/// <summary>
+	/// ジェット使用時間
+	/// </summary>
+	[SerializeField]
+	float m_jetUseTime;
+
+	/// <summary>
+	/// ジェット加速時の消費率
+	/// </summary>
+	[SerializeField]
+	float m_consumptionRateAtJetAcceleration;
+
+	/// <summary>
+	/// ジェット減速時の消費率
+	/// </summary>
+	[SerializeField]
+	float m_consumptionRateAtJetDeceleration;
+
+	/// <summary>
+	/// ジェット回復率
+	/// </summary>
+	[SerializeField]
+	float m_jetRecoveryRate;
 
 	/// <summary>
 	/// 足場Ray
@@ -167,6 +191,11 @@ public class MyPlayer : MonoBehaviour
 	/// 足元の情報
 	/// </summary>
 	RaycastHit m_footInfo;
+
+	/// <summary>
+	/// ジェット使用時間を数える
+	/// </summary>
+	float m_countJetUseTime;
 	#endregion
 
 	#region キーボード関係
@@ -240,14 +269,33 @@ public class MyPlayer : MonoBehaviour
 			return;
 		}
 
-		//足元を調べる
-		ExamineFeet();
+		//浮遊状態を調べる
+		ExamineFloatingState();
 
 		//飛ぶ
 		if (m_isFly)
 			MovementInTheAir();
 		else
-			Movement();
+			MovementOnTheGround();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 浮遊状態を調べる
+	/// </summary>
+	void ExamineFloatingState()
+	{
+		//足元を調べる
+		ExamineFeet();
+
+		//ジェットを調べる
+		ExamineJet();
+		
+		//Rボタンを押している間は飛ぶ
+		if (m_isKeepPressingRButton)
+			m_isFly = true;
+
+		Rb.useGravity = !m_isFly || m_isFalling;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -256,18 +304,44 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void ExamineFeet()
 	{
+		//足元のRay
 		m_scaffoldRay.origin = transform.position + (Vector3.up * m_footHeight);
 		m_scaffoldRay.direction = Vector3.down;
 
 		//地に足が付いた
 		if (Physics.Raycast(m_scaffoldRay, out m_footInfo, m_footHeight) && m_footInfo.transform.tag == StageInfo.GROUND_TAG)
 			m_isFly = false;
+	}
 
-		//Rボタンを押している間は飛ぶ
-		if (m_isKeepPressingRButton)
-			m_isFly = true;
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットを調べる
+	/// </summary>
+	void ExamineJet()
+	{
+		//飛んでいるand落下していない
+		if (m_isFly && !m_isFalling)
+		{
+			//ジェットの上昇・下降・滞在によってジェットの燃料が減る
+			if (m_isKeepPressingRButton)
+				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetAcceleration;
+			else if (m_isKeepPressingLButton)
+				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetDeceleration;
+			else
+				m_countJetUseTime += Time.deltaTime;
+		}
+		else if (!m_isFalling)
+		{
+			//地面の上
+			m_countJetUseTime = 0;
+		}
 
-		Rb.useGravity = !m_isFly || m_isFalling;
+		//ジェットの燃料切れ
+		if (m_countJetUseTime > m_jetUseTime)
+		{
+			m_isFalling = true;
+			m_countJetUseTime = m_jetUseTime;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -300,18 +374,14 @@ public class MyPlayer : MonoBehaviour
 			(Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
 			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_airMovingSpeed * Time.deltaTime;
 
-		//ステージ移動制限
-		StageMovementRestriction();
-
-		//移動に伴う回転
-		Rotation();
+		Movement();
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 移動
+	/// 地上での移動
 	/// </summary>
-	void Movement()
+	void MovementOnTheGround()
 	{
 		m_posPrev = transform.position;
 
@@ -320,6 +390,15 @@ public class MyPlayer : MonoBehaviour
 			(Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
 			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_walkSpeed * Time.deltaTime;
 
+		Movement();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Movement()
+	{
 		//ステージ移動制限
 		StageMovementRestriction();
 
@@ -412,6 +491,9 @@ public class MyPlayer : MonoBehaviour
 		{
 			//相手のジェットウォータ―で下降する
 			transform.position -= Vector3.up * m_risingForce * Time.deltaTime;
+
+			//ジェットウォータに当たる分だけ水分回復
+			m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
 		}
 	}
 

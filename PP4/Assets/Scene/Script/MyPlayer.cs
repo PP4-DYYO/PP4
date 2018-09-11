@@ -300,6 +300,9 @@ public class MyPlayer : MonoBehaviour
 			(Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
 			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_airMovingSpeed * Time.deltaTime;
 
+		//ステージ移動制限
+		StageMovementRestriction();
+
 		//移動に伴う回転
 		Rotation();
 	}
@@ -317,8 +320,27 @@ public class MyPlayer : MonoBehaviour
 			(Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
 			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_walkSpeed * Time.deltaTime;
 
+		//ステージ移動制限
+		StageMovementRestriction();
+
 		//移動に伴う回転
 		Rotation();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ステージの移動制限
+	/// </summary>
+	void StageMovementRestriction()
+	{
+		//平面距離がステージ半径を超える
+		if (Vector3.Scale(transform.position, (Vector3.right + Vector3.forward)).sqrMagnitude
+			> Mathf.Pow(Players.GameScript.StageScript.CurrentFieldScript.FieldRudius, 2))
+		{
+			//平面のベクトルの長さをステージ半径にする
+			transform.position = (Vector3.Scale(transform.position, (Vector3.right + Vector3.forward)).normalized
+				* Players.GameScript.StageScript.CurrentFieldScript.FieldRudius) + (Vector3.up * transform.position.y);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

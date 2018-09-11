@@ -34,15 +34,13 @@ public class MyField : MonoBehaviour
 		get { return m_team2StartPositions; }
 	}
 
-	// Use this for initialization
-	void Start()
+	/// <summary>
+	/// ステージの半径
+	/// </summary>
+	[SerializeField]
+	float m_fieldRudius;
+	public float FieldRudius
 	{
-
-	}
-
-	// Update is called once per frame
-	void Update()
-	{
-
+		get { return m_fieldRudius; }
 	}
 }

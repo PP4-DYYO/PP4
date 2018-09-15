@@ -62,6 +62,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Rigidbody Rb;
+
+	/// <summary>
+	/// 水のゲージ
+	/// </summary>
+	[SerializeField]
+	Transform WaterGauge;
 	#endregion
 
 	#region トランスフォーム
@@ -342,6 +348,10 @@ public class MyPlayer : MonoBehaviour
 			m_isFalling = true;
 			m_countJetUseTime = m_jetUseTime;
 		}
+
+		//水の残量
+		WaterGauge.localScale = Vector3.Scale(WaterGauge.localScale, Vector3.up + Vector3.forward)
+			+ Vector3.right * ((m_jetUseTime - m_countJetUseTime) / m_jetUseTime);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -517,7 +527,7 @@ public class MyPlayer : MonoBehaviour
 	{
 		//地面に触れている間は落下しない
 		if (other.transform.tag.Equals(StageInfo.GROUND_TAG))
-			m_isFalling = false;
+			m_isFalling = false; Debug.Log(other.transform.tag);
 	}
 
 	//----------------------------------------------------------------------------------------------------

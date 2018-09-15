@@ -242,6 +242,5 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//プレイヤー人数が揃うか
 		return (m_netPlayerSettings.Count >= MyGame.NUM_OF_PLAYERS);
-
 	}
 }

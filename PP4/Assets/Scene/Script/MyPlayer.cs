@@ -18,7 +18,36 @@ using UnityEngine;
 /// 行動状態
 /// </summary>
 enum BehaviorStatus
-{ };
+{
+	/// <summary>
+	/// 静止
+	/// </summary>
+	Idle,
+	/// <summary>
+	/// 水平移動
+	/// </summary>
+	HorizontalMovement,
+	/// <summary>
+	/// ジェット上昇
+	/// </summary>
+	JetRise,
+	/// <summary>
+	/// ジェット下降
+	/// </summary>
+	JetDescent,
+	/// <summary>
+	/// 落下
+	/// </summary>
+	Falling,
+	/// <summary>
+	/// 空中で静止
+	/// </summary>
+	IdleInTheAir,
+	/// <summary>
+	/// 変化なし
+	/// </summary>
+	Non,
+};
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
@@ -30,6 +59,16 @@ public struct PlayerInfo
 	/// タグ
 	/// </summary>
 	public const string TAG = "Player";
+
+	/// <summary>
+	/// アニメーションのレイヤー
+	/// </summary>
+	public const string ANIM_LAYER = "Base Layer.";
+
+	/// <summary>
+	/// アニメーションパラメータ名
+	/// </summary>
+	public const string ANIM_PARAMETER_NAME = "PlayerAnimIdx";
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -62,6 +101,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Rigidbody Rb;
+
+	/// <summary>
+	/// アニメーター
+	/// </summary>
+	[SerializeField]
+	Animator Anim;
 
 	/// <summary>
 	/// 水のゲージ
@@ -110,6 +155,14 @@ public class MyPlayer : MonoBehaviour
 	const int HALF_CIRCUMFERENCE_ANGLE = 180;
 	#endregion
 
+	#region 状態
+	[Header("状態")]
+	/// <summary>
+	/// 状態
+	/// </summary>
+	BehaviorStatus m_state;
+	#endregion
+
 	#region 移動速度
 	[Header("移動速度")]
 	/// <summary>
@@ -144,6 +197,17 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_accelerationRate;
+
+	/// <summary>
+	/// 水圧による移動量
+	/// </summary>
+	[SerializeField]
+	float m_transferAmountByWaterPressure;
+
+	/// <summary>
+	/// 水平移動距離
+	/// </summary>
+	Vector3 m_horizontalTravelDistance;
 
 	/// <summary>
 	/// 飛んでいる
@@ -283,6 +347,9 @@ public class MyPlayer : MonoBehaviour
 			MovementInTheAir();
 		else
 			MovementOnTheGround();
+
+		//アニメーション処理
+		AnimProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -296,7 +363,7 @@ public class MyPlayer : MonoBehaviour
 
 		//ジェットを調べる
 		ExamineJet();
-		
+
 		//Rボタンを押している間は飛ぶ
 		if (m_isKeepPressingRButton)
 			m_isFly = true;
@@ -380,9 +447,16 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		//カメラの向きに対応した移動
-		transform.position +=
-			(Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
+		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
 			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_airMovingSpeed * Time.deltaTime;
+		transform.position += m_horizontalTravelDistance;
+
+		//水平移動なし
+		if(m_horizontalTravelDistance == Vector3.zero)
+		{
+			//水圧による自動移動
+			transform.position += transform.forward * (m_transferAmountByWaterPressure * Time.deltaTime);
+		}
 
 		Movement();
 	}
@@ -396,9 +470,9 @@ public class MyPlayer : MonoBehaviour
 		m_posPrev = transform.position;
 
 		//カメラの向きに対応した移動
-		transform.position +=
-			(Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
+		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
 			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_walkSpeed * Time.deltaTime;
+		transform.position += m_horizontalTravelDistance;
 
 		Movement();
 	}
@@ -487,6 +561,57 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		transform.eulerAngles = m_workVector3;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// アニメーション処理
+	/// </summary>
+	void AnimProcess()
+	{
+		//状態の取得
+		GetState();
+
+		//状態とアニメーション遷移が同じ
+		if ((int)m_state == Anim.GetInteger(PlayerInfo.ANIM_PARAMETER_NAME))
+		{
+			//状態遷移を無効に
+			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Non);
+			return;
+		}
+
+		//現在のアニメーションと状態が同じ
+		if (Anim.GetCurrentAnimatorStateInfo(0).IsName(PlayerInfo.ANIM_LAYER + m_state.ToString()))
+			return;
+
+		//遷移変更
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)m_state);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 状態の取得
+	/// </summary>
+	void GetState()
+	{
+		//落下
+		if(m_isFalling)
+		{
+			m_state = BehaviorStatus.Falling;
+			return;
+		}
+
+		//上昇と下降と水平移動と空中状態と地上
+		if (m_isKeepPressingRButton)
+			m_state = BehaviorStatus.JetRise;
+		else if (m_isKeepPressingLButton)
+			m_state = BehaviorStatus.JetDescent;
+		else if (m_horizontalTravelDistance != Vector3.zero)
+			m_state = BehaviorStatus.HorizontalMovement;
+		else if (m_isFly)
+			m_state = BehaviorStatus.IdleInTheAir;
+		else
+			m_state = BehaviorStatus.Idle;
 	}
 
 	//----------------------------------------------------------------------------------------------------

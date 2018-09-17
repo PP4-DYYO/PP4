@@ -193,12 +193,6 @@ public class MyPlayer : MonoBehaviour
 	float m_descendingForce;
 
 	/// <summary>
-	/// 加速率
-	/// </summary>
-	[SerializeField]
-	float m_accelerationRate;
-
-	/// <summary>
 	/// 水圧による移動量
 	/// </summary>
 	[SerializeField]
@@ -653,32 +647,5 @@ public class MyPlayer : MonoBehaviour
 		//地面に触れている間は落下しない
 		if (other.transform.tag.Equals(StageInfo.GROUND_TAG))
 			m_isFalling = false; Debug.Log(other.transform.tag);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// プレイヤーパラメータを設定
-	/// </summary>
-	/// <param name="player">設定したいプレイヤー</param>
-	public void SetPlayerParameters(MyPlayer player)
-	{
-		//必要なコンポーネント
-		Rb = GetComponent<Rigidbody>();
-
-		//トランスフォーム
-		m_rotationSpeed = player.m_rotationSpeed;
-		m_correctionAngle = player.m_correctionAngle;
-
-		//移動速度
-		m_walkSpeed = player.m_walkSpeed;
-		m_airMovingSpeed = player.m_airMovingSpeed;
-
-		//移動
-		m_risingForce = player.m_risingForce;
-		m_descendingForce = player.m_descendingForce;
-		m_accelerationRate = player.m_accelerationRate;
-
-		//足関係
-		m_footHeight = player.m_footHeight;
 	}
 }

@@ -27,12 +27,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
-	/// パラメータを取得するためのプレイヤー
-	/// </summary>
-	[SerializeField]
-	MyPlayer PlayerToAcquireParameters;
-
-	/// <summary>
 	/// ゲーム
 	/// </summary>
 	MyGame Game;
@@ -154,10 +148,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
-		//必要スクリプトの追加と設定
-		gameObject.AddComponent<MyPlayer>();
-		GetComponent<MyPlayer>().SetPlayerParameters(PlayerToAcquireParameters);
-
 		//ゲームに必要な設定
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;
@@ -196,6 +186,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				//親設定と不要なものを取り除く
 				transform.parent = Game.PlayersScript.transform;
 				GetComponent<Rigidbody>().isKinematic = true;
+				GetComponent<MyPlayer>().enabled = false;
 			}
 		}
 	}

@@ -651,10 +651,31 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲーム開始状態にする
+	/// バトル開始状態にする
 	/// </summary>
-	public void MakeItGameStartState()
+	public void MakeItBattleStartState()
 	{
+		transform.LookAt(Vector3.zero);
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Idle);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ゲーム状態にする
+	/// </summary>
+	public void MakeItBattleState()
+	{
+		enabled = true;
+		Rb.constraints = RigidbodyConstraints.FreezeRotation;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル終了状態にする
+	/// </summary>
+	public void MakeItBattleEndState()
+	{
+		enabled = false;
+		Rb.constraints = RigidbodyConstraints.FreezeAll;
 	}
 }

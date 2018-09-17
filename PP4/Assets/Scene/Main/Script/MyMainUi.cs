@@ -62,7 +62,7 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject BattleEnd;
-	
+
 	/// <summary>
 	/// 結果画面
 	/// </summary>
@@ -80,6 +80,18 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Text ScoreOfTeam2;
+
+	/// <summary>
+	/// 勝ち
+	/// </summary>
+	[SerializeField]
+	GameObject Win;
+
+	/// <summary>
+	/// 負け
+	/// </summary>
+	[SerializeField]
+	GameObject Defeat;
 	#endregion
 
 	/// <summary>
@@ -93,9 +105,14 @@ public class MyMainUi : MonoBehaviour
 	MyNetPlayerSetting[] NetPlayerSettings;
 
 	/// <summary>
-	/// 作業用のFloat
+	/// チーム１のスコア
 	/// </summary>
-	float m_workFloat;
+	float m_team1Score;
+
+	/// <summary>
+	/// チーム２のスコア
+	/// </summary>
+	float m_team2Score;
 
 	// Use this for initialization
 	void Start()
@@ -120,6 +137,8 @@ public class MyMainUi : MonoBehaviour
 		MessageToStartGame.enabled = false;
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
+		Win.SetActive(false);
+		Defeat.SetActive(false);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -172,9 +191,9 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲーム開始設定
+	/// バトル開始設定
 	/// </summary>
-	public void GameStartSetting()
+	public void BattleStartSetting()
 	{
 		//人材募集画面
 		MessageToStartGame.enabled = true;
@@ -182,9 +201,9 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲーム開始
+	/// バトル開始
 	/// </summary>
-	public void GameStart()
+	public void BattleStart()
 	{
 		RecruitPeopleScreen.SetActive(false);
 
@@ -228,28 +247,19 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 結果
-	/// </summary>
-	public void Result()
-	{
-		ResultScreen.SetActive(true);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	/// チーム１スコアの計算
 	/// </summary>
 	/// <param name="scores">得点たち</param>
 	public void CalculateScoreOfTeam1(float[] scores)
 	{
-		m_workFloat = 0;
+		m_team1Score = 0;
 
-		foreach(var score in scores)
+		foreach (var score in scores)
 		{
-			m_workFloat += score;
+			m_team1Score += score;
 		}
 
-		ScoreOfTeam1.text = m_workFloat.ToString("F2") + StageInfo.UNIT_SYMBOL;
+		ScoreOfTeam1.text = m_team1Score.ToString("F2") + StageInfo.UNIT_SYMBOL;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -259,13 +269,41 @@ public class MyMainUi : MonoBehaviour
 	/// <param name="scores">得点たち</param>
 	public void CalculateScoreOfTeam2(float[] scores)
 	{
-		m_workFloat = 0;
+		m_team2Score = 0;
 
 		foreach (var score in scores)
 		{
-			m_workFloat += score;
+			m_team2Score += score;
 		}
 
-		ScoreOfTeam2.text = m_workFloat.ToString("F2") + StageInfo.UNIT_SYMBOL;
+		ScoreOfTeam2.text = m_team2Score.ToString("F2") + StageInfo.UNIT_SYMBOL;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 結果
+	/// </summary>
+	public void Result()
+	{
+		ResultScreen.SetActive(true);
+
+		//操作キャラのチーム
+		switch (Game.OperationgNetPlayerSettingScript.TeamNum)
+		{
+			case Team.Team1:
+				//勝敗
+				if (m_team1Score >= m_team2Score)
+					Win.SetActive(true);
+				else
+					Defeat.SetActive(true);
+				break;
+			case Team.Team2:
+				//勝敗
+				if (m_team1Score <= m_team2Score)
+					Win.SetActive(true);
+				else
+					Defeat.SetActive(true);
+				break;
+		}
 	}
 }

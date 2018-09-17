@@ -215,10 +215,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲームスタートできるかか
+	/// バトルスタートできるかか
 	/// </summary>
-	/// <returns>ゲーム開始できる</returns>
-	public bool IsGameStart()
+	/// <returns>バトル開始できる</returns>
+	public bool IsBattleStart()
 	{
 		//接続が切れているプレイヤー確認
 		ConfirmationOfPlayersWhoAreDisconnected();

@@ -24,21 +24,21 @@ public enum GameStatus
 	/// </summary>
 	RecruitPeople,
 	/// <summary>
-	/// ゲーム設定
+	/// バトル設定
 	/// </summary>
-	GameSetting,
+	BattleSetting,
 	/// <summary>
-	/// ゲーム開始
+	/// バトル開始
 	/// </summary>
-	GameStart,
+	BattleStart,
 	/// <summary>
-	/// ゲーム中
+	/// バトル中
 	/// </summary>
-	Game,
+	Battle,
 	/// <summary>
-	/// ゲーム終了
+	/// バトル終了
 	/// </summary>
-	GameEnd,
+	BattleEnd,
 	/// <summary>
 	/// 結果
 	/// </summary>
@@ -81,6 +81,10 @@ public class MyGame : MonoBehaviour
 	/// 操作しているネットワークプレイヤー設定
 	/// </summary>
 	MyNetPlayerSetting OperatingNetPlayerSetting;
+	public MyNetPlayerSetting OperationgNetPlayerSettingScript
+	{
+		get { return OperatingNetPlayerSetting; }
+	}
 
 	/// <summary>
 	/// ステージ
@@ -133,10 +137,10 @@ public class MyGame : MonoBehaviour
 	#region ゲームの情報
 	[Header("ゲームの情報")]
 	/// <summary>
-	/// ゲーム設定時間
+	/// バトル設定時間
 	/// </summary>
 	[SerializeField]
-	float m_gameSettingTime;
+	float m_battleSettingTime;
 
 	/// <summary>
 	/// 初めのカウントダウン時間
@@ -155,10 +159,10 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// ゲームが終了して停止する時間
+	/// バトルが終了して停止する時間
 	/// </summary>
 	[SerializeField]
-	float m_timeWhenTheGameEndsAndStops;
+	float m_timeWhenTheBattleEndsAndStops;
 
 	/// <summary>
 	/// 状態の時間を数える
@@ -223,17 +227,17 @@ public class MyGame : MonoBehaviour
 			case GameStatus.RecruitPeople:
 				RecruitPeopleStateProcess();
 				break;
-			case GameStatus.GameSetting:
-				GameSettingStateProcess();
+			case GameStatus.BattleSetting:
+				BattleSettingStateProcess();
 				break;
-			case GameStatus.GameStart:
-				GameStartStateProcess();
+			case GameStatus.BattleStart:
+				BattleStartStateProcess();
 				break;
-			case GameStatus.Game:
-				GameStateProcess();
+			case GameStatus.Battle:
+				BattleStateProcess();
 				break;
-			case GameStatus.GameEnd:
-				GameEndStateProcess();
+			case GameStatus.BattleEnd:
+				BattleEndStateProcess();
 				break;
 			case GameStatus.Result:
 				ResultStateProcess();
@@ -268,18 +272,18 @@ public class MyGame : MonoBehaviour
 		}
 
 		//ゲームが開始できるか
-		if (OperatingNetPlayerSetting.IsGameStart())
+		if (OperatingNetPlayerSetting.IsBattleStart())
 		{
-			//ゲームの開始設定
-			m_state = GameStatus.GameSetting;
+			//バトルの開始設定
+			m_state = GameStatus.BattleSetting;
 		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲーム設定状態の処理
+	/// バトル設定状態の処理
 	/// </summary>
-	void GameSettingStateProcess()
+	void BattleSettingStateProcess()
 	{
 		//状態初期設定
 		if (m_state != m_statePrev)
@@ -287,23 +291,23 @@ public class MyGame : MonoBehaviour
 			m_statePrev = m_state;
 
 			//設定
-			PlayerGameSettings();
-			MainUi.GameStartSetting();
+			PlayerBattleSettings();
+			MainUi.BattleStartSetting();
 		}
 
 		//設定時間が過ぎた
-		if (m_countTheTimeOfTheState >= m_gameSettingTime)
+		if (m_countTheTimeOfTheState >= m_battleSettingTime)
 		{
 			//状態遷移
-			m_state = GameStatus.GameStart;
+			m_state = GameStatus.BattleStart;
 		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// プレイヤーのゲーム設定
+	/// プレイヤーのバトル設定
 	/// </summary>
-	void PlayerGameSettings()
+	void PlayerBattleSettings()
 	{
 		//動きを無効
 		OperatingPlayer.enabled = false;
@@ -328,26 +332,25 @@ public class MyGame : MonoBehaviour
 	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲームスタート状態の処理
+	/// バトルスタート状態の処理
 	/// </summary>
-	void GameStartStateProcess()
+	void BattleStartStateProcess()
 	{
 		//状態初期設定
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
 
-			OperatingPlayer.MakeItGameStartState();
-			MainUi.GameStart();
+			OperatingPlayer.MakeItBattleStartState();
+			OperatingCamera.SetPosition(OperatingPlayer.transform.position);
+			MainUi.BattleStart();
 		}
 
 		//カウントダウン時間が過ぎた
 		if (m_countTheTimeOfTheState >= m_initialCountdownTime)
 		{
-			//状態遷移とプレイヤー設定
-			m_state = GameStatus.Game;
-			OperatingPlayer.enabled = true;
-			OperatingPlayer.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+			//状態遷移
+			m_state = GameStatus.Battle;
 
 			//カウントダウン反映
 			MainUi.SetCountdown();
@@ -361,21 +364,23 @@ public class MyGame : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ゲーム状態の処理
+	/// バトル状態の処理
 	/// </summary>
-	void GameStateProcess()
+	void BattleStateProcess()
 	{
 		//状態初期設定
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
+
+			OperatingPlayer.MakeItBattleState();
 		}
 
 		//バトル時間が過ぎた
 		if (m_countTheTimeOfTheState >= m_battleTime)
 		{
 			//状態遷移
-			m_state = GameStatus.GameEnd;
+			m_state = GameStatus.BattleEnd;
 			MainUi.SetTimer();
 		}
 		else
@@ -389,23 +394,19 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// ゲーム終了の処理
 	/// </summary>
-	void GameEndStateProcess()
+	void BattleEndStateProcess()
 	{
 		//状態初期設定
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーの停止
-			OperatingPlayer.enabled = false;
-			OperatingPlayer.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-
-			//UI
+			OperatingPlayer.MakeItBattleEndState();
 			MainUi.EndBattle();
 		}
 
-		//ゲーム終了時間が過ぎた
-		if (m_countTheTimeOfTheState >= m_timeWhenTheGameEndsAndStops)
+		//バトル終了時間が過ぎた
+		if (m_countTheTimeOfTheState >= m_timeWhenTheBattleEndsAndStops)
 		{
 			m_state = GameStatus.Result;
 		}
@@ -452,8 +453,8 @@ public class MyGame : MonoBehaviour
 		m_scoreOfTeam2 = Players.GetTeam2HeightTotal(ref m_scoreOfTeam2Array);
 
 		//表示
-		MainUi.Result();
 		MainUi.CalculateScoreOfTeam1(m_scoreOfTeam1Array);
 		MainUi.CalculateScoreOfTeam2(m_scoreOfTeam2Array);
+		MainUi.Result();
 	}
 }

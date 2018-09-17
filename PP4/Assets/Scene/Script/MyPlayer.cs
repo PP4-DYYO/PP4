@@ -618,6 +618,10 @@ public class MyPlayer : MonoBehaviour
 		//ジェットウォーターに当たる
 		if (other.tag.Equals(JetWaterInfo.TAG))
 		{
+			//重なった位置が自分より下
+			if (other.ClosestPointOnBounds(transform.position).y < transform.position.y)
+				return;
+
 			//相手のジェットウォータ―で下降する
 			transform.position -= Vector3.up * m_risingForce * Time.deltaTime;
 

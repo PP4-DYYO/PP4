@@ -337,6 +337,7 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
+			OperatingPlayer.MakeItGameStartState();
 			MainUi.GameStart();
 		}
 
@@ -346,6 +347,7 @@ public class MyGame : MonoBehaviour
 			//状態遷移とプレイヤー設定
 			m_state = GameStatus.Game;
 			OperatingPlayer.enabled = true;
+			OperatingPlayer.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
 
 			//カウントダウン反映
 			MainUi.SetCountdown();
@@ -396,7 +398,7 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーの停止
 			OperatingPlayer.enabled = false;
-			OperatingPlayer.GetComponent<Rigidbody>().useGravity = false;
+			OperatingPlayer.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
 			//UI
 			MainUi.EndBattle();

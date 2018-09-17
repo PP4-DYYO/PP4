@@ -646,6 +646,15 @@ public class MyPlayer : MonoBehaviour
 	{
 		//地面に触れている間は落下しない
 		if (other.transform.tag.Equals(StageInfo.GROUND_TAG))
-			m_isFalling = false; Debug.Log(other.transform.tag);
+			m_isFalling = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ゲーム開始状態にする
+	/// </summary>
+	public void MakeItGameStartState()
+	{
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Idle);
 	}
 }

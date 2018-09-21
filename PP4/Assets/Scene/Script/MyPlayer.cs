@@ -262,6 +262,19 @@ public class MyPlayer : MonoBehaviour
 	float m_countJetUseTime;
 	#endregion
 
+	#region サポート
+	[Header("サポート")]
+	/// <summary>
+	/// サポート率
+	/// </summary>
+	[SerializeField]
+	float m_supportRate;
+	public float SupportRate
+	{
+		set { m_supportRate = value; }
+	}
+	#endregion
+
 	#region キーボード関係
 	[Header("キーボード関係")]
 	/// <summary>
@@ -432,7 +445,7 @@ public class MyPlayer : MonoBehaviour
 
 			//Rボタンでジェット上昇
 			if (m_isKeepPressingRButton)
-				transform.position += Vector3.up * m_risingForce * Time.deltaTime;
+				transform.position += Vector3.up * m_risingForce * m_supportRate * Time.deltaTime;
 
 			//ジェット上昇下降なし
 			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
@@ -446,7 +459,7 @@ public class MyPlayer : MonoBehaviour
 		transform.position += m_horizontalTravelDistance;
 
 		//水平移動なし
-		if(m_horizontalTravelDistance == Vector3.zero)
+		if (m_horizontalTravelDistance == Vector3.zero)
 		{
 			//水圧による自動移動
 			transform.position += transform.forward * (m_transferAmountByWaterPressure * Time.deltaTime);
@@ -589,7 +602,7 @@ public class MyPlayer : MonoBehaviour
 	void GetState()
 	{
 		//落下
-		if(m_isFalling)
+		if (m_isFalling)
 		{
 			m_state = BehaviorStatus.Falling;
 			return;

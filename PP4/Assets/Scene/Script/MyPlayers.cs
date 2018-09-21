@@ -59,7 +59,12 @@ public class MyPlayers : MonoBehaviour
 	/// <summary>
 	/// ネットワークプレイヤー設定たち
 	/// </summary>
-	MyNetPlayerSetting[] NetPlayerSettings;
+	MyNetPlayerSetting[] m_netPlayerSettings;
+
+	/// <summary>
+	/// 最高高度
+	/// </summary>
+	float m_maximumAltitude;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -68,22 +73,54 @@ public class MyPlayers : MonoBehaviour
 	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>
 	public void DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
 	{
-		NetPlayerSettings = netPlayerSettings;
+		m_netPlayerSettings = netPlayerSettings;
 
-		for (var i = 0; i < NetPlayerSettings.Length; i++)
+		for (var i = 0; i < m_netPlayerSettings.Length; i++)
 		{
 			//交互にチーム分け
 			if (i % 2 == 0)
 			{
-				NetPlayerSettings[i].transform.parent = Team1.transform;
-				NetPlayerSettings[i].TeamNum = Team.Team1;
+				m_netPlayerSettings[i].transform.parent = Team1.transform;
+				m_netPlayerSettings[i].TeamNum = Team.Team1;
 			}
 			else
 			{
-				NetPlayerSettings[i].transform.parent = Team2.transform;
-				NetPlayerSettings[i].TeamNum = Team.Team2;
+				m_netPlayerSettings[i].transform.parent = Team2.transform;
+				m_netPlayerSettings[i].TeamNum = Team.Team2;
 			}
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 最高高度を取得
+	/// </summary>
+	public float GetMaximumAltitude()
+	{
+		m_maximumAltitude = 0;
+
+		if (m_netPlayerSettings[0] = null)
+		{
+			//全子供
+			foreach(Transform child in transform)
+			{
+				//最高高度を超える
+				if (child.position.y > m_maximumAltitude)
+					m_maximumAltitude = child.position.y;
+			}
+		}
+		else
+		{
+			//全プレイヤー
+			foreach(var player in m_netPlayerSettings)
+			{
+				//最高高度を超える
+				if (player.transform.position.y > m_maximumAltitude)
+					m_maximumAltitude = player.transform.position.y;
+			}
+		}
+
+		return m_maximumAltitude;
 	}
 
 	//----------------------------------------------------------------------------------------------------

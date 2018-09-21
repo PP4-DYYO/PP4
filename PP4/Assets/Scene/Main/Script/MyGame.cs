@@ -165,6 +165,12 @@ public class MyGame : MonoBehaviour
 	float m_timeWhenTheBattleEndsAndStops;
 
 	/// <summary>
+	/// １ｍ毎のサポート率
+	/// </summary>
+	[SerializeField]
+	float m_supportRatePerMeter;
+
+	/// <summary>
 	/// 状態の時間を数える
 	/// </summary>
 	float m_countTheTimeOfTheState;
@@ -387,6 +393,10 @@ public class MyGame : MonoBehaviour
 		{
 			//タイマー反映
 			MainUi.SetTimer(m_battleTime - m_countTheTimeOfTheState);
+
+			//プレイヤーサポート(サポート率０回避付き)
+			OperatingPlayer.SupportRate =
+				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y + 1) * m_supportRatePerMeter;
 		}
 	}
 

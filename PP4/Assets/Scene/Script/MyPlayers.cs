@@ -99,7 +99,7 @@ public class MyPlayers : MonoBehaviour
 	{
 		m_maximumAltitude = 0;
 
-		if (m_netPlayerSettings[0] = null)
+		if (m_netPlayerSettings[0] == null)
 		{
 			//全子供
 			foreach(Transform child in transform)

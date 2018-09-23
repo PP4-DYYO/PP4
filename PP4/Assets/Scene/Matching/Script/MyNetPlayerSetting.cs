@@ -34,6 +34,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	#region プレイヤーの情報
 	/// <summary>
+	/// 追加されたプレイヤー数
+	/// </summary>
+	static int m_numOfPlayersAdded;
+	
+	/// <summary>
 	/// チーム番号
 	/// </summary>
 	Team m_teamNum;
@@ -57,11 +62,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_playerName; }
 	}
-
-	/// <summary>
-	/// 追加されたプレイヤー数
-	/// </summary>
-	int m_numOfPlayersAdded;
 	#endregion
 
 	/// <summary>
@@ -191,13 +191,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			else
 			{
 				//追加されたプレイヤーがいる
-				if(m_numOfPlayersAdded > 0)
+				if (m_numOfPlayersAdded > 0)
 				{
 					//追加されたプレイヤーをUIに登録
 					for(var i = m_netPlayerSettings.Count - m_numOfPlayersAdded; i < m_netPlayerSettings.Count; i++)
 					{
 						Game.MainUiScript.RegisterPlayerName(i, m_netPlayerSettings[i].m_playerName);
 					}
+					m_numOfPlayersAdded = 0;
 				}
 			}
 		}

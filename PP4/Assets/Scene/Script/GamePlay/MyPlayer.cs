@@ -668,6 +668,17 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// バトル設定の準備
+	/// </summary>
+	public void PreparationForBattleSetting()
+	{
+		enabled = false;
+		Rb.velocity = Vector3.zero;
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Idle);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル開始状態にする
 	/// </summary>
 	public void MakeItBattleStartState()

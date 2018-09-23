@@ -104,10 +104,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
-		//既存プレイヤーのリストアップ
-		Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
-		m_numOfPlayersAdded = 0;
-
 		//ゲームに必要な設定
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;
@@ -139,6 +135,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncPlayerName(string playerName)
 	{
 		m_playerName = playerName;
+
+		//自分の名の同期
+		if(isLocalPlayer)
+		{
+			//既存プレイヤーのリストアップ
+			Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
+			m_numOfPlayersAdded = 0;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

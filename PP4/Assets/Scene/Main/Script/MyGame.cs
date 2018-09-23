@@ -315,8 +315,8 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void PlayerBattleSettings()
 	{
-		//動きを無効
-		OperatingPlayer.enabled = false;
+		//準備
+		OperatingPlayer.PreparationForBattleSetting();
 
 		//チーム分け
 		m_operatingPlayerNum = OperatingNetPlayerSetting.GetPlayerNum();

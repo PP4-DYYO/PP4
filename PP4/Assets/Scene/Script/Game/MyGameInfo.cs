@@ -45,6 +45,16 @@ public struct PlayerPrefsKeys
 /// </summary>
 public class MyGameInfo : MySingleton<MyGameInfo>
 {
+	/// <summary>
+	/// プレイヤー名
+	/// </summary>
+	string m_playerName = "たけし";
+	public string PlayerName
+	{
+		get { return m_playerName; }
+		set { m_playerName = value; }
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// データをリセットする

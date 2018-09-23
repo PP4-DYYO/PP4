@@ -20,7 +20,13 @@ public class MyArmedCanvas : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Camera ArmedCamera;
-	
+
+	/// <summary>
+	/// プレイヤー名
+	/// </summary>
+	[SerializeField]
+	Text PlayerName;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -51,6 +57,6 @@ public class MyArmedCanvas : MonoBehaviour
 	/// </summary>
 	public void SavePlayerName()
 	{
-		Debug.Log("プレイヤー名を保存しました。");
+		MyGameInfo.Instance.PlayerName = PlayerName.text;
 	}
 }

@@ -49,6 +49,6 @@ public class MyArmedUi : MonoBehaviour
 	/// </summary>
 	public void GameStart()
 	{
-		Debug.Log("ゲームスタート");
+		MySceneManager.Instance.ChangeScene(MyScene.Matching);
 	}
 }

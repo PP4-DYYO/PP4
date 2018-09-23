@@ -51,6 +51,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// プレイヤー名
 	/// </summary>
+	[SyncVar(hook = "SyncPlayerName")]
 	string m_playerName;
 	public string PlayerName
 	{
@@ -58,9 +59,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
-	/// プレイヤー名
+	/// 追加されたプレイヤー数
 	/// </summary>
-	const string PLAYER_NAME = "Player";
+	int m_numOfPlayersAdded;
 	#endregion
 
 	/// <summary>
@@ -72,11 +73,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_isReady; }
 	}
-
-	/// <summary>
-	/// メンバーが変わったフラグ
-	/// </summary>
-	bool m_isMemberChanged;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -90,50 +86,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
-		//接続が切れているプレイヤー確認
-		ConfirmationOfPlayersWhoAreDisconnected();
-
 		m_netPlayerSettings.Add(this);
-
-		//名前の登録
-		m_playerName = PLAYER_NAME + m_netPlayerSettings.Count.ToString();
-
-		//メンバーが入れ替わった
-		if (m_isMemberChanged)
-		{
-			//登録されているプレイヤー名を初めから再登録
-			Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
-		}
-		else
-		{
-			//追加されたプレイヤー名を登録
-			Game.MainUiScript.RegisterPlayerName(m_netPlayerSettings.Count - 1, m_playerName);
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 接続が切れたプレイヤーの確認
-	/// </summary>
-	void ConfirmationOfPlayersWhoAreDisconnected()
-	{
-		m_isMemberChanged = false;
-
-		for (var i = 0; i < m_netPlayerSettings.Count;)
-		{
-			//存在していない
-			if (!m_netPlayerSettings[i])
-			{
-				//接続が切れた設定
-				m_netPlayerSettings.RemoveAt(i);
-				Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
-				m_isMemberChanged = true;
-			}
-			else
-			{
-				i++;
-			}
-		}
+		
+		//プレイヤー数が増えた
+		m_numOfPlayersAdded++;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -152,8 +108,33 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
 		transform.parent = Game.PlayersScript.transform;
 
+		//名前の登録
+		CmdRegisterPlayerName(MyGameInfo.Instance.PlayerName);
+
 		//準備完了
 		CmdNotifyOfIsReady(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤー名登録のサーバ通知
+	/// </summary>
+	/// <param name="playerName">プレイヤー名</param>
+	[Command]
+	void CmdRegisterPlayerName(string playerName)
+	{
+		m_playerName = playerName;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤー名を同期する
+	/// </summary>
+	/// <param name="playerName">プレイヤー名</param>
+	[Client]
+	void SyncPlayerName(string playerName)
+	{
+		m_playerName = playerName;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -163,6 +144,17 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <param name="isReady">準備完了</param>
 	[Command]
 	public void CmdNotifyOfIsReady(bool isReady)
+	{
+		m_isReady = isReady;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 準備完了フラグを同期する
+	/// </summary>
+	/// <param name="isReady">準備完了フラグ</param>
+	[Client]
+	void SyncIsReady(bool isReady)
 	{
 		m_isReady = isReady;
 	}
@@ -188,18 +180,19 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				GetComponent<Rigidbody>().isKinematic = true;
 				GetComponent<MyPlayer>().enabled = false;
 			}
+			else
+			{
+				//追加されたプレイヤーがいる
+				if(m_numOfPlayersAdded > 0)
+				{
+					//追加されたプレイヤーをUIに登録
+					for(var i = m_netPlayerSettings.Count - m_numOfPlayersAdded; i < m_netPlayerSettings.Count; i++)
+					{
+						Game.MainUiScript.RegisterPlayerName(i, m_netPlayerSettings[i].m_playerName);
+					}
+				}
+			}
 		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 準備完了フラグを同期する
-	/// </summary>
-	/// <param name="isReady">準備完了フラグ</param>
-	[Client]
-	void SyncIsReady(bool isReady)
-	{
-		m_isReady = isReady;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -233,5 +226,27 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//プレイヤー人数が揃うか
 		return (m_netPlayerSettings.Count >= MyGame.NUM_OF_PLAYERS);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 接続が切れたプレイヤーの確認
+	/// </summary>
+	void ConfirmationOfPlayersWhoAreDisconnected()
+	{
+		for (var i = 0; i < m_netPlayerSettings.Count;)
+		{
+			//存在していない
+			if (!m_netPlayerSettings[i])
+			{
+				//接続が切れた設定
+				m_netPlayerSettings.RemoveAt(i);
+				Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
+			}
+			else
+			{
+				i++;
+			}
+		}
 	}
 }

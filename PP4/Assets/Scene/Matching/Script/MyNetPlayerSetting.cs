@@ -87,9 +87,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
 		m_netPlayerSettings.Add(this);
-		
-		//プレイヤー数が増えた
-		m_numOfPlayersAdded++;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -136,8 +133,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		m_playerName = playerName;
 
+		//プレイヤー数が増えた
+		m_numOfPlayersAdded++;
+
 		//自分の名の同期
-		if(isLocalPlayer)
+		if (isLocalPlayer)
 		{
 			//既存プレイヤーのリストアップ
 			Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());

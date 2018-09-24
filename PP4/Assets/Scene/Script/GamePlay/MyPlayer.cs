@@ -693,13 +693,10 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	public void BecomeUnauthorizedPlayer()
 	{
-		//仮起動
-		Awake();
-
 		//親設定と不要なものを取り除く
-		transform.parent = Players.transform;
-		GetComponent<Rigidbody>().isKinematic = true;
-		GetComponent<MyPlayer>().enabled = false;
+		transform.parent = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript.transform;
+		Rb.isKinematic = true;
+		enabled = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

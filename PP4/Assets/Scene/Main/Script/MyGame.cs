@@ -397,7 +397,7 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーサポート(サポート率０回避付き)
 			OperatingPlayer.SupportRate = 1 +
-				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y) * (1 - m_supportRatePerMeter);
+				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
 		}
 	}
 

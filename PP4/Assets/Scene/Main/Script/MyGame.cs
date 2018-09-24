@@ -395,8 +395,8 @@ public class MyGame : MonoBehaviour
 			MainUi.SetTimer(m_battleTime - m_countTheTimeOfTheState);
 
 			//プレイヤーサポート(サポート率０回避付き)
-			OperatingPlayer.SupportRate =
-				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y + 1) * m_supportRatePerMeter;
+			OperatingPlayer.SupportRate = 1 +
+				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y) * (1 - m_supportRatePerMeter);
 		}
 	}
 

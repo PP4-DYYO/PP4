@@ -60,6 +60,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	#endregion
 
 	/// <summary>
+	/// フレーム前のゲーム状態
+	/// </summary>
+	GameStatus m_gameStatePrev;
+
+	/// <summary>
 	/// 準備完了フラグ
 	/// </summary>
 	[SyncVar(hook = "SyncIsReady")]
@@ -67,6 +72,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public bool IsReady
 	{
 		get { return m_isReady; }
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 初期
+	/// </summary>
+	void Start()
+	{
+		m_gameStatePrev = GameStatus.Result;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -173,17 +187,32 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
-		//ゲームが人材募集状態
-		if (Game.State == GameStatus.RecruitPeople)
+		//ゲーム状態が変わった
+		if(Game.State != m_gameStatePrev)
 		{
-			//権限がないプレイヤー
-			if (!isLocalPlayer && isClient)
+			m_gameStatePrev = Game.State;
+			
+			//ゲーム状態
+			switch(Game.State)
 			{
-				//親設定と不要なものを取り除く
-				transform.parent = Game.PlayersScript.transform;
-				GetComponent<Rigidbody>().isKinematic = true;
-				GetComponent<MyPlayer>().enabled = false;
+				case GameStatus.RecruitPeople:
+					GameStateGotPeopleToGather();
+					break;
 			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ゲーム状態が人を集める状態になった
+	/// </summary>
+	void GameStateGotPeopleToGather()
+	{
+		//権限がないプレイヤー
+		if (!isLocalPlayer && isClient)
+		{
+			//権限のないプレイヤーになる
+			GetComponent<MyPlayer>().BecomeUnauthorizedPlayer();
 		}
 	}
 

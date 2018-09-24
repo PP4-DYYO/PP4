@@ -212,6 +212,7 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void Start()
 	{
+		m_state = GameStatus.RecruitPeople;
 		m_statePrev = GameStatus.Result;
 	}
 

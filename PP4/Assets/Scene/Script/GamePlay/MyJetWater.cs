@@ -39,11 +39,7 @@ public class MyJetWater : MonoBehaviour
 	/// プレイヤーのスクリプト
 	/// </summary>
 	[SerializeField]
-	MyPlayers myPlayers;
-	public MyPlayers PlayersScript
-	{
-		get { return myPlayers; }
-	}
+	MyPlayer Player;
 
 	/// <summary>
 	/// 水発射点のオブジェクト1
@@ -90,15 +86,13 @@ public class MyJetWater : MonoBehaviour
 
 		if (m_countFiringIntervalTime >= m_firingIntervalTime)
 		{
-			GameObject w1 = Instantiate(Water);
+			GameObject w1 = Instantiate(Water, Player.PlayersScript.SplashesTrans);
 			w1.transform.position = Water1.transform.position;
-			w1.GetComponentInChildren<MeshRenderer>().enabled = false;
 			w1.transform.LookAt(Water1.transform.position + Water1.transform.forward);
 			w1.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
 
-			GameObject w2 = Instantiate(Water);
+			GameObject w2 = Instantiate(Water, Player.PlayersScript.SplashesTrans);
 			w2.transform.position = Water2.transform.position;
-			w2.GetComponentInChildren<MeshRenderer>().enabled = false;
 			w2.transform.LookAt(Water2.transform.position + Water2.transform.forward);
 			w2.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
 

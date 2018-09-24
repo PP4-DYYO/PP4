@@ -42,26 +42,11 @@ public class MySplashe : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_splasheSizeChange;
-
-	/// <summary>
-	/// ジェットウォーターの名前
-	/// </summary>
-	const string JET_NAME = "JetWater";
-
+	
 	/// <summary>
 	/// ステージのタグ
 	/// </summary>
 	const string GROUND_TAG = "Ground";
-
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// スタート
-	/// </summary>	
-	void Start()
-	{
-		transform.parent = GameObject.Find(JET_NAME).GetComponent<MyJetWater>().PlayersScript.transform;
-	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -92,14 +77,8 @@ public class MySplashe : MonoBehaviour
 		}
 
 		if (m_posPrev != Vector3.zero)
-		{
 			transform.LookAt(transform.position + (m_pos - m_posPrev));
 
-			if (GetComponentInChildren<MeshRenderer>().enabled == false)
-			{
-				GetComponentInChildren<MeshRenderer>().enabled = true;
-			}
-		}
 		m_splasheLivingTime += Time.deltaTime;
 	}
 

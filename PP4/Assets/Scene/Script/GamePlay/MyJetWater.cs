@@ -35,11 +35,6 @@ public struct JetWaterInfo
 /// </summary>
 public class MyJetWater : MonoBehaviour
 {
-	/// <summary>
-	/// プレイヤーのオブジェクト
-	/// </summary>
-	[SerializeField]
-	MonoBehaviour Player;
 
 	/// <summary>
 	/// 水発射点のオブジェクト1
@@ -88,11 +83,13 @@ public class MyJetWater : MonoBehaviour
 		{
 			GameObject w1 = Instantiate(Water);
 			w1.transform.position = Water1.transform.position;
-			w1.transform.LookAt(Water1.transform.position +Water1.transform.forward);
+			w1.GetComponentInChildren<MeshRenderer>().enabled = false;
+			w1.transform.LookAt(Water1.transform.position + Water1.transform.forward);
 			w1.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
 
 			GameObject w2 = Instantiate(Water);
 			w2.transform.position = Water2.transform.position;
+			w2.GetComponentInChildren<MeshRenderer>().enabled = false;
 			w2.transform.LookAt(Water2.transform.position + Water2.transform.forward);
 			w2.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
 

@@ -206,6 +206,19 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	int m_operatingPlayerNum;
 
+	#region キーボード関係
+	[Header("キーボード関係")]
+	/// <summary>
+	/// Aボタンを押した
+	/// </summary>
+	bool m_isAButtonDown;
+
+	/// <summary>
+	/// Bボタンを押した
+	/// </summary>
+	bool m_isBButtonDown;
+	#endregion
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 初期
@@ -216,6 +229,18 @@ public class MyGame : MonoBehaviour
 		m_statePrev = GameStatus.Result;
 	}
 
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// フレーム
+	/// </summary>
+	void Update()
+	{
+		if(Input.GetButtonDown("AButton"))
+			m_isAButtonDown = true;
+		if(Input.GetButtonDown("BButton"))
+			m_isBButtonDown = true;
+	}
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -253,6 +278,9 @@ public class MyGame : MonoBehaviour
 
 		//時間経過
 		m_countTheTimeOfTheState += Time.deltaTime;
+
+		//入力のリセット
+		ResetInput();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -442,12 +470,12 @@ public class MyGame : MonoBehaviour
 		}
 
 		//もう一度か終了か
-		if (Input.GetButtonDown("AButton"))
+		if (m_isAButtonDown)
 		{
 			m_state = GameStatus.RecruitPeople;
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		}
-		else if (Input.GetButtonDown("BButton"))
+		else if (m_isBButtonDown)
 		{
 			Debug.Log("終了");
 		}
@@ -468,4 +496,15 @@ public class MyGame : MonoBehaviour
 		MainUi.CalculateScoreOfTeam2(m_scoreOfTeam2Array);
 		MainUi.Result();
 	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 入力のリセット
+	/// </summary>
+	void ResetInput()
+	{
+		m_isAButtonDown = false;
+		m_isBButtonDown = false;
+	}
+
 }

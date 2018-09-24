@@ -87,6 +87,10 @@ public class MyPlayer : MonoBehaviour
 	/// プレイヤーの収集物
 	/// </summary>
 	MyPlayers Players;
+	public MyPlayers PlayersScript
+	{
+		get { return Players; }
+	}
 
 	/// <summary>
 	/// カメラ
@@ -113,6 +117,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Transform WaterGauge;
+
+	/// <summary>
+	/// ボードの方向
+	/// </summary>
+	[SerializeField]
+	Transform BoardDirection;
 	#endregion
 
 	#region トランスフォーム
@@ -166,20 +176,14 @@ public class MyPlayer : MonoBehaviour
 	#region 移動速度
 	[Header("移動速度")]
 	/// <summary>
-	/// 徒歩速度
+	/// 移動速度
 	/// </summary>
 	[SerializeField]
-	float m_walkSpeed;
-
-	/// <summary>
-	/// 空中移動速度
-	/// </summary>
-	[SerializeField]
-	float m_airMovingSpeed;
+	float m_movingSpeed;
 	#endregion
 
-	#region 移動
-	[Header("移動")]
+	#region ジェットボードの移動
+	[Header("ジェットボードの移動")]
 	/// <summary>
 	/// 上昇する力
 	/// </summary>
@@ -197,6 +201,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_transferAmountByWaterPressure;
+
+	/// <summary>
+	/// 滞在するための回転量
+	/// </summary>
+	[SerializeField]
+	float m_rotationAmountForStay;
 
 	/// <summary>
 	/// 水平移動距離
@@ -434,7 +444,8 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void MovementInTheAir()
 	{
-		m_posPrev = transform.position;
+		//移動
+		Movement();
 
 		//落ちていない
 		if (!m_isFalling)
@@ -450,22 +461,21 @@ public class MyPlayer : MonoBehaviour
 			//ジェット上昇下降なし
 			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
 			{
+				//水平移動なし
+				if (m_horizontalTravelDistance == Vector3.zero)
+				{
+					//位置滞在による回転
+					transform.Rotate(Vector3.up, m_rotationAmountForStay * Time.deltaTime);
+				}
 			}
-		}
 
-		//カメラの向きに対応した移動
-		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
-			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_airMovingSpeed * Time.deltaTime;
-		transform.position += m_horizontalTravelDistance;
-
-		//水平移動なし
-		if (m_horizontalTravelDistance == Vector3.zero)
-		{
 			//水圧による自動移動
-			transform.position += transform.forward * (m_transferAmountByWaterPressure * Time.deltaTime);
+			transform.position +=
+				Vector3.Scale(BoardDirection.forward, Vector3.right + Vector3.forward) * (m_transferAmountByWaterPressure * Time.deltaTime);
 		}
 
-		Movement();
+		//後処理
+		PostProcessingOfMovement();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -474,14 +484,11 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void MovementOnTheGround()
 	{
-		m_posPrev = transform.position;
-
-		//カメラの向きに対応した移動
-		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
-			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_walkSpeed * Time.deltaTime;
-		transform.position += m_horizontalTravelDistance;
-
+		//移動
 		Movement();
+
+		//後処理
+		PostProcessingOfMovement();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -489,6 +496,20 @@ public class MyPlayer : MonoBehaviour
 	/// 移動
 	/// </summary>
 	void Movement()
+	{
+		m_posPrev = transform.position;
+
+		//カメラの向きに対応した移動
+		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
+			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_movingSpeed * Time.deltaTime;
+		transform.position += m_horizontalTravelDistance;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 移動の後処理
+	/// </summary>
+	void PostProcessingOfMovement()
 	{
 		//ステージ移動制限
 		StageMovementRestriction();

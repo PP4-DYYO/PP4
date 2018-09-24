@@ -57,6 +57,16 @@ public class MyPlayers : MonoBehaviour
 	GameObject Team2;
 
 	/// <summary>
+	/// 水しぶき
+	/// </summary>
+	[SerializeField]
+	Transform Splashes;
+	public Transform SplashesTrans
+	{
+		get { return Splashes; }
+	}
+
+	/// <summary>
 	/// ネットワークプレイヤー設定たち
 	/// </summary>
 	MyNetPlayerSetting[] m_netPlayerSettings;

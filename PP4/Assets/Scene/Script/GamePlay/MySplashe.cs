@@ -44,14 +44,15 @@ public class MySplashe : MonoBehaviour
 	float m_splasheSizeChange;
 
 	/// <summary>
-	/// ジェットの名前
+	/// ジェットウォーターの名前
 	/// </summary>
-	const string JET_NAME = "Jet";
+	const string JET_NAME = "JetWater";
 
 	/// <summary>
 	/// ステージのタグ
 	/// </summary>
 	const string GROUND_TAG = "Ground";
+
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -59,7 +60,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>	
 	void Start()
 	{
-		//this.transform.parent =GameObject.Find(JET_NAME).transform;
+		transform.parent = GameObject.Find(JET_NAME).GetComponent<MyJetWater>().PlayersScript.transform;
 	}
 
 	//----------------------------------------------------------------------------------------------------

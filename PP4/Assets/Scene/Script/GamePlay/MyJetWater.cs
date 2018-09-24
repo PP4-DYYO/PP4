@@ -35,6 +35,15 @@ public struct JetWaterInfo
 /// </summary>
 public class MyJetWater : MonoBehaviour
 {
+	/// <summary>
+	/// プレイヤーのスクリプト
+	/// </summary>
+	[SerializeField]
+	MyPlayers myPlayers;
+	public MyPlayers PlayersScript
+	{
+		get { return myPlayers; }
+	}
 
 	/// <summary>
 	/// 水発射点のオブジェクト1

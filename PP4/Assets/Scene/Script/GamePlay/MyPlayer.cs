@@ -694,7 +694,8 @@ public class MyPlayer : MonoBehaviour
 	public void BecomeUnauthorizedPlayer()
 	{
 		//親設定と不要なものを取り除く
-		transform.parent = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript.transform;
+		Players = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript;
+		transform.parent = Players.transform;
 		Rb.isKinematic = true;
 		enabled = false;
 	}

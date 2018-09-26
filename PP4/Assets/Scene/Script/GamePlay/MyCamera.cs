@@ -280,6 +280,18 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 追跡カメラになる
+	/// </summary>
+	public void BecomePursuitCamera(MonoBehaviour target = null)
+	{
+		m_mode = CameraMode.Pursuit;
+
+		if (target)
+			m_target = target;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// カメラの位置を設定
 	/// </summary>
 	/// <param name="relativeLocations">相対的位置</param>

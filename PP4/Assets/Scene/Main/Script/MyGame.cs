@@ -384,9 +384,10 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとUI
+			//プレイヤーとカメラとUI
 			PlayerBattleSettings();
 			GhostPlayers.SetActive(false);
+			OperatingCamera.BecomePursuitCamera();
 			MainUi.BattleStartSetting();
 		}
 

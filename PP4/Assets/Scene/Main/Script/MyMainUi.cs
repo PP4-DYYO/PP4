@@ -34,16 +34,16 @@ public class MyMainUi : MonoBehaviour
 	GameObject RecruitPeopleScreen;
 
 	/// <summary>
-	/// プレイヤー名
+	/// 人を待つ時間
 	/// </summary>
 	[SerializeField]
-	Text[] PlayerNames;
+	Text TimeToWaitWorPeople;
 
 	/// <summary>
 	/// ゲームを開始するメッセージ
 	/// </summary>
 	[SerializeField]
-	Text MessageToStartGame;
+	GameObject MessageToStartGame;
 
 	/// <summary>
 	/// タイマー
@@ -95,16 +95,6 @@ public class MyMainUi : MonoBehaviour
 	#endregion
 
 	/// <summary>
-	/// 募集中のメッセージ
-	/// </summary>
-	const string WANTED_MESSAGE = "募集中...";
-
-	/// <summary>
-	/// ネットワークプレイヤー設定たち
-	/// </summary>
-	MyNetPlayerSetting[] NetPlayerSettings;
-
-	/// <summary>
 	/// チーム１のスコア
 	/// </summary>
 	float m_team1Score;
@@ -134,7 +124,7 @@ public class MyMainUi : MonoBehaviour
 	{
 		RecruitPeopleScreen.SetActive(true);
 
-		MessageToStartGame.enabled = false;
+		MessageToStartGame.SetActive(false);
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
 		Win.SetActive(false);
@@ -143,50 +133,12 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 接続しているプレイヤーを一覧表示
+	/// 人を待つ時間の設定
 	/// </summary>
-	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>
-	public void ListConnectedPlayers(MyNetPlayerSetting[] netPlayerSettings)
+	/// <param name="time">時間</param>
+	public void SetTimeToWaitWorPeople(float time)
 	{
-		NetPlayerSettings = netPlayerSettings;
-
-		//表示のリセット
-		ResetRecruitPeopleScreen();
-
-		//プレイヤー名を初めから登録
-		for (var i = 0; i < NetPlayerSettings.Length; i++)
-		{
-			RegisterPlayerName(i, NetPlayerSettings[i].PlayerName);
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 人材募集画面のリセット
-	/// </summary>
-	void ResetRecruitPeopleScreen()
-	{
-		RecruitPeopleScreen.SetActive(true);
-
-		MessageToStartGame.enabled = false;
-		foreach (var playerName in PlayerNames)
-		{
-			playerName.text = WANTED_MESSAGE;
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// プレイヤー名を登録
-	/// </summary>
-	/// <param name="num">プレイヤー番号</param>
-	/// <param name="name">名前</param>
-	public void RegisterPlayerName(int num, string name)
-	{
-		if (num >= PlayerNames.Length)
-			return;
-
-		PlayerNames[num].text = name;
+		TimeToWaitWorPeople.text = ((int)time).ToString();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -196,7 +148,7 @@ public class MyMainUi : MonoBehaviour
 	public void BattleStartSetting()
 	{
 		//人材募集画面
-		MessageToStartGame.enabled = true;
+		MessageToStartGame.SetActive(true);
 	}
 
 	//----------------------------------------------------------------------------------------------------

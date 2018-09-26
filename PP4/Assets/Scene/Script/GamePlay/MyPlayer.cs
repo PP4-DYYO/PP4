@@ -44,6 +44,10 @@ enum BehaviorStatus
 	/// </summary>
 	IdleInTheAir,
 	/// <summary>
+	/// 立つ
+	/// </summary>
+	Stand,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,
@@ -702,13 +706,24 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 指定位置に立つ
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <param name="direction">方向</param>
+	public void StandAtSpecifiedPos(Vector3 pos, Vector3 direction)
+	{
+		transform.position = pos;
+		transform.LookAt(pos + direction);
+		enabled = false;
+		Rb.velocity = Vector3.zero;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル設定の準備
 	/// </summary>
 	public void PreparationForBattleSetting()
 	{
-		enabled = false;
-		Rb.velocity = Vector3.zero;
-		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Idle);
 	}
 
 	//----------------------------------------------------------------------------------------------------

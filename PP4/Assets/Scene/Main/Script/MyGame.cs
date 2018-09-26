@@ -68,23 +68,10 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 操作しているプレイヤー
+	/// ゴーストプレイヤー達
 	/// </summary>
-	MyPlayer OperatingPlayer;
-	public MyPlayer OperatingPlayerScript
-	{
-		get { return OperatingPlayer; }
-		set { OperatingPlayer = value; }
-	}
-
-	/// <summary>
-	/// 操作しているネットワークプレイヤー設定
-	/// </summary>
-	MyNetPlayerSetting OperatingNetPlayerSetting;
-	public MyNetPlayerSetting OperationgNetPlayerSettingScript
-	{
-		get { return OperatingNetPlayerSetting; }
-	}
+	[SerializeField]
+	GameObject GhostPlayers;
 
 	/// <summary>
 	/// ステージ
@@ -115,6 +102,25 @@ public class MyGame : MonoBehaviour
 	{
 		get { return MainUi; }
 	}
+
+	/// <summary>
+	/// 操作しているプレイヤー
+	/// </summary>
+	MyPlayer OperatingPlayer;
+	public MyPlayer OperatingPlayerScript
+	{
+		get { return OperatingPlayer; }
+		set { OperatingPlayer = value; }
+	}
+
+	/// <summary>
+	/// 操作しているネットワークプレイヤー設定
+	/// </summary>
+	MyNetPlayerSetting OperatingNetPlayerSetting;
+	public MyNetPlayerSetting OperationgNetPlayerSettingScript
+	{
+		get { return OperatingNetPlayerSetting; }
+	}
 	#endregion
 
 	#region 状態
@@ -136,6 +142,36 @@ public class MyGame : MonoBehaviour
 
 	#region ゲームの情報
 	[Header("ゲームの情報")]
+	/// <summary>
+	/// 人を待つ時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToWaitForPeople;
+
+	/// <summary>
+	/// 人を待つ時のプレイヤー位置
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_playerPosWhenWaitingForPeople;
+
+	/// <summary>
+	/// 人を待つ時のプレイヤー向き
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_playerDirectionWhenWaitingForPeople;
+
+	/// <summary>
+	/// 人を待つときのカメラ位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_cameraPosWhenWaitingForPeople;
+
+	/// <summary>
+	/// 人を待つときのカメラ向き
+	/// </summary>
+	[SerializeField]
+	Vector3 m_cameraDirectionWhenWaitingForPeople;
+
 	/// <summary>
 	/// バトル設定時間
 	/// </summary>
@@ -159,16 +195,16 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// バトルが終了して停止する時間
-	/// </summary>
-	[SerializeField]
-	float m_timeWhenTheBattleEndsAndStops;
-
-	/// <summary>
 	/// １ｍ毎のサポート率
 	/// </summary>
 	[SerializeField]
 	float m_supportRatePerMeter;
+
+	/// <summary>
+	/// バトルが終了して停止する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeWhenTheBattleEndsAndStops;
 
 	/// <summary>
 	/// 状態の時間を数える
@@ -302,7 +338,10 @@ public class MyGame : MonoBehaviour
 			if (!OperatingNetPlayerSetting)
 				OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
-			//UIの初期設定
+			//プレイヤーとカメラとUI
+			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
+			GhostPlayers.SetActive(true);
+			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
 			MainUi.WantedRecruitment();
 		}
 
@@ -312,6 +351,26 @@ public class MyGame : MonoBehaviour
 			//バトルの開始設定
 			m_state = GameStatus.BattleSetting;
 		}
+		else if(m_countTheTimeOfTheState > m_timeToWaitForPeople)
+		{
+			//プレイヤーの解放（ネット接続を切る）
+			FindObjectOfType<MyNetworkManager>().StopConnection();
+		}
+		else
+		{
+			//解放時間を更新
+			MainUi.SetTimeToWaitWorPeople(m_timeToWaitForPeople - m_countTheTimeOfTheState);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人を待つ位置にプレイヤーを移動する
+	/// </summary>
+	/// <param name="playerNum">プレイヤー番号</param>
+	void MovePlayerToPosToWaitForPeople(int playerNum)
+	{
+		OperatingPlayer.StandAtSpecifiedPos(m_playerPosWhenWaitingForPeople[playerNum], m_playerDirectionWhenWaitingForPeople[playerNum]);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -325,8 +384,9 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			//設定
+			//プレイヤーとUI
 			PlayerBattleSettings();
+			GhostPlayers.SetActive(false);
 			MainUi.BattleStartSetting();
 		}
 

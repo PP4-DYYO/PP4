@@ -10,6 +10,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//----------------------------------------------------------------------------------------------------
+//Enum・Struct
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// カメラモード
+/// </summary>
+enum CameraMode
+{
+	/// <summary>
+	/// 追跡
+	/// </summary>
+	Pursuit,
+	/// <summary>
+	/// 固定
+	/// </summary>
+	Fixed,
+}
+
+//----------------------------------------------------------------------------------------------------
+//クラス
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
 /// <summary>
 /// カメラを制御する
 /// </summary>
@@ -33,29 +58,46 @@ public class MyCamera : MonoBehaviour
 	MonoBehaviour m_target;
 	#endregion
 
+	#region 能力
+	[Header("能力")]
+	/// <summary>
+	/// カメラモード
+	/// </summary>
+	[SerializeField]
+	CameraMode m_mode;
+	#endregion
+
+	#region 追跡カメラ
+	[Header("追跡カメラ")]
 	/// <summary>
 	/// カメラとプレイヤーとの距離[m]
 	/// </summary>
-	[SerializeField, Header("カメラとプレイヤーの距離")]
+	[SerializeField, Tooltip("カメラとプレイヤーの距離")]
 	float m_distanceToPlayer;
 
 	/// <summary>
 	/// 注視点の高さ[m]
 	/// </summary>
-	[SerializeField, Header("注視点の高さ")]
+	[SerializeField, Tooltip("注視点の高さ")]
 	float m_heightToWatch;
 
 	/// <summary>
 	/// 回転感度
 	/// </summary>
-	[SerializeField, Header("回転感度")]
+	[SerializeField, Tooltip("回転感度")]
 	float m_rotationSensitivity;
 
 	/// <summary>
 	/// 回転する限界比率
 	/// </summary>
-	[SerializeField, Header("回転する限界比率")]
+	[SerializeField, Tooltip("回転する限界比率")]
 	float m_rotationalLimitingRatio;
+
+	/// <summary>
+	/// プレイヤーの高さ
+	/// </summary>
+	[SerializeField, Tooltip("プレイヤーの高さ")]
+	float m_playerHeight;
 
 	/// <summary>
 	/// Xの回転量
@@ -86,6 +128,7 @@ public class MyCamera : MonoBehaviour
 	/// Rayが衝突したコライダーの情報を得る
 	/// </summary>
 	RaycastHit m_hit;
+	#endregion
 
 #if DEBUG
 	#region Debug
@@ -139,9 +182,27 @@ public class MyCamera : MonoBehaviour
 			return;
 		}
 
+		//モード
+		switch (m_mode)
+		{
+			case CameraMode.Pursuit:
+				PursuitProcess();
+				break;
+			case CameraMode.Fixed:
+				FixedProcess();
+				break;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 追跡処理
+	/// </summary>
+	void PursuitProcess()
+	{
 		//カメラの位置リセット
 		if (Input.GetKey(KeyCode.Joystick1Button9))
-			SetPosition(-m_target.transform.forward + Vector3.up * 1.75f);
+			SetPosition(-m_target.transform.forward + Vector3.up * m_playerHeight);
 
 		//カメラの回転量
 		m_rotX = Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity;
@@ -193,6 +254,28 @@ public class MyCamera : MonoBehaviour
 				transform.position = m_hit.point;
 		}
 		transform.position -= m_ray.GetPoint(Camera.main.nearClipPlane) - m_playerCenterPos;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 固定カメラ処理
+	/// </summary>
+	void FixedProcess()
+	{
+		return;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 固定カメラになる
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <param name="direction">方向</param>
+	public void BecomeFixedCamera(Vector3 pos, Vector3 direction)
+	{
+		m_mode = CameraMode.Fixed;
+		transform.position = pos;
+		transform.LookAt(transform.position + direction);
 	}
 
 	//----------------------------------------------------------------------------------------------------

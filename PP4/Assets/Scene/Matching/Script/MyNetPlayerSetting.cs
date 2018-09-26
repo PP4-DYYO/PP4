@@ -27,6 +27,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
+	/// 名札
+	/// </summary>
+	[SerializeField]
+	TextMesh Nameplate;
+
+	/// <summary>
 	/// ゲーム
 	/// </summary>
 	MyGame Game;
@@ -145,13 +151,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//自分の名の同期
 		if (isLocalPlayer)
 		{
-			//既存プレイヤーのリストアップ
-			Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
+			//既存プレイヤーの名前登録
+			foreach (var player in m_netPlayerSettings)
+			{
+				player.Nameplate.text = player.m_playerName;
+			}
 		}
 		else
 		{
 			//プレイヤー名の登録
-			Game.MainUiScript.RegisterPlayerName(GetPlayerNum(), m_playerName);
+			Nameplate.text = playerName;
 		}
 	}
 
@@ -200,6 +209,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 					break;
 			}
 		}
+
+		//名札の方向
+		Nameplate.transform.LookAt(Nameplate.transform.position + -Camera.main.transform.position);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -259,15 +271,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		{
 			//存在していない
 			if (!m_netPlayerSettings[i])
-			{
-				//接続が切れた設定
 				m_netPlayerSettings.RemoveAt(i);
-				Game.MainUiScript.ListConnectedPlayers(m_netPlayerSettings.ToArray());
-			}
 			else
-			{
 				i++;
-			}
 		}
 	}
 }

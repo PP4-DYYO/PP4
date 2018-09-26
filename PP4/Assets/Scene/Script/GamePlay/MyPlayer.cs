@@ -326,7 +326,7 @@ public class MyPlayer : MonoBehaviour
 	{
 		//親なし
 		if (!transform.parent)
-			return;
+			transform.parent = GameObject.Find("Game").GetComponent<MyGame>().PlayersScript.transform;
 
 		//親クラスなし
 		Players = transform.parent.GetComponent<MyPlayers>();
@@ -353,13 +353,6 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void FixedUpdate()
 	{
-		//インスタンスが未取得
-		if (!Players)
-		{
-			SearchInstance();
-			return;
-		}
-
 		//浮遊状態を調べる
 		ExamineFloatingState();
 

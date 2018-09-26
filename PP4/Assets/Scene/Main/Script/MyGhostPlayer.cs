@@ -20,17 +20,34 @@ public class MyGhostPlayer : MonoBehaviour
 	[SerializeField]
 	GameObject Body;
 
+	/// <summary>
+	/// 姿を消すフラグ
+	/// </summary>
+	bool m_isDisappear;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 定期フレーム
+	/// </summary>
+	void FixedUpdate()
+	{
+		//姿を消す
+		Body.SetActive(!m_isDisappear);
+
+		m_isDisappear = false;
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 重なり判定
 	/// </summary>
 	/// <param name="other">重なったもの</param>
-	void OnTriggerEnter(Collider other)
+	void OnTriggerStay(Collider other)
 	{
 		//プレイヤーと重なった
 		if(other.tag.Equals(PlayerInfo.TAG))
 		{
-			Body.SetActive(false);
+			m_isDisappear = true;
 		}
 	}
 

@@ -188,9 +188,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	///	フレーム
+	///	定期フレーム
 	/// </summary>
-	void Update()
+	void FixedUpdate()
 	{
 		//インスタンスの取得
 		if (!Game)
@@ -211,7 +211,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		}
 
 		//名札の方向
-		Nameplate.transform.LookAt(Nameplate.transform.position + -Camera.main.transform.position);
+		Nameplate.transform.LookAt(Nameplate.transform.position + (Nameplate.transform.position - Camera.main.transform.position));
 	}
 
 	//----------------------------------------------------------------------------------------------------

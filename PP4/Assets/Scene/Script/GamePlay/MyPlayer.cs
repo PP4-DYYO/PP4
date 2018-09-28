@@ -15,9 +15,9 @@ using UnityEngine;
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
-/// 行動状態
+/// プレイヤー行動状態
 /// </summary>
-enum BehaviorStatus
+public enum PlayerBehaviorStatus
 {
 	/// <summary>
 	/// 静止
@@ -174,7 +174,7 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// 状態
 	/// </summary>
-	BehaviorStatus m_state;
+	PlayerBehaviorStatus m_state;
 	#endregion
 
 	#region 移動速度
@@ -601,7 +601,7 @@ public class MyPlayer : MonoBehaviour
 		if ((int)m_state == Anim.GetInteger(PlayerInfo.ANIM_PARAMETER_NAME))
 		{
 			//状態遷移を無効に
-			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Non);
+			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Non);
 			return;
 		}
 
@@ -622,21 +622,21 @@ public class MyPlayer : MonoBehaviour
 		//落下
 		if (m_isFalling)
 		{
-			m_state = BehaviorStatus.Falling;
+			m_state = PlayerBehaviorStatus.Falling;
 			return;
 		}
 
 		//上昇と下降と水平移動と空中状態と地上
 		if (m_isKeepPressingRButton)
-			m_state = BehaviorStatus.JetRise;
+			m_state = PlayerBehaviorStatus.JetRise;
 		else if (m_isKeepPressingLButton)
-			m_state = BehaviorStatus.JetDescent;
+			m_state = PlayerBehaviorStatus.JetDescent;
 		else if (m_horizontalTravelDistance != Vector3.zero)
-			m_state = BehaviorStatus.HorizontalMovement;
+			m_state = PlayerBehaviorStatus.HorizontalMovement;
 		else if (m_isFly)
-			m_state = BehaviorStatus.IdleInTheAir;
+			m_state = PlayerBehaviorStatus.IdleInTheAir;
 		else
-			m_state = BehaviorStatus.Idle;
+			m_state = PlayerBehaviorStatus.Idle;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -699,6 +699,16 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// アニメーションの変更
+	/// </summary>
+	/// <param name="state">状態</param>
+	public void SetAnimation(PlayerBehaviorStatus state)
+	{
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 指定位置に立つ
 	/// </summary>
 	/// <param name="pos">位置</param>
@@ -726,7 +736,7 @@ public class MyPlayer : MonoBehaviour
 	public void MakeItBattleStartState()
 	{
 		transform.LookAt(Vector3.zero);
-		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)BehaviorStatus.Idle);
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Idle);
 	}
 
 	//----------------------------------------------------------------------------------------------------

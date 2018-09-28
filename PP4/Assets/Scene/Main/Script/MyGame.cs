@@ -370,6 +370,7 @@ public class MyGame : MonoBehaviour
 	/// <param name="playerNum">プレイヤー番号</param>
 	void MovePlayerToPosToWaitForPeople(int playerNum)
 	{
+		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Stand);
 		OperatingPlayer.StandAtSpecifiedPos(m_playerPosWhenWaitingForPeople[playerNum], m_playerDirectionWhenWaitingForPeople[playerNum]);
 	}
 

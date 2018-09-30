@@ -28,6 +28,12 @@ public class MyMainUi : MonoBehaviour
 	}
 
 	/// <summary>
+	/// フェードインアウト
+	/// </summary>
+	[SerializeField]
+	Image FadeInOut;
+
+	/// <summary>
 	/// 人材募集の画面
 	/// </summary>
 	[SerializeField]
@@ -143,11 +149,20 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 人が集まった
+	/// </summary>
+	public void PeopleGathered()
+	{
+		//ゲーム開始のメッセージ
+		MessageToStartGame.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル開始設定
 	/// </summary>
 	public void BattleStartSetting()
 	{
-		//人材募集画面
 		MessageToStartGame.SetActive(true);
 	}
 

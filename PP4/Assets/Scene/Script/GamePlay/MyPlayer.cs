@@ -48,6 +48,14 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	Stand,
 	/// <summary>
+	/// ボードを手に持つ
+	/// </summary>
+	HoldBoardInHand,
+	/// <summary>
+	/// ボードを手に持つ（パターン２）
+	/// </summary>
+	HoldBoardInHnad2,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,

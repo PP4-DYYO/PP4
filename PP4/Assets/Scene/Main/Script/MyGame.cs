@@ -24,6 +24,10 @@ public enum GameStatus
 	/// </summary>
 	RecruitPeople,
 	/// <summary>
+	/// 人が集まった
+	/// </summary>
+	PeopleGathered,
+	/// <summary>
 	/// バトル設定
 	/// </summary>
 	BattleSetting,
@@ -140,8 +144,8 @@ public class MyGame : MonoBehaviour
 	GameStatus m_statePrev;
 	#endregion
 
-	#region ゲームの情報
-	[Header("ゲームの情報")]
+	#region 人を待つ状態
+	[Header("人を待つ状態")]
 	/// <summary>
 	/// 人を待つ時間
 	/// </summary>
@@ -171,6 +175,33 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Vector3 m_cameraDirectionWhenWaitingForPeople;
+	#endregion
+
+	#region 人が集まった状態
+	[Header("人が集まった状態")]
+	/// <summary>
+	/// 人が集まった状態の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeWhenPeopleGather;
+
+	/// <summary>
+	/// 人が集まった時のカメラ位置
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_cameraPosWhenPeopleGather;
+
+	/// <summary>
+	/// 人が集まった時のカメラ方向
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_cameraDirectionWhenPeopleGather;
+
+	/// <summary>
+	/// 人が集まった時のカメラ移動時間
+	/// </summary>
+	[SerializeField]
+	float[] m_cameraMovingTimeWhenPeopleGather;
 
 	/// <summary>
 	/// バトル設定時間
@@ -214,7 +245,7 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 2;
+	public const int NUM_OF_PLAYERS = 1;
 	#endregion
 
 	/// <summary>
@@ -271,12 +302,12 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
-		if(Input.GetButtonDown("AButton"))
+		if (Input.GetButtonDown("AButton"))
 			m_isAButtonDown = true;
-		if(Input.GetButtonDown("BButton"))
+		if (Input.GetButtonDown("BButton"))
 			m_isBButtonDown = true;
 	}
-	
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -294,6 +325,9 @@ public class MyGame : MonoBehaviour
 		{
 			case GameStatus.RecruitPeople:
 				RecruitPeopleStateProcess();
+				break;
+			case GameStatus.PeopleGathered:
+				PeopleGatheredStateProcess();
 				break;
 			case GameStatus.BattleSetting:
 				BattleSettingStateProcess();
@@ -349,9 +383,9 @@ public class MyGame : MonoBehaviour
 		if (OperatingNetPlayerSetting.IsBattleStart())
 		{
 			//バトルの開始設定
-			m_state = GameStatus.BattleSetting;
+			m_state = GameStatus.PeopleGathered;
 		}
-		else if(m_countTheTimeOfTheState > m_timeToWaitForPeople)
+		else if (m_countTheTimeOfTheState > m_timeToWaitForPeople)
 		{
 			//プレイヤーの解放（ネット接続を切る）
 			FindObjectOfType<MyNetworkManager>().StopConnection();
@@ -376,6 +410,34 @@ public class MyGame : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 人が集まった状態の処理
+	/// </summary>
+	void PeopleGatheredStateProcess()
+	{
+		//状態初期設定
+		if (m_state != m_statePrev)
+		{
+			m_statePrev = m_state;
+
+			//プレイヤーとカメラとUI
+			OperatingPlayer.SetAnimation(
+				(OperatingPlayer.transform.position.x < 0) ? PlayerBehaviorStatus.HoldBoardInHand : PlayerBehaviorStatus.HoldBoardInHnad2);
+			GhostPlayers.SetActive(false);
+			OperatingCamera.BecomeFollowSpecifiedPosCamera(
+				m_cameraPosWhenPeopleGather, m_cameraDirectionWhenPeopleGather, m_cameraMovingTimeWhenPeopleGather);
+			MainUi.PeopleGathered();
+		}
+
+		//設定時間が過ぎた
+		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGather)
+		{
+			//状態遷移
+			m_state = GameStatus.BattleSetting;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル設定状態の処理
 	/// </summary>
 	void BattleSettingStateProcess()
@@ -387,7 +449,6 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーとカメラとUI
 			PlayerBattleSettings();
-			GhostPlayers.SetActive(false);
 			OperatingCamera.BecomePursuitCamera();
 			MainUi.BattleStartSetting();
 		}
@@ -426,7 +487,7 @@ public class MyGame : MonoBehaviour
 				break;
 		}
 	}
-	
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// バトルスタート状態の処理

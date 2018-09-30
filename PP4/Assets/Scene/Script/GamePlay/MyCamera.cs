@@ -28,6 +28,10 @@ enum CameraMode
 	/// 固定
 	/// </summary>
 	Fixed,
+	/// <summary>
+	/// 指定位置をたどる
+	/// </summary>
+	FollowSpecifiedPos,
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -130,6 +134,41 @@ public class MyCamera : MonoBehaviour
 	RaycastHit m_hit;
 	#endregion
 
+	#region 指定位置をたどるカメラ
+	[Header("指定位置をたどるカメラ")]
+	/// <summary>
+	/// 指定位置
+	/// </summary>
+	Vector3[] m_specifiedPos;
+
+	/// <summary>
+	/// 指定方向
+	/// </summary>
+	Vector3[] m_specifiedDirection;
+
+	/// <summary>
+	/// 指定移動時間
+	/// </summary>
+	float[] m_specifiedMovingTime;
+
+	/// <summary>
+	/// 移動時間を数える
+	/// </summary>
+	float m_countMovingTime;
+
+	/// <summary>
+	/// 指定番号
+	/// </summary>
+	int m_specifiedNum;
+	#endregion
+
+	#region 作業用
+	/// <summary>
+	/// 作業用Float
+	/// </summary>
+	float m_workFloat;
+	#endregion
+
 #if DEBUG
 	#region Debug
 	[Header("Debug")]
@@ -190,6 +229,9 @@ public class MyCamera : MonoBehaviour
 				break;
 			case CameraMode.Fixed:
 				FixedProcess();
+				break;
+			case CameraMode.FollowSpecifiedPos:
+				FollowSpecifiedPosProcess();
 				break;
 		}
 	}
@@ -267,6 +309,34 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 指定位置をたどる処理
+	/// </summary>
+	void FollowSpecifiedPosProcess()
+	{
+		m_countMovingTime += Time.deltaTime;
+
+		//移動時間の割合
+		m_workFloat = m_countMovingTime / m_specifiedMovingTime[m_specifiedNum - 1];
+
+		//時間の割合による位置と方向
+		transform.position = m_specifiedPos[m_specifiedNum - 1] +
+			(m_specifiedPos[m_specifiedNum] - m_specifiedPos[m_specifiedNum - 1]) * m_workFloat;
+		transform.LookAt(m_specifiedDirection[m_specifiedNum - 1] +
+			(m_specifiedDirection[m_specifiedNum] - m_specifiedDirection[m_specifiedNum - 1]) * m_workFloat);
+
+		//指定時間を超えた
+		if (m_countMovingTime >= m_specifiedMovingTime[m_specifiedNum - 1])
+		{
+			//指定位置がなければ固定カメラに
+			if (++m_specifiedNum >= m_specifiedPos.Length)
+				m_mode = CameraMode.Fixed;
+
+			m_countMovingTime = 0;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 固定カメラになる
 	/// </summary>
 	/// <param name="pos">位置</param>
@@ -288,6 +358,30 @@ public class MyCamera : MonoBehaviour
 
 		if (target)
 			m_target = target;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 指定位置をたどるカメラになる
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <param name="direction">方向</param>
+	/// <param name="movingTime">移動時間</param>
+	public void BecomeFollowSpecifiedPosCamera(Vector3[] pos, Vector3[] direction, float[] movingTime)
+	{
+		//引数の要素数が違っている
+		if (pos.Length != direction.Length || direction.Length != movingTime.Length)
+			Debug.LogError("引数の要素数を合わせてください");
+
+		//代入
+		m_specifiedPos = pos;
+		m_specifiedDirection = direction;
+		m_specifiedMovingTime = movingTime;
+
+		//初期設定
+		m_mode = CameraMode.FollowSpecifiedPos;
+		m_specifiedNum = 1;
+		m_countMovingTime = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

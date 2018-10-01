@@ -15,8 +15,6 @@ using UnityEngine.Networking;
 /// </summary>
 public class MyNetPlayerSetting : NetworkBehaviour
 {
-	#region 外部のインスタンス
-	[Header("外部のインスタンス")]
 	/// <summary>
 	/// ネットワークプレイヤーセッティングクラス達
 	/// </summary>
@@ -26,6 +24,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		get { return m_netPlayerSettings; }
 	}
 
+	#region 外部のインスタンス
+	[Header("外部のインスタンス")]
 	/// <summary>
 	/// 名札
 	/// </summary>
@@ -39,6 +39,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	#endregion
 
 	#region プレイヤーの情報
+	[Header("プレイヤーの情報")]
+	/// <summary>
+	/// 自分自身の表示名
+	/// </summary>
+	[SerializeField]
+	string m_yourOwnDisplayName;
+
 	/// <summary>
 	/// チーム番号
 	/// </summary>
@@ -197,12 +204,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
 		//ゲーム状態が変わった
-		if(Game.State != m_gameStatePrev)
+		if (Game.State != m_gameStatePrev)
 		{
 			m_gameStatePrev = Game.State;
-			
+
 			//ゲーム状態
-			switch(Game.State)
+			switch (Game.State)
 			{
 				case GameStatus.RecruitPeople:
 					GameStateGotPeopleToGather();
@@ -226,6 +233,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			//権限のないプレイヤーになる
 			GetComponent<MyPlayer>().BecomeUnauthorizedPlayer();
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 名札の表示
+	/// </summary>
+	/// <param name="isDisplay">表示するか</param>
+	public void NameplateDisplay(bool isDisplay = true)
+	{
+		Nameplate.gameObject.SetActive(isDisplay);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -275,5 +292,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			else
 				i++;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 名札の表示名を切り替える
+	/// </summary>
+	public void ChangeDisplayNameOfNameplate()
+	{
+		Nameplate.text = (Nameplate.text == m_playerName) ? m_yourOwnDisplayName : m_playerName;
 	}
 }

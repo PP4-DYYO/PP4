@@ -424,6 +424,8 @@ public class MyGame : MonoBehaviour
 				OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
 			//プレイヤーとカメラとUI
+			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
+			OperatingNetPlayerSetting.NameplateDisplay();
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
 			GhostPlayers.SetActive(true);
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
@@ -628,6 +630,7 @@ public class MyGame : MonoBehaviour
 			m_statePrev = m_state;
 
 			OperatingPlayer.MakeItBattleState();
+			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomePursuitCamera();
 		}
 
@@ -661,6 +664,8 @@ public class MyGame : MonoBehaviour
 			m_statePrev = m_state;
 
 			OperatingPlayer.MakeItBattleEndState();
+			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
+			OperatingNetPlayerSetting.NameplateDisplay();
 			MainUi.EndBattle();
 		}
 

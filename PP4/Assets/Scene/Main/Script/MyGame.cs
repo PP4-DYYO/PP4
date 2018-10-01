@@ -202,7 +202,10 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float[] m_cameraMovingTimeWhenPeopleGather;
+	#endregion
 
+	#region バトル設定状態
+	[Header("バトル設定状態")]
 	/// <summary>
 	/// バトル設定時間
 	/// </summary>
@@ -246,7 +249,7 @@ public class MyGame : MonoBehaviour
 	/// プレイヤー人数
 	/// </summary>
 	public const int NUM_OF_PLAYERS = 1;
-	#endregion
+#endregion
 
 	/// <summary>
 	/// チーム１のスコア
@@ -447,9 +450,8 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとカメラとUI
+			//プレイヤーとUI
 			PlayerBattleSettings();
-			OperatingCamera.BecomePursuitCamera();
 			MainUi.BattleStartSetting();
 		}
 
@@ -467,9 +469,6 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void PlayerBattleSettings()
 	{
-		//準備
-		OperatingPlayer.PreparationForBattleSetting();
-
 		//チーム分け
 		m_operatingPlayerNum = OperatingNetPlayerSetting.GetPlayerNum();
 		Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray());
@@ -486,6 +485,9 @@ public class MyGame : MonoBehaviour
 					Stage.CurrentFieldScript.Team2StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
 				break;
 		}
+
+		//Z軸を中心とした反対側を見る
+		OperatingPlayer.transform.LookAt(Vector3.Scale(OperatingPlayer.transform.position, Vector3.one - (Vector3.right * 2)));
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -499,7 +501,7 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			OperatingPlayer.MakeItBattleStartState();
+			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
 			OperatingCamera.SetPosition(OperatingPlayer.transform.position);
 			MainUi.BattleStart();
 		}

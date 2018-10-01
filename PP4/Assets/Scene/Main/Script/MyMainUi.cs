@@ -100,6 +100,35 @@ public class MyMainUi : MonoBehaviour
 	GameObject Defeat;
 	#endregion
 
+	#region フェードインアウト
+	[Header("フェードインアウト")]
+	/// <summary>
+	/// フェードインアウトの時間
+	/// </summary>
+	[SerializeField]
+	float m_fadeInOutTime;
+
+	/// <summary>
+	/// フェードインアウトの時間を数える
+	/// </summary>
+	float m_countFadeInOut;
+
+	/// <summary>
+	/// フェードインが動作している
+	/// </summary>
+	bool m_isFadeInRunning;
+
+	/// <summary>
+	/// フェードアウトが動作している
+	/// </summary>
+	bool m_isFadeOutRunning;
+
+	/// <summary>
+	/// フェードインアウト用の色
+	/// </summary>
+	Color m_fadeInOutColor;
+	#endregion
+
 	/// <summary>
 	/// チーム１のスコア
 	/// </summary>
@@ -110,16 +139,32 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	float m_team2Score;
 
-	// Use this for initialization
-	void Start()
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 定期フレーム
+	/// </summary>
+	void FixedUpdate()
 	{
-
+		if (m_isFadeOutRunning)
+			FadeOutProcess();
 	}
 
-	// Update is called once per frame
-	void Update()
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// フェードアウト処理
+	/// </summary>
+	void FadeOutProcess()
 	{
+		m_countFadeInOut += Time.deltaTime;
 
+		//時間に応じてαを増やす
+		m_fadeInOutColor = FadeInOut.color;
+		m_fadeInOutColor.a = m_countFadeInOut / m_fadeInOutTime;
+		FadeInOut.color = m_fadeInOutColor;
+
+		//時間が過ぎた
+		if (m_countFadeInOut >= m_fadeInOutTime)
+			m_isFadeOutRunning = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -163,7 +208,18 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	public void BattleStartSetting()
 	{
-		MessageToStartGame.SetActive(true);
+		StartFadeOut();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// フェードアウトを開始
+	/// </summary>
+	void StartFadeOut()
+	{
+		m_isFadeOutRunning = true;
+		m_isFadeInRunning = false;
+		m_countFadeInOut = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

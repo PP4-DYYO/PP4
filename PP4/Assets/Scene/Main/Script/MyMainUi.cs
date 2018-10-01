@@ -52,17 +52,23 @@ public class MyMainUi : MonoBehaviour
 	GameObject MessageToStartGame;
 
 	/// <summary>
+	/// 準備完了メッセージ
+	/// </summary>
+	[SerializeField]
+	MyImageAnimation ReadyMessage;
+
+	/// <summary>
+	/// Goメッセージ
+	/// </summary>
+	[SerializeField]
+	MyImageAnimation GoMessage;
+
+	/// <summary>
 	/// タイマー
 	/// </summary>
 	[SerializeField]
 	Text Timer;
-
-	/// <summary>
-	/// カウントダウン
-	/// </summary>
-	[SerializeField]
-	Text Countdown;
-
+	
 	/// <summary>
 	/// バトル終了
 	/// </summary>
@@ -145,8 +151,13 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	void FixedUpdate()
 	{
+		//フェードアウト
 		if (m_isFadeOutRunning)
 			FadeOutProcess();
+
+		//フェードイン
+		if (m_isFadeInRunning)
+			FadeInProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -169,13 +180,35 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// フェードイン処理
+	/// </summary>
+	void FadeInProcess()
+	{
+		m_countFadeInOut += Time.deltaTime;
+
+		//時間に応じてαを減らす
+		m_fadeInOutColor = FadeInOut.color;
+		m_fadeInOutColor.a = 1f - (m_countFadeInOut / m_fadeInOutTime);
+		FadeInOut.color = m_fadeInOutColor;
+
+		//時間が過ぎた
+		if (m_countFadeInOut >= m_fadeInOutTime)
+			m_isFadeInRunning = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 人材募集をする
 	/// </summary>
 	public void WantedRecruitment()
 	{
+		//全体の表示
 		RecruitPeopleScreen.SetActive(true);
 
+		//不要オブジェクトの非表示
 		MessageToStartGame.SetActive(false);
+		ReadyMessage.StopAnimation();
+		GoMessage.StopAnimation();
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
 		Win.SetActive(false);
@@ -224,29 +257,46 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// フェードインを開始
+	/// </summary>
+	void StartFadeIn()
+	{
+		m_isFadeInRunning = true;
+		m_isFadeOutRunning = false;
+		m_countFadeInOut = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル開始
 	/// </summary>
 	public void BattleStart()
 	{
+		//不要オブジェクトの非表示
 		RecruitPeopleScreen.SetActive(false);
 
+		//必要オブジェクトの設定
+		StartFadeIn();
 		Timer.text = Game.BattleTime.ToString("F0");
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// カウントダウンを設定する
+	/// 準備完了アニメーションを開始
 	/// </summary>
-	/// <param name="time">時間</param>
-	public void SetCountdown(float time = 0)
+	public void StartReadyAnimation()
 	{
-		//表示・非表示
-		if (time == 0)
-			Countdown.enabled = false;
-		else
-			Countdown.enabled = true;
+		ReadyMessage.StartAnimation();
+	}
 
-		Countdown.text = time.ToString("F0");
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 開始アニメーションを開始
+	/// </summary>
+	public void StartGoAnimation()
+	{
+		ReadyMessage.StopAnimation();
+		GoMessage.StartAnimation();
 	}
 
 	//----------------------------------------------------------------------------------------------------

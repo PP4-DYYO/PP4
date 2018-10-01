@@ -78,12 +78,20 @@ public class MyCamera : MonoBehaviour
 	/// </summary>
 	[SerializeField, Tooltip("カメラとプレイヤーの距離")]
 	float m_distanceToPlayer;
+	public float DistanceToPlayer
+	{
+		get { return m_distanceToPlayer; }
+	}
 
 	/// <summary>
 	/// 注視点の高さ[m]
 	/// </summary>
 	[SerializeField, Tooltip("注視点の高さ")]
 	float m_heightToWatch;
+	public float HeightToWatch
+	{
+		get { return m_heightToWatch; }
+	}
 
 	/// <summary>
 	/// 回転感度
@@ -295,7 +303,6 @@ public class MyCamera : MonoBehaviour
 			if (!m_hit.collider.isTrigger)
 				transform.position = m_hit.point;
 		}
-		transform.position -= m_ray.GetPoint(Camera.main.nearClipPlane) - m_playerCenterPos;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -321,8 +328,8 @@ public class MyCamera : MonoBehaviour
 		//時間の割合による位置と方向
 		transform.position = m_specifiedPos[m_specifiedNum - 1] +
 			(m_specifiedPos[m_specifiedNum] - m_specifiedPos[m_specifiedNum - 1]) * m_workFloat;
-		transform.LookAt(m_specifiedDirection[m_specifiedNum - 1] +
-			(m_specifiedDirection[m_specifiedNum] - m_specifiedDirection[m_specifiedNum - 1]) * m_workFloat);
+		transform.LookAt(transform.position +
+			((m_specifiedDirection[m_specifiedNum] * m_workFloat) + (m_specifiedDirection[m_specifiedNum - 1] * (1f - m_workFloat))));
 
 		//指定時間を超えた
 		if (m_countMovingTime >= m_specifiedMovingTime[m_specifiedNum - 1])

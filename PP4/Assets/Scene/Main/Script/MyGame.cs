@@ -211,12 +211,60 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_battleSettingTime;
+	#endregion
 
+	#region バトル前状態
+	[Header("バトル前状態")]
 	/// <summary>
-	/// 初めのカウントダウン時間
+	/// バトル前の時間
 	/// </summary>
 	[SerializeField]
-	float m_initialCountdownTime;
+	float m_timeBeforeBattle;
+
+	/// <summary>
+	/// バトル直前の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeJustBeforeBattle;
+
+	/// <summary>
+	/// バトル開始前の最初のカメラ位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_firstCameraPosBeforeStartingBattle;
+
+	/// <summary>
+	/// バトル開始前のカメラ絶対的位置の数
+	/// </summary>
+	[SerializeField]
+	int m_numOfAbsolutePosOfCameraBeforeStartingBattle;
+
+	/// <summary>
+	/// バトル開始前のプレイヤーへの相対的カメラ位置
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_cameraPosRelativeToPlayerBeforeStartingBattle;
+
+	/// <summary>
+	/// バトル開始前のカメラ移動時間
+	/// </summary>
+	[SerializeField]
+	float[] m_cameraMovingTimeBeforeStaringBattle;
+
+	/// <summary>
+	/// バトル直前フラグ
+	/// </summary>
+	bool m_isItJustBeforeBattle;
+
+	/// <summary>
+	/// 指定するためのカメラ位置
+	/// </summary>
+	Vector3[] m_cameraPosForSpecifying;
+
+	/// <summary>
+	/// 指定するためのカメラ方向
+	/// </summary>
+	Vector3[] m_cameraDirectionForSpecifying;
 
 	/// <summary>
 	/// バトル時間
@@ -249,7 +297,7 @@ public class MyGame : MonoBehaviour
 	/// プレイヤー人数
 	/// </summary>
 	public const int NUM_OF_PLAYERS = 1;
-#endregion
+	#endregion
 
 	/// <summary>
 	/// チーム１のスコア
@@ -501,25 +549,71 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
-			OperatingCamera.SetPosition(OperatingPlayer.transform.position);
+			//フラグとカメラとUIの設定
+			m_isItJustBeforeBattle = false;
+			SettingOfCameraInBattleStartState();
 			MainUi.BattleStart();
 		}
 
 		//カウントダウン時間が過ぎた
-		if (m_countTheTimeOfTheState >= m_initialCountdownTime)
+		if (m_countTheTimeOfTheState >= m_timeBeforeBattle)
 		{
 			//状態遷移
 			m_state = GameStatus.Battle;
 
-			//カウントダウン反映
-			MainUi.SetCountdown();
+			//Goメッセージ
+			MainUi.StartGoAnimation();
 		}
-		else
+		else if (!m_isItJustBeforeBattle && m_countTheTimeOfTheState >= m_timeBeforeBattle - m_timeJustBeforeBattle)
 		{
-			//カウントダウン反映
-			MainUi.SetCountdown(m_initialCountdownTime - m_countTheTimeOfTheState);
+			//バトル直前フラグ（一度だけTrue）
+			m_isItJustBeforeBattle = true;
+
+			//プレイヤーとReadyメッセージ設定
+			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
+			MainUi.StartReadyAnimation();
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル開始状態のカメラ設定
+	/// </summary>
+	void SettingOfCameraInBattleStartState()
+	{
+		//カメラ位置とカメラ方向の要素数
+		m_cameraPosForSpecifying =
+			new Vector3[m_cameraPosRelativeToPlayerBeforeStartingBattle.Length + m_numOfAbsolutePosOfCameraBeforeStartingBattle];
+		m_cameraDirectionForSpecifying =
+			new Vector3[m_cameraPosRelativeToPlayerBeforeStartingBattle.Length + m_numOfAbsolutePosOfCameraBeforeStartingBattle];
+
+		int index;
+
+		//カメラを絶対的位置で登録
+		for(index = 0; index < m_numOfAbsolutePosOfCameraBeforeStartingBattle; index++)
+		{
+			//カメラ初期位置とカメラ初期方向の設定
+			m_cameraPosForSpecifying[index] = m_firstCameraPosBeforeStartingBattle;
+			m_cameraDirectionForSpecifying[index] = -m_firstCameraPosBeforeStartingBattle;
+		}
+
+		//操作プレイヤーに対応するカメラ位置とカメラ方向の設定
+		for (index = m_numOfAbsolutePosOfCameraBeforeStartingBattle; index < m_cameraPosForSpecifying.Length; index++)
+		{
+			//プレイヤーの背後の位置からカメラ位置を生成
+			m_cameraPosForSpecifying[index] =
+				(OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch)
+				- (OperatingPlayer.transform.forward * OperatingCamera.DistanceToPlayer)) 
+				+ m_cameraPosRelativeToPlayerBeforeStartingBattle[index - m_numOfAbsolutePosOfCameraBeforeStartingBattle];
+
+			//プレイヤーを見る方向を生成
+			m_cameraDirectionForSpecifying[index] =
+				OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch) - m_cameraPosForSpecifying[index];
+		}
+
+		//指定位置をだどるカメラにする
+		OperatingCamera.BecomeFollowSpecifiedPosCamera(
+			m_cameraPosForSpecifying, m_cameraDirectionForSpecifying, m_cameraMovingTimeBeforeStaringBattle);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -534,6 +628,7 @@ public class MyGame : MonoBehaviour
 			m_statePrev = m_state;
 
 			OperatingPlayer.MakeItBattleState();
+			OperatingCamera.BecomePursuitCamera();
 		}
 
 		//バトル時間が過ぎた

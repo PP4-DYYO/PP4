@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 //----------------------------------------------------------------------------------------------------
 /// <summary>
 /// 水しぶき
@@ -42,11 +41,12 @@ public class MySplashe : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_splasheSizeChange;
-	
+
 	/// <summary>
-	/// ステージのタグ
+	/// 水しぶきの広がりオブジェクト
 	/// </summary>
-	const string GROUND_TAG = "Ground";
+	[SerializeField]
+	GameObject spreadSplashe;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -54,6 +54,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>	
 	void FixedUpdate()
 	{
+		//時間経過で消滅する
 		if (m_splasheLivingTime >= m_splasheLifeTime)
 		{
 			Destroy(gameObject);
@@ -67,10 +68,14 @@ public class MySplashe : MonoBehaviour
 			//サイズが０以下になるときには消す
 			if (transform.localScale.z - m_splasheSizeChange < 0)
 			{
+				GameObject ss = Instantiate(spreadSplashe);
+				ss.transform.position = transform.position;
 				Destroy(gameObject);
+				MakeSpreadSplashe();
 			}
 			else
 			{
+				//オブジェクトが小さくなる
 				transform.localScale = new Vector3(transform.localScale.x,
 					 transform.localScale.y, transform.localScale.z - m_splasheSizeChange);
 			}
@@ -82,11 +87,27 @@ public class MySplashe : MonoBehaviour
 		m_splasheLivingTime += Time.deltaTime;
 	}
 
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶき当たり判定
+	/// </summary>
 	void OnTriggerEnter(Collider other)
 	{
-		if (other.tag == GROUND_TAG)
+		//ステージに衝突時消える
+		if (other.tag == StageInfo.GROUND_TAG)
 		{
 			Destroy(gameObject);
+			MakeSpreadSplashe();
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきの広がりのオブジェクト生成
+	/// </summary>
+	void MakeSpreadSplashe()
+	{
+		GameObject ss = Instantiate(spreadSplashe);
+		ss.transform.position = transform.position;
 	}
 }

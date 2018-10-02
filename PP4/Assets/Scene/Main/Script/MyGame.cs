@@ -424,7 +424,6 @@ public class MyGame : MonoBehaviour
 				OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
 			//プレイヤーとカメラとUI
-			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
 			OperatingNetPlayerSetting.NameplateDisplay();
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
 			GhostPlayers.SetActive(true);
@@ -699,6 +698,7 @@ public class MyGame : MonoBehaviour
 		{
 			m_state = GameStatus.RecruitPeople;
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
+			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
 		}
 		else if (m_isBButtonDown)
 		{

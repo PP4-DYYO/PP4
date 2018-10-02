@@ -22,6 +22,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public static List<MyNetPlayerSetting> NetPlayerSettings
 	{
 		get { return m_netPlayerSettings; }
+		set { m_netPlayerSettings = value; }
 	}
 
 	#region 外部のインスタンス
@@ -54,6 +55,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_teamNum; }
 		set { m_teamNum = value; }
+	}
+
+	/// <summary>
+	/// チームの順番
+	/// </summary>
+	int m_teamOrder;
+	public int TeamOrder
+	{
+		get { return m_teamOrder; }
+		set { m_teamOrder = value; }
 	}
 
 	/// <summary>
@@ -163,6 +174,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			{
 				player.Nameplate.text = player.m_playerName;
 			}
+
+			//自分の名を切り替える
+			ChangeDisplayNameOfNameplate();
 		}
 		else
 		{

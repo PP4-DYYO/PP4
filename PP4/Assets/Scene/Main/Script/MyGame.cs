@@ -296,7 +296,7 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 1;
+	public const int NUM_OF_PLAYERS = 8;
 	#endregion
 
 	/// <summary>
@@ -424,7 +424,6 @@ public class MyGame : MonoBehaviour
 				OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
 			//プレイヤーとカメラとUI
-			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
 			OperatingNetPlayerSetting.NameplateDisplay();
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
 			GhostPlayers.SetActive(true);
@@ -474,7 +473,7 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーとカメラとUI
 			OperatingPlayer.SetAnimation(
-				(OperatingPlayer.transform.position.x < 0) ? PlayerBehaviorStatus.HoldBoardInHand : PlayerBehaviorStatus.HoldBoardInHnad2);
+				(OperatingPlayer.transform.position.x < 0) ? PlayerBehaviorStatus.HoldBoardInHand : PlayerBehaviorStatus.HoldBoardInHand2);
 			GhostPlayers.SetActive(false);
 			OperatingCamera.BecomeFollowSpecifiedPosCamera(
 				m_cameraPosWhenPeopleGather, m_cameraDirectionWhenPeopleGather, m_cameraMovingTimeWhenPeopleGather);
@@ -521,18 +520,18 @@ public class MyGame : MonoBehaviour
 	{
 		//チーム分け
 		m_operatingPlayerNum = OperatingNetPlayerSetting.GetPlayerNum();
-		Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray());
+		MyNetPlayerSetting.NetPlayerSettings.CopyTo(Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray()));
 
 		//チームによる位置
 		switch (OperatingNetPlayerSetting.TeamNum)
 		{
 			case Team.Team1:
 				OperatingPlayer.transform.position =
-					Stage.CurrentFieldScript.Team1StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
+					Stage.CurrentFieldScript.Team1StartPositions[OperatingNetPlayerSetting.TeamOrder];
 				break;
 			case Team.Team2:
 				OperatingPlayer.transform.position =
-					Stage.CurrentFieldScript.Team2StartPositions[OperatingPlayer.transform.GetSiblingIndex()];
+					Stage.CurrentFieldScript.Team2StartPositions[OperatingNetPlayerSetting.TeamOrder];
 				break;
 		}
 
@@ -699,6 +698,7 @@ public class MyGame : MonoBehaviour
 		{
 			m_state = GameStatus.RecruitPeople;
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
+			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
 		}
 		else if (m_isBButtonDown)
 		{

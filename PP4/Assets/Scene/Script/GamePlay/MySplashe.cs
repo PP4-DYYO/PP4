@@ -74,8 +74,6 @@ public class MySplashe : MonoBehaviour
 			//サイズが０以下になるときには消す
 			if (transform.localScale.x - m_splasheXYSizeChange < 0)
 			{
-				GameObject ss = Instantiate(spreadSplashe);
-				ss.transform.position = transform.position;
 				Destroy(gameObject);
 			}
 			else
@@ -113,7 +111,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>
 	void MakeSpreadSplashe()
 	{
-		GameObject ss = Instantiate(spreadSplashe);
+		GameObject ss = Instantiate(spreadSplashe, transform.parent);
 		ss.transform.position = transform.position;
 	}
 }

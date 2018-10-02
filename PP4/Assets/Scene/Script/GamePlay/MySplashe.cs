@@ -71,7 +71,6 @@ public class MySplashe : MonoBehaviour
 				GameObject ss = Instantiate(spreadSplashe);
 				ss.transform.position = transform.position;
 				Destroy(gameObject);
-				MakeSpreadSplashe();
 			}
 			else
 			{
@@ -81,6 +80,7 @@ public class MySplashe : MonoBehaviour
 			}
 		}
 
+		//水しぶきオブジェクトの向きを調整
 		if (m_posPrev != Vector3.zero)
 			transform.LookAt(transform.position + (m_pos - m_posPrev));
 

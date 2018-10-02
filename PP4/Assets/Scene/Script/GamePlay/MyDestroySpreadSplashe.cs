@@ -13,13 +13,27 @@ using UnityEngine;
 /// <summary>
 /// 水しぶきの広がりの自動消滅
 /// </summary>
-public class MyDestroySpreadSplashe : MonoBehaviour {
-
+public class MyDestroySpreadSplashe : MonoBehaviour
+{
+	/// <summary>
+	/// 時間計測用
+	/// </summary>
 	float m_time;
-	
-	void Update () {
+
+	/// <summary>
+	/// 自動消滅までの時間(0.5f)
+	/// </summary>
+	[SerializeField]
+	float m_limitTime;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 一定時間経過後、消滅する
+	/// </summary>
+	void Update()
+	{
 		m_time += Time.deltaTime;
-		if (m_time > 0.5f)
+		if (m_time > m_limitTime)
 		{
 			Destroy(gameObject);
 		}

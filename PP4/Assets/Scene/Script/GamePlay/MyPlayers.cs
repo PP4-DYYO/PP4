@@ -81,24 +81,32 @@ public class MyPlayers : MonoBehaviour
 	/// チームを決める
 	/// </summary>
 	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>
-	public void DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
+	public MyNetPlayerSetting[] DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
 	{
 		m_netPlayerSettings = netPlayerSettings;
 
+		var team1Order = 0;
+		var team2Order = 0;
+
 		for (var i = 0; i < m_netPlayerSettings.Length; i++)
 		{
+
 			//交互にチーム分け
 			if (i % 2 == 0)
 			{
 				m_netPlayerSettings[i].transform.parent = Team1.transform;
 				m_netPlayerSettings[i].TeamNum = Team.Team1;
+				m_netPlayerSettings[i].TeamOrder = team1Order++;
 			}
 			else
 			{
 				m_netPlayerSettings[i].transform.parent = Team2.transform;
 				m_netPlayerSettings[i].TeamNum = Team.Team2;
+				m_netPlayerSettings[i].TeamOrder = team2Order++;
 			}
 		}
+
+		return m_netPlayerSettings;
 	}
 
 	//----------------------------------------------------------------------------------------------------

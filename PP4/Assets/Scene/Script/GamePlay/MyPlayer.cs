@@ -54,7 +54,7 @@ public enum PlayerBehaviorStatus
 	/// <summary>
 	/// ボードを手に持つ（パターン２）
 	/// </summary>
-	HoldBoardInHnad2,
+	HoldBoardInHand2,
 	/// <summary>
 	/// 変化なし
 	/// </summary>

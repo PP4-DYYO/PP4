@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: 6d702dc08d501db4b929c1744154fd7a
-timeCreated: 1537424971
+timeCreated: 1538448810
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - spreadSplashe: {fileID: 1913692150073316, guid: 51839e6dcd3da7c4da4c2cfdd417d0e6,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -37,10 +37,16 @@ public class MySplashe : MonoBehaviour
 	float m_splasheLivingTime;
 
 	/// <summary>
-	/// 水しぶきを小さくする数値
+	/// 水しぶきを大きくする値(Z方向)
 	/// </summary>
 	[SerializeField]
 	float m_splasheSizeChange;
+
+	/// <summary>
+	/// 水しぶきを小さくする数値(X,Y方向)
+	/// </summary>
+	[SerializeField]
+	float m_splasheXYSizeChange;
 
 	/// <summary>
 	/// 水しぶきの広がりオブジェクト
@@ -66,7 +72,7 @@ public class MySplashe : MonoBehaviour
 		if (transform.localScale.z > 0)
 		{
 			//サイズが０以下になるときには消す
-			if (transform.localScale.z - m_splasheSizeChange < 0)
+			if (transform.localScale.x - m_splasheXYSizeChange < 0)
 			{
 				GameObject ss = Instantiate(spreadSplashe);
 				ss.transform.position = transform.position;
@@ -74,9 +80,9 @@ public class MySplashe : MonoBehaviour
 			}
 			else
 			{
-				//オブジェクトが小さくなる
-				transform.localScale = new Vector3(transform.localScale.x,
-					 transform.localScale.y, transform.localScale.z - m_splasheSizeChange);
+				//オブジェクトの大きさ変化
+				transform.localScale = new Vector3(transform.localScale.x-m_splasheXYSizeChange,
+					 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
 			}
 		}
 

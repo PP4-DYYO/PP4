@@ -76,27 +76,47 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	float m_countFiringIntervalTime;
 
+	/// <summary>
+	/// 水を発射するかどうか
+	/// </summary>
+	bool m_isSplasheFire;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの発生
 	/// </summary>	
 	void FixedUpdate()
 	{
-		m_countFiringIntervalTime += Time.deltaTime;
-
-		if (m_countFiringIntervalTime >= m_firingIntervalTime)
+		if (m_isSplasheFire)
 		{
-			GameObject w1 = Instantiate(Water, Player.PlayersScript.SplashesTrans);
-			w1.transform.position = Water1.transform.position;
-			w1.transform.LookAt(Water1.transform.position + Water1.transform.forward);
-			w1.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
+			m_countFiringIntervalTime += Time.deltaTime;
 
-			GameObject w2 = Instantiate(Water, Player.PlayersScript.SplashesTrans);
-			w2.transform.position = Water2.transform.position;
-			w2.transform.LookAt(Water2.transform.position + Water2.transform.forward);
-			w2.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
+			if (m_countFiringIntervalTime >= m_firingIntervalTime)
+			{
+				GameObject w1 = Instantiate(Water, Player.PlayersScript.SplashesTrans);
+				w1.transform.position = Water1.transform.position;
+				w1.transform.LookAt(Water1.transform.position + Water1.transform.forward);
+				w1.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
 
-			m_countFiringIntervalTime = 0;
+				GameObject w2 = Instantiate(Water, Player.PlayersScript.SplashesTrans);
+				w2.transform.position = Water2.transform.position;
+				w2.transform.LookAt(Water2.transform.position + Water2.transform.forward);
+				w2.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
+
+				m_countFiringIntervalTime = 0;
+			}
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットの起動、停止
+	/// </summary>
+	/// <param name="isFire">ジェットの発射</param>
+	public void JetFire(bool isFire)
+	{
+		Water1.SetActive(isFire);
+		Water2.SetActive(isFire);
+		m_isSplasheFire = isFire;
 	}
 }

@@ -71,12 +71,7 @@ public struct PlayerInfo
 	/// タグ
 	/// </summary>
 	public const string TAG = "Player";
-
-	/// <summary>
-	/// アニメーションのレイヤー
-	/// </summary>
-	public const string ANIM_LAYER = "Base Layer.";
-
+	
 	/// <summary>
 	/// アニメーションパラメータ名
 	/// </summary>
@@ -614,7 +609,7 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		//現在のアニメーションと状態が同じ
-		if (Anim.GetCurrentAnimatorStateInfo(0).IsName(PlayerInfo.ANIM_LAYER + m_state.ToString()))
+		if (Anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains(m_state.ToString()))
 			return;
 
 		//遷移変更

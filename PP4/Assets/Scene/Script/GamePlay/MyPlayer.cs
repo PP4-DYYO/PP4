@@ -750,6 +750,16 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 残った水の割合を得る
+	/// </summary>
+	/// <returns></returns>
+	public float GetPercentageOfRemainingWater()
+	{
+		return WaterGauge.localScale.x;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル終了状態にする
 	/// </summary>
 	public void MakeItBattleEndState()

@@ -296,7 +296,7 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 8;
+	public const int NUM_OF_PLAYERS = 1;
 	#endregion
 
 	/// <summary>
@@ -642,13 +642,26 @@ public class MyGame : MonoBehaviour
 		}
 		else
 		{
-			//タイマー反映
-			MainUi.SetTimer(m_battleTime - m_countTheTimeOfTheState);
+			//UI
+			BattleStateUi();
 
 			//プレイヤーサポート(サポート率０回避付き)
 			OperatingPlayer.SupportRate = 1 +
 				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル状態のUI
+	/// </summary>
+	void BattleStateUi()
+	{
+		//タイマー反映
+		MainUi.SetTimer(m_battleTime - m_countTheTimeOfTheState);
+
+		//タンクの残量
+		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
 	}
 
 	//----------------------------------------------------------------------------------------------------

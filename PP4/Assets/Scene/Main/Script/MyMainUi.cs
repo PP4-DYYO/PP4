@@ -68,7 +68,13 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Text Timer;
-	
+
+	/// <summary>
+	/// 水の残量
+	/// </summary>
+	[SerializeField]
+	Image RemainingAmountOfWater;
+
 	/// <summary>
 	/// バトル終了
 	/// </summary>
@@ -307,6 +313,16 @@ public class MyMainUi : MonoBehaviour
 	public void SetTimer(float time = 0)
 	{
 		Timer.text = time.ToString("F0");
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水の残量を設定する
+	/// </summary>
+	/// <param name="remainingAmount">残量</param>
+	public void SetRemainingAmountOfWater(float remainingAmount)
+	{
+		RemainingAmountOfWater.fillAmount = remainingAmount;
 	}
 
 	//----------------------------------------------------------------------------------------------------

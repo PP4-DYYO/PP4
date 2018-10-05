@@ -76,6 +76,11 @@ public struct PlayerInfo
 	/// アニメーションパラメータ名
 	/// </summary>
 	public const string ANIM_PARAMETER_NAME = "PlayerAnimIdx";
+
+	/// <summary>
+	/// アニメーションの回転名
+	/// </summary>
+	public const string ANIM_ROTATION_NAME = "Rotation";
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -566,6 +571,9 @@ public class MyPlayer : MonoBehaviour
 		{
 			//向きたい方向に向く
 			m_workVector3.y = m_angle;
+
+			//回転値をアニメーションに渡す
+			Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, 0f);
 		}
 		else if (m_workFloat < HALF_CIRCUMFERENCE_ANGLE) //向きたい角度が想定範囲
 		{
@@ -573,6 +581,9 @@ public class MyPlayer : MonoBehaviour
 			m_angle -= m_workVector3.y;
 			m_angle *= Time.deltaTime * m_rotationSpeed;
 			m_workVector3.y += m_angle;
+
+			//回転値をアニメーションに渡す
+			Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, m_angle);
 		}
 		else
 		{
@@ -586,6 +597,9 @@ public class MyPlayer : MonoBehaviour
 			m_angle -= m_workVector3.y;
 			m_angle *= Time.deltaTime * m_rotationSpeed;
 			m_workVector3.y += m_angle;
+
+			//回転値をアニメーションに渡す
+			Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, m_angle);
 		}
 
 		transform.eulerAngles = m_workVector3;

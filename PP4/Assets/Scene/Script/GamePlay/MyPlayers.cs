@@ -75,6 +75,29 @@ public class MyPlayers : MonoBehaviour
 	/// 最高高度
 	/// </summary>
 	float m_maximumAltitude;
+	public float MaximumAltitude
+	{
+		get { return m_maximumAltitude; }
+	}
+
+	/// <summary>
+	/// 高さの順位
+	/// </summary>
+	int[] m_heightRanks;
+	public int[] HeightRanks
+	{
+		get { return m_heightRanks; }
+	}
+
+	/// <summary>
+	/// 変更される番号
+	/// </summary>
+	int m_numToBeChanged;
+
+	/// <summary>
+	/// 対象の番号
+	/// </summary>
+	int m_targetNum;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -84,6 +107,7 @@ public class MyPlayers : MonoBehaviour
 	public MyNetPlayerSetting[] DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
 	{
 		m_netPlayerSettings = netPlayerSettings;
+		m_heightRanks = new int[m_netPlayerSettings.Length];
 
 		var team1Order = 0;
 		var team2Order = 0;
@@ -111,34 +135,33 @@ public class MyPlayers : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 最高高度を取得
+	/// 高さランキングの更新
 	/// </summary>
-	public float GetMaximumAltitude()
+	public void UpdateHeightRank()
 	{
+		//初期化
+		m_heightRanks.Initialize();
 		m_maximumAltitude = 0;
 
+		//ネットプレイヤー非対応
 		if (m_netPlayerSettings[0] == null)
-		{
-			//全子供
-			foreach(Transform child in transform)
-			{
-				//最高高度を超える
-				if (child.position.y > m_maximumAltitude)
-					m_maximumAltitude = child.position.y;
-			}
-		}
-		else
-		{
-			//全プレイヤー
-			foreach(var player in m_netPlayerSettings)
-			{
-				//最高高度を超える
-				if (player.transform.position.y > m_maximumAltitude)
-					m_maximumAltitude = player.transform.position.y;
-			}
-		}
+			return;
 
-		return m_maximumAltitude;
+		//全プレイヤーにアクセス
+		for (m_numToBeChanged = 0; m_numToBeChanged < m_netPlayerSettings.Length; m_numToBeChanged++)
+		{
+			//変更される番号以外のプレイヤーにアクセス
+			for (m_targetNum = m_numToBeChanged + 1; m_targetNum < m_netPlayerSettings.Length; m_targetNum++)
+			{
+				//対象の高さが小さければ順位を下げる
+				if (m_netPlayerSettings[m_numToBeChanged].transform.position.y < m_netPlayerSettings[m_targetNum].transform.position.y)
+					m_heightRanks[m_numToBeChanged]++;
+			}
+
+			//最大高度の取得
+			m_maximumAltitude = (m_maximumAltitude < m_netPlayerSettings[m_numToBeChanged].transform.position.y) ?
+				m_netPlayerSettings[m_numToBeChanged].transform.position.y : m_maximumAltitude;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -156,7 +179,7 @@ public class MyPlayers : MonoBehaviour
 		var totalHeight = 0f;
 
 		//全子供
-		for(var i = 0; i < Team1.transform.childCount; i++)
+		for (var i = 0; i < Team1.transform.childCount; i++)
 		{
 			totalHeight += Team1.transform.GetChild(i).position.y;
 			scoreArray[i] = Team1.transform.GetChild(i).position.y;

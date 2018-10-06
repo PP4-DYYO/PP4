@@ -296,7 +296,7 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 1;
+	public const int NUM_OF_PLAYERS = 2;
 	#endregion
 
 	/// <summary>
@@ -628,6 +628,7 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
+			//プレイヤーとカメラ
 			OperatingPlayer.MakeItBattleState();
 			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomePursuitCamera();
@@ -642,12 +643,15 @@ public class MyGame : MonoBehaviour
 		}
 		else
 		{
+			//プレイヤー順位の更新
+			Players.UpdateHeightRank();
+
 			//UI
 			BattleStateUi();
 
 			//プレイヤーサポート(サポート率０回避付き)
 			OperatingPlayer.SupportRate = 1 +
-				(Players.GetMaximumAltitude() - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
+				(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
 		}
 	}
 
@@ -662,6 +666,9 @@ public class MyGame : MonoBehaviour
 
 		//タンクの残量
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
+
+		//順位の反映
+		MainUi.RearrangeRankOnMap(Players.HeightRanks);
 	}
 
 	//----------------------------------------------------------------------------------------------------

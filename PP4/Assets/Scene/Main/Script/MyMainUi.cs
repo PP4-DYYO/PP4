@@ -76,6 +76,24 @@ public class MyMainUi : MonoBehaviour
 	Image RemainingAmountOfWater;
 
 	/// <summary>
+	/// 順位の親たち
+	/// </summary>
+	[SerializeField]
+	Transform[] ParentsOfRank;
+
+	/// <summary>
+	/// マップ上のプレイヤー
+	/// </summary>
+	[SerializeField]
+	GameObject[] PlayersOnMap;
+
+	/// <summary>
+	/// マップ上のプレイヤー名
+	/// </summary>
+	[SerializeField]
+	Text[] PlayerNamesOnTheMap;
+
+	/// <summary>
 	/// バトル終了
 	/// </summary>
 	[SerializeField]
@@ -150,6 +168,11 @@ public class MyMainUi : MonoBehaviour
 	/// チーム２のスコア
 	/// </summary>
 	float m_team2Score;
+
+	/// <summary>
+	/// 対象の番号
+	/// </summary>
+	int m_targetNum;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -284,6 +307,24 @@ public class MyMainUi : MonoBehaviour
 		//必要オブジェクトの設定
 		StartFadeIn();
 		Timer.text = Game.BattleTime.ToString("F0");
+		WritePlayerNamesOnTheMap();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マップ上にプレイヤー名を書く
+	/// </summary>
+	void WritePlayerNamesOnTheMap()
+	{
+		//全プレイヤーをテキストに代入
+		for (var i = 0; i < PlayerNamesOnTheMap.Length; i++)
+		{
+			//ネットプレイヤー設定がない
+			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
+				return;
+
+			PlayerNamesOnTheMap[i].text = MyNetPlayerSetting.NetPlayerSettings[i].PlayerName;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -323,6 +364,22 @@ public class MyMainUi : MonoBehaviour
 	public void SetRemainingAmountOfWater(float remainingAmount)
 	{
 		RemainingAmountOfWater.fillAmount = remainingAmount;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マップ上の順位を入れ替える
+	/// </summary>
+	/// <param name="heightRanks">高さ順位たち</param>
+	public void RearrangeRankOnMap(int[] heightRanks)
+	{
+		//全プレイヤーにアクセス
+		for(m_targetNum = 0; m_targetNum < heightRanks.Length; m_targetNum++)
+		{
+			//順位に合った親と位置
+			PlayersOnMap[m_targetNum].transform.SetParent(ParentsOfRank[heightRanks[m_targetNum]]);
+			PlayersOnMap[m_targetNum].transform.localPosition = Vector3.zero;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

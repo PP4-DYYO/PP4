@@ -64,6 +64,12 @@ public class MyMainUi : MonoBehaviour
 	MyImageAnimation GoMessage;
 
 	/// <summary>
+	/// バトル画面
+	/// </summary>
+	[SerializeField]
+	GameObject BattleScreen;
+
+	/// <summary>
 	/// タイマー
 	/// </summary>
 	[SerializeField]
@@ -74,6 +80,12 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Image RemainingAmountOfWater;
+
+	/// <summary>
+	/// 順位
+	/// </summary>
+	[SerializeField]
+	GameObject Rank;
 
 	/// <summary>
 	/// 順位の親たち
@@ -159,6 +171,62 @@ public class MyMainUi : MonoBehaviour
 	Color m_fadeInOutColor;
 	#endregion
 
+	#region バトル画面
+	[Header("バトル画面")]
+	/// <summary>
+	/// 順位入れ替え時間
+	/// </summary>
+	[SerializeField]
+	float m_rankChangeTime;
+
+	/// <summary>
+	/// 順位が上がった時にマップ上の回避する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToAvoidOnMapWhenRankingGoesUp;
+
+	/// <summary>
+	/// 順位が上がった時にマップ上の回避する位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_posToAvoidOnMapWhenRankingGoesUp;
+
+	/// <summary>
+	/// １分当たりの秒
+	/// </summary>
+	const int SECONDS_PER_MINUTE = 60;
+
+	/// <summary>
+	/// 時間の区切り文字
+	/// </summary>
+	const string TIME_SEPARATOR = ":";
+
+	/// <summary>
+	/// 操作プレイヤー順位
+	/// </summary>
+	int m_operatingPlayerRank;
+
+	/// <summary>
+	/// フレーム前の操作プレイヤー順位
+	/// </summary>
+	int m_operatingPlayerRankPrev;
+
+	/// <summary>
+	/// 操作プレイヤーの順位が上がったフラグ
+	/// </summary>
+	bool m_isRankingOfOperationPlayerHasRisen;
+
+	/// <summary>
+	/// 順位入れ替え時間を数える
+	/// </summary>
+	float m_countRankChangeTime;
+
+	/// <summary>
+	/// 高さの順位たち
+	/// </summary>
+	int[] m_heightRanks;
+	#endregion
+
 	/// <summary>
 	/// チーム１のスコア
 	/// </summary>
@@ -174,6 +242,11 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	int m_targetNum;
 
+	/// <summary>
+	/// 作業用のInt
+	/// </summary>
+	int m_workInt;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -187,6 +260,10 @@ public class MyMainUi : MonoBehaviour
 		//フェードイン
 		if (m_isFadeInRunning)
 			FadeInProcess();
+
+		//プレイヤーの順位を上げる
+		if (m_isRankingOfOperationPlayerHasRisen)
+			RaisePlayerRankProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -227,6 +304,47 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// プレイヤーの順位を上げる処理
+	/// </summary>
+	void RaisePlayerRankProcess()
+	{
+		m_countRankChangeTime += Time.deltaTime;
+
+		//順位が下がるプレイヤー番号
+		for(var i = m_operatingPlayerRank; i < m_operatingPlayerRankPrev; i++)
+		{
+			//時間により下に移動
+			ParentsOfRank[i].GetChild(0).localPosition =
+				(ParentsOfRank[i + 1].localPosition - ParentsOfRank[i].localPosition) * (m_countRankChangeTime / m_rankChangeTime);
+		}
+
+		//回避する時間
+		if (m_countRankChangeTime < m_timeToAvoidOnMapWhenRankingGoesUp)
+		{
+			//順位が上がるプレイヤーが回避
+			ParentsOfRank[m_operatingPlayerRankPrev].GetChild(0).localPosition =
+				m_posToAvoidOnMapWhenRankingGoesUp * (m_countRankChangeTime / m_timeToAvoidOnMapWhenRankingGoesUp);
+		}
+		else
+		{
+			//順位が上がるプレイヤーが本来の位置に移動
+			ParentsOfRank[m_operatingPlayerRankPrev].GetChild(0).localPosition =
+				((ParentsOfRank[m_operatingPlayerRank].localPosition -
+				ParentsOfRank[m_operatingPlayerRankPrev].localPosition - m_posToAvoidOnMapWhenRankingGoesUp)
+				* ((m_countRankChangeTime - m_timeToAvoidOnMapWhenRankingGoesUp) / (m_rankChangeTime - m_timeToAvoidOnMapWhenRankingGoesUp)))
+				+ m_posToAvoidOnMapWhenRankingGoesUp;
+		}
+
+		//順位を上げる処理の終了
+		if(m_countRankChangeTime >= m_rankChangeTime)
+		{
+			m_isRankingOfOperationPlayerHasRisen = false;
+			m_operatingPlayerRankPrev = m_operatingPlayerRank;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 人材募集をする
 	/// </summary>
 	public void WantedRecruitment()
@@ -236,6 +354,7 @@ public class MyMainUi : MonoBehaviour
 
 		//不要オブジェクトの非表示
 		MessageToStartGame.SetActive(false);
+		BattleScreen.SetActive(false);
 		ReadyMessage.StopAnimation();
 		GoMessage.StopAnimation();
 		BattleEnd.SetActive(false);
@@ -299,15 +418,45 @@ public class MyMainUi : MonoBehaviour
 	/// <summary>
 	/// バトル開始
 	/// </summary>
-	public void BattleStart()
+	/// <param name="battleTime">バトル時間</param>
+	public void BattleStart(float battleTime)
 	{
 		//不要オブジェクトの非表示
 		RecruitPeopleScreen.SetActive(false);
 
 		//必要オブジェクトの設定
 		StartFadeIn();
-		Timer.text = Game.BattleTime.ToString("F0");
+		BattleScreen.SetActive(true);
+		SetTimer(battleTime);
+		SetRemainingAmountOfWater();
 		WritePlayerNamesOnTheMap();
+		DisplayRank();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// タイマーを設定する
+	/// </summary>
+	/// <param name="time">時間</param>
+	public void SetTimer(float time = 0)
+	{
+		//小数点以下の切り捨て
+		time = (int)time;
+
+		//分の確保
+		m_workInt = (int)(time / SECONDS_PER_MINUTE);
+
+		Timer.text = m_workInt + TIME_SEPARATOR + (time - (m_workInt * SECONDS_PER_MINUTE)).ToString("00");
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水の残量を設定する
+	/// </summary>
+	/// <param name="remainingAmount">残量</param>
+	public void SetRemainingAmountOfWater(float remainingAmount = 1)
+	{
+		RemainingAmountOfWater.fillAmount = remainingAmount;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -348,22 +497,32 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// タイマーを設定する
+	/// 順位を設定
 	/// </summary>
-	/// <param name="time">時間</param>
-	public void SetTimer(float time = 0)
+	/// <param name="heightRanks">高さ順位たち</param>
+	/// <param name="numOfOperatingPlayer">操作プレイヤーの番号</param>
+	public void SetRank(int[] heightRanks, int numOfOperatingPlayer)
 	{
-		Timer.text = time.ToString("F0");
-	}
+		//順位が上げているところ
+		if (m_isRankingOfOperationPlayerHasRisen)
+			return;
 
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 水の残量を設定する
-	/// </summary>
-	/// <param name="remainingAmount">残量</param>
-	public void SetRemainingAmountOfWater(float remainingAmount)
-	{
-		RemainingAmountOfWater.fillAmount = remainingAmount;
+		//操作プレイヤーの順位
+		m_operatingPlayerRank = heightRanks[numOfOperatingPlayer];
+
+		//操作プレイヤーの順位が上がった
+		if (m_operatingPlayerRank < m_operatingPlayerRankPrev)
+		{
+			m_isRankingOfOperationPlayerHasRisen = true;
+			m_countRankChangeTime = 0;
+			return;
+		}
+
+		//入れ替え
+		RearrangeRankOnMap(heightRanks);
+
+		//操作プレイヤーの順位
+		m_operatingPlayerRankPrev = heightRanks[numOfOperatingPlayer];
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -371,15 +530,25 @@ public class MyMainUi : MonoBehaviour
 	/// マップ上の順位を入れ替える
 	/// </summary>
 	/// <param name="heightRanks">高さ順位たち</param>
-	public void RearrangeRankOnMap(int[] heightRanks)
+	void RearrangeRankOnMap(int[] heightRanks)
 	{
 		//全プレイヤーにアクセス
-		for(m_targetNum = 0; m_targetNum < heightRanks.Length; m_targetNum++)
+		for (m_targetNum = 0; m_targetNum < heightRanks.Length; m_targetNum++)
 		{
 			//順位に合った親と位置
 			PlayersOnMap[m_targetNum].transform.SetParent(ParentsOfRank[heightRanks[m_targetNum]]);
 			PlayersOnMap[m_targetNum].transform.localPosition = Vector3.zero;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 順位を表示する
+	/// </summary>
+	/// <param name="isDisplay">表示するか</param>
+	public void DisplayRank(bool isDisplay = true)
+	{
+		Rank.SetActive(isDisplay);
 	}
 
 	//----------------------------------------------------------------------------------------------------

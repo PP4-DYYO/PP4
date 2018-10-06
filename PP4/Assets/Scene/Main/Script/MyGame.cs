@@ -265,7 +265,10 @@ public class MyGame : MonoBehaviour
 	/// 指定するためのカメラ方向
 	/// </summary>
 	Vector3[] m_cameraDirectionForSpecifying;
+	#endregion
 
+#region バトル状態
+	[Header("バトル状態")]
 	/// <summary>
 	/// バトル時間
 	/// </summary>
@@ -292,6 +295,11 @@ public class MyGame : MonoBehaviour
 	/// 状態の時間を数える
 	/// </summary>
 	float m_countTheTimeOfTheState;
+
+	/// <summary>
+	/// 順位の表示
+	/// </summary>
+	bool m_isDisplayRank;
 
 	/// <summary>
 	/// プレイヤー人数
@@ -335,6 +343,11 @@ public class MyGame : MonoBehaviour
 	/// Bボタンを押した
 	/// </summary>
 	bool m_isBButtonDown;
+
+	/// <summary>
+	/// Yボタンを押した
+	/// </summary>
+	bool m_isYButtonDown;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -357,6 +370,8 @@ public class MyGame : MonoBehaviour
 			m_isAButtonDown = true;
 		if (Input.GetButtonDown("BButton"))
 			m_isBButtonDown = true;
+		if (Input.GetButtonDown("YButton"))
+			m_isYButtonDown = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -552,8 +567,9 @@ public class MyGame : MonoBehaviour
 
 			//フラグとカメラとUIの設定
 			m_isItJustBeforeBattle = false;
+			m_isDisplayRank = true;
 			SettingOfCameraInBattleStartState();
-			MainUi.BattleStart();
+			MainUi.BattleStart(m_battleTime);
 		}
 
 		//カウントダウン時間が過ぎた
@@ -668,7 +684,16 @@ public class MyGame : MonoBehaviour
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
 
 		//順位の反映
-		MainUi.RearrangeRankOnMap(Players.HeightRanks);
+		MainUi.SetRank(Players.HeightRanks, MyNetPlayerSetting.NetPlayerSettings.IndexOf(OperatingNetPlayerSetting));
+
+		//Yボタンを押した
+		if(m_isYButtonDown)
+		{
+			m_isDisplayRank = !m_isDisplayRank;
+
+			//順位の表示
+			MainUi.DisplayRank(m_isDisplayRank);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -750,6 +775,6 @@ public class MyGame : MonoBehaviour
 	{
 		m_isAButtonDown = false;
 		m_isBButtonDown = false;
+		m_isYButtonDown = false;
 	}
-
 }

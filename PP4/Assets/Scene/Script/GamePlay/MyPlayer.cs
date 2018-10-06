@@ -766,5 +766,8 @@ public class MyPlayer : MonoBehaviour
 	{
 		enabled = false;
 		Rb.constraints = RigidbodyConstraints.FreezeAll;
+
+		//水を満タンにする
+		WaterGauge.localScale = Vector3.one;
 	}
 }

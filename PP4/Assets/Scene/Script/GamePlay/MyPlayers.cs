@@ -158,7 +158,7 @@ public class MyPlayers : MonoBehaviour
 			for (m_targetNum = m_netPlayerSettings.Length - 1; m_targetNum > m_numToBeChanged; m_targetNum--)
 			{
 				//高さが小さければ順位を下げる
-				if (m_netPlayerSettings[m_numToBeChanged].transform.position.y < m_netPlayerSettings[m_targetNum].transform.position.y)
+				if ((int)m_netPlayerSettings[m_numToBeChanged].transform.position.y < (int)m_netPlayerSettings[m_targetNum].transform.position.y)
 					m_heightRanks[m_numToBeChanged]++;
 				else
 					m_heightRanks[m_targetNum]++;

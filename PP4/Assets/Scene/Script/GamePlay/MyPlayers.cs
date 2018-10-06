@@ -140,7 +140,11 @@ public class MyPlayers : MonoBehaviour
 	public void UpdateHeightRank()
 	{
 		//初期化
-		m_heightRanks.Initialize();
+		for(m_targetNum = 0; m_targetNum < m_heightRanks.Length; m_targetNum++)
+		{
+			//順位
+			m_heightRanks[m_targetNum] = 0;
+		}
 		m_maximumAltitude = 0;
 
 		//ネットプレイヤー非対応
@@ -151,11 +155,13 @@ public class MyPlayers : MonoBehaviour
 		for (m_numToBeChanged = 0; m_numToBeChanged < m_netPlayerSettings.Length; m_numToBeChanged++)
 		{
 			//変更される番号以外のプレイヤーにアクセス
-			for (m_targetNum = m_numToBeChanged + 1; m_targetNum < m_netPlayerSettings.Length; m_targetNum++)
+			for (m_targetNum = m_netPlayerSettings.Length - 1; m_targetNum > m_numToBeChanged; m_targetNum--)
 			{
-				//対象の高さが小さければ順位を下げる
+				//高さが小さければ順位を下げる
 				if (m_netPlayerSettings[m_numToBeChanged].transform.position.y < m_netPlayerSettings[m_targetNum].transform.position.y)
 					m_heightRanks[m_numToBeChanged]++;
+				else
+					m_heightRanks[m_targetNum]++;
 			}
 
 			//最大高度の取得

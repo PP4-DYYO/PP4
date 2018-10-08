@@ -20,6 +20,10 @@ public class MyImageAnimation : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Image Target;
+	public Image TargetImage
+	{
+		get { return Target; }
+	}
 
 	/// <summary>
 	/// 画像たち
@@ -114,13 +118,19 @@ public class MyImageAnimation : MonoBehaviour
 	/// <summary>
 	/// アニメーションを開始
 	/// </summary>
-	public void StartAnimation()
+	/// <param name="isInitialization">初期化するか</param>
+	public void StartAnimation(bool isInitialization = true)
 	{
 		Target.enabled = true;
 
 		m_isPlay = true;
-		m_imageNum = 0;
-		m_countImageDisplayTime = 0;
+
+		//初期化
+		if (isInitialization)
+		{
+			m_imageNum = 0;
+			m_countImageDisplayTime = 0;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

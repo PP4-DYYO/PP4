@@ -304,7 +304,7 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 2;
+	public const int NUM_OF_PLAYERS = 1;
 	#endregion
 
 	/// <summary>
@@ -694,6 +694,10 @@ public class MyGame : MonoBehaviour
 			//順位の表示
 			MainUi.DisplayRank(m_isDisplayRank);
 		}
+
+		//被水している
+		if (OperatingPlayer.GetIsWearWater())
+			MainUi.WearWater();
 	}
 
 	//----------------------------------------------------------------------------------------------------

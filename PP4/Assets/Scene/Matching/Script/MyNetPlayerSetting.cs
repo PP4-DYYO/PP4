@@ -28,15 +28,30 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
+	/// ゲーム
+	/// </summary>
+	MyGame Game;
+	#endregion
+
+	#region コンポーネント
+	[Header("コンポーネント")]
+	/// <summary>
+	/// プレイヤー
+	/// </summary>
+	[SerializeField]
+	MyPlayer Player;
+
+	/// <summary>
 	/// 名札
 	/// </summary>
 	[SerializeField]
 	TextMesh Nameplate;
 
 	/// <summary>
-	/// ゲーム
+	/// アニメーター
 	/// </summary>
-	MyGame Game;
+	[SerializeField]
+	Animator Anim;
 	#endregion
 
 	#region プレイヤーの情報
@@ -46,6 +61,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	string m_yourOwnDisplayName;
+
+	/// <summary>
+	/// 状態
+	/// </summary>
+	[SyncVar(hook = "SyncState")]
+	PlayerBehaviorStatus m_state;
 
 	/// <summary>
 	/// チーム番号
@@ -135,7 +156,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
 		//ゲームに必要な設定
-		Game.OperatingPlayerScript = GetComponent<MyPlayer>();
+		Game.OperatingPlayerScript = Player;
 		transform.parent = Game.PlayersScript.transform;
 
 		//名前の登録
@@ -233,6 +254,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//名札の方向
 		Nameplate.transform.LookAt(Nameplate.transform.position + (Nameplate.transform.position - Camera.main.transform.position));
+
+		//アニメーション処理
+		AnimProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -245,8 +269,65 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!isLocalPlayer && isClient)
 		{
 			//権限のないプレイヤーになる
-			GetComponent<MyPlayer>().BecomeUnauthorizedPlayer();
+			Player.BecomeUnauthorizedPlayer();
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// アニメーション処理
+	/// </summary>
+	void AnimProcess()
+	{
+		//操作プレイヤー
+		if (isLocalPlayer)
+		{
+			//状態が変わった
+			if (m_state != Player.State)
+			{
+				//状態の通知
+				m_state = Player.State;
+				CmdState(m_state);
+			}
+			return;
+		}
+
+		//状態とアニメーション遷移が同じ
+		if ((int)m_state == Anim.GetInteger(PlayerInfo.ANIM_PARAMETER_NAME))
+		{
+			//状態遷移を無効に
+			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Non);
+			return;
+		}
+
+		//現在のアニメーションと状態が同じ
+		if (Anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains(m_state.ToString()))
+			return;
+
+		//遷移変更
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)m_state);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 状態の通知
+	/// </summary>
+	/// <param name="state">状態</param>
+	[Command]
+	void CmdState(PlayerBehaviorStatus state)
+	{
+		m_state = state;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 状態を同期する
+	/// </summary>
+	/// <param name="state">状態</param>
+	[Client]
+	void SyncState(PlayerBehaviorStatus state)
+	{
+		m_state = state;
 	}
 
 	//----------------------------------------------------------------------------------------------------

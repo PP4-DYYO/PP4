@@ -135,6 +135,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Transform BoardDirection;
+
+	/// <summary>
+	/// ジェットウォータ
+	/// </summary>
+	[SerializeField]
+	MyJetWater JetWater;
 	#endregion
 
 	#region トランスフォーム
@@ -183,6 +189,15 @@ public class MyPlayer : MonoBehaviour
 	/// 状態
 	/// </summary>
 	PlayerBehaviorStatus m_state;
+	public PlayerBehaviorStatus State
+	{
+		get { return m_state; }
+	}
+
+	/// <summary>
+	/// 水を被っている
+	/// </summary>
+	bool m_isWearWater;
 	#endregion
 
 	#region 移動速度
@@ -675,6 +690,8 @@ public class MyPlayer : MonoBehaviour
 
 			//ジェットウォータに当たる分だけ水分回復
 			m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
+
+			m_isWearWater = true;
 		}
 	}
 
@@ -746,6 +763,19 @@ public class MyPlayer : MonoBehaviour
 	{
 		enabled = true;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+		//ジェットウォータの起動
+		LaunchJetWater(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットウォータの起動
+	/// </summary>
+	/// <param name="isLaunch">起動するか</param>
+	public void LaunchJetWater(bool isLaunch)
+	{
+		JetWater.JetFire(isLaunch);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -760,6 +790,23 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 水を被るフラグを取得
+	/// </summary>
+	/// <returns>水を被ったか</returns>
+	public bool GetIsWearWater()
+	{
+		//水を被った
+		if(m_isWearWater)
+		{
+			m_isWearWater = false;
+			return true;
+		}
+
+		return false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル終了状態にする
 	/// </summary>
 	public void MakeItBattleEndState()
@@ -769,5 +816,8 @@ public class MyPlayer : MonoBehaviour
 
 		//水を満タンにする
 		WaterGauge.localScale = Vector3.one;
+
+		//ジェットウォータの停止
+		LaunchJetWater(false);
 	}
 }

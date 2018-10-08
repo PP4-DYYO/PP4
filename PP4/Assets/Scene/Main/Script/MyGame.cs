@@ -267,7 +267,7 @@ public class MyGame : MonoBehaviour
 	Vector3[] m_cameraDirectionForSpecifying;
 	#endregion
 
-#region バトル状態
+	#region バトル状態
 	[Header("バトル状態")]
 	/// <summary>
 	/// バトル時間
@@ -304,7 +304,7 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 1;
+	public const int NUM_OF_PLAYERS = 2;
 	#endregion
 
 	/// <summary>

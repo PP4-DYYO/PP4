@@ -764,9 +764,6 @@ public class MyPlayer : MonoBehaviour
 	{
 		enabled = true;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
-
-		//ジェットウォータの起動
-		LaunchJetWater(true);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -817,8 +814,5 @@ public class MyPlayer : MonoBehaviour
 
 		//水を満タンにする
 		WaterGauge.localScale = Vector3.one;
-
-		//ジェットウォータの停止
-		LaunchJetWater(false);
 	}
 }

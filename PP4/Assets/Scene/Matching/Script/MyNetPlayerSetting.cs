@@ -69,6 +69,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	PlayerBehaviorStatus m_state;
 
 	/// <summary>
+	/// フレーム前の状態
+	/// </summary>
+	PlayerBehaviorStatus m_statePrev;
+
+	/// <summary>
 	/// チーム番号
 	/// </summary>
 	Team m_teamNum;
@@ -257,6 +262,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//アニメーション処理
 		AnimProcess();
+
+		//ジェットウォータ処理
+		JetWaterProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -328,6 +336,24 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncState(PlayerBehaviorStatus state)
 	{
 		m_state = state;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットウォータ処理
+	/// </summary>
+	void JetWaterProcess()
+	{
+		//状態が変わった
+		if (m_state != m_statePrev)
+		{
+			//状態によって、ジェットウォータの起動と停止
+			Player.LaunchJetWater(
+				!(m_state == PlayerBehaviorStatus.Idle || m_state == PlayerBehaviorStatus.Falling || m_state == PlayerBehaviorStatus.Stand
+				|| m_state == PlayerBehaviorStatus.HoldBoardInHand || m_state == PlayerBehaviorStatus.HoldBoardInHand2));
+
+			m_statePrev = m_state;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

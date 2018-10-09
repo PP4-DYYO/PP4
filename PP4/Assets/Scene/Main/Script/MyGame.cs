@@ -285,10 +285,21 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
+	/// 時間を通知するための残り時間
+	/// </summary>
+	[SerializeField]
+	float m_remainingTimeToNotifyTime;
+
+	/// <summary>
 	/// １ｍ毎のサポート率
 	/// </summary>
 	[SerializeField]
 	float m_supportRatePerMeter;
+
+	/// <summary>
+	/// 残り時間の通知フラグ
+	/// </summary>
+	bool m_isRemainingTimeNotification;
 
 	/// <summary>
 	/// バトルが終了して停止する時間
@@ -573,6 +584,7 @@ public class MyGame : MonoBehaviour
 			//フラグとカメラとUIの設定
 			m_isItJustBeforeBattle = false;
 			m_isDisplayRank = true;
+			m_isRemainingTimeNotification = false;
 			SettingOfCameraInBattleStartState();
 			MainUi.BattleStart(m_battleTime);
 		}
@@ -714,6 +726,13 @@ public class MyGame : MonoBehaviour
 				MainUi.StartOfFall();
 			else
 				MainUi.StopOfFall();
+		}
+
+		//通知していないand残り時間が通知時間になった
+		if (!m_isRemainingTimeNotification && (m_battleTime - m_countTheTimeOfTheState) < m_remainingTimeToNotifyTime)
+		{
+			m_isRemainingTimeNotification = true;
+			MainUi.NotifyRemainingTime();
 		}
 	}
 

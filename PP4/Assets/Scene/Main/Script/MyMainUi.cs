@@ -118,6 +118,12 @@ public class MyMainUi : MonoBehaviour
 	GameObject Falling;
 
 	/// <summary>
+	/// 残り時間
+	/// </summary>
+	[SerializeField]
+	MyImageAnimation RemainingTime;
+
+	/// <summary>
 	/// バトル終了
 	/// </summary>
 	[SerializeField]
@@ -663,6 +669,15 @@ public class MyMainUi : MonoBehaviour
 	public void StopOfFall()
 	{
 		Falling.SetActive(false);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 残り時間の通知
+	/// </summary>
+	public void NotifyRemainingTime()
+	{
+		RemainingTime.StartAnimation();
 	}
 
 	//----------------------------------------------------------------------------------------------------

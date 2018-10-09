@@ -222,6 +222,12 @@ public class MyMainUi : MonoBehaviour
 	float m_alphaValueWhenWearingWater;
 
 	/// <summary>
+	/// 時間を通知するための残り時間
+	/// </summary>
+	[SerializeField]
+	float m_remainingTimeToNotifyTime;
+
+	/// <summary>
 	/// １分当たりの秒
 	/// </summary>
 	const int SECONDS_PER_MINUTE = 60;
@@ -265,6 +271,11 @@ public class MyMainUi : MonoBehaviour
 	/// 被水するフラグ
 	/// </summary>
 	bool m_isWearWater;
+
+	/// <summary>
+	/// 残り時間の通知フラグ
+	/// </summary>
+	bool m_isRemainingTimeNotification;
 	#endregion
 
 	/// <summary>
@@ -508,6 +519,7 @@ public class MyMainUi : MonoBehaviour
 		StartFadeIn();
 		BattleScreen.SetActive(true);
 		SetTimer(battleTime);
+		m_isRemainingTimeNotification = false;
 		SetRemainingAmountOfWater();
 		WritePlayerNamesOnTheMap();
 		DisplayRank();
@@ -526,7 +538,16 @@ public class MyMainUi : MonoBehaviour
 		//分の確保
 		m_workInt = (int)(time / SECONDS_PER_MINUTE);
 
+		//タイマー時間の代入
 		Timer.text = m_workInt + TIME_SEPARATOR + (time - (m_workInt * SECONDS_PER_MINUTE)).ToString("00");
+
+		//通知していないand残り時間が通知時間になった
+		if (!m_isRemainingTimeNotification && (time < m_remainingTimeToNotifyTime))
+		{
+			//時間通知
+			m_isRemainingTimeNotification = true;
+			RemainingTime.StartAnimation();
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -669,15 +690,6 @@ public class MyMainUi : MonoBehaviour
 	public void StopOfFall()
 	{
 		Falling.SetActive(false);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 残り時間の通知
-	/// </summary>
-	public void NotifyRemainingTime()
-	{
-		RemainingTime.StartAnimation();
 	}
 
 	//----------------------------------------------------------------------------------------------------

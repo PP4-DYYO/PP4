@@ -124,6 +124,12 @@ public class MyMainUi : MonoBehaviour
 	MyImageAnimation RemainingTime;
 
 	/// <summary>
+	/// バトル終了のカウントダウン
+	/// </summary>
+	[SerializeField]
+	MyImageAnimation CountdownOfBattleFinish;
+
+	/// <summary>
 	/// バトル終了
 	/// </summary>
 	[SerializeField]
@@ -228,6 +234,12 @@ public class MyMainUi : MonoBehaviour
 	float m_remainingTimeToNotifyTime;
 
 	/// <summary>
+	/// バトル終了前のカウントダウン時間
+	/// </summary>
+	[SerializeField]
+	float m_countdownTimeBeforeBattleEnd;
+
+	/// <summary>
 	/// １分当たりの秒
 	/// </summary>
 	const int SECONDS_PER_MINUTE = 60;
@@ -276,6 +288,11 @@ public class MyMainUi : MonoBehaviour
 	/// 残り時間の通知フラグ
 	/// </summary>
 	bool m_isRemainingTimeNotification;
+
+	/// <summary>
+	/// バトル終了前のカウントダウンフラグ
+	/// </summary>
+	bool m_isCountdownOfBattleFinish;
 	#endregion
 
 	/// <summary>
@@ -519,10 +536,11 @@ public class MyMainUi : MonoBehaviour
 		StartFadeIn();
 		BattleScreen.SetActive(true);
 		SetTimer(battleTime);
-		m_isRemainingTimeNotification = false;
 		SetRemainingAmountOfWater();
 		WritePlayerNamesOnTheMap();
 		DisplayRank();
+		m_isRemainingTimeNotification = false;
+		m_isCountdownOfBattleFinish = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -542,11 +560,19 @@ public class MyMainUi : MonoBehaviour
 		Timer.text = m_workInt + TIME_SEPARATOR + (time - (m_workInt * SECONDS_PER_MINUTE)).ToString("00");
 
 		//通知していないand残り時間が通知時間になった
-		if (!m_isRemainingTimeNotification && (time < m_remainingTimeToNotifyTime))
+		if (!m_isRemainingTimeNotification && (time <= m_remainingTimeToNotifyTime))
 		{
 			//時間通知
 			m_isRemainingTimeNotification = true;
 			RemainingTime.StartAnimation();
+		}
+
+		//通知していないandカウントダウンの時間になった
+		if(!m_isCountdownOfBattleFinish && (time <= m_countdownTimeBeforeBattleEnd))
+		{
+			//カウントダウン開始
+			m_isCountdownOfBattleFinish = true;
+			CountdownOfBattleFinish.StartAnimation();
 		}
 	}
 

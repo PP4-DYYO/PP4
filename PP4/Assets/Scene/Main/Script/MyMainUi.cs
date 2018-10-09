@@ -112,6 +112,12 @@ public class MyMainUi : MonoBehaviour
 	MyImageAnimation[] WearWaters;
 
 	/// <summary>
+	/// 落下
+	/// </summary>
+	[SerializeField]
+	GameObject Falling;
+
+	/// <summary>
 	/// バトル終了
 	/// </summary>
 	[SerializeField]
@@ -424,6 +430,7 @@ public class MyMainUi : MonoBehaviour
 		BattleScreen.SetActive(false);
 		ReadyMessage.StopAnimation();
 		GoMessage.StopAnimation();
+		Falling.SetActive(false);
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
 		Win.SetActive(false);
@@ -638,6 +645,24 @@ public class MyMainUi : MonoBehaviour
 
 		m_countTimeToWearWater = 0;
 		m_isWearWater = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下の開始
+	/// </summary>
+	public void StartOfFall()
+	{
+		Falling.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下の停止
+	/// </summary>
+	public void StopOfFall()
+	{
+		Falling.SetActive(false);
 	}
 
 	//----------------------------------------------------------------------------------------------------

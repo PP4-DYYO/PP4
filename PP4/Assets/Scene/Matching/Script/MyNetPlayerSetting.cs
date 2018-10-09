@@ -48,6 +48,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	TextMesh Nameplate;
 
 	/// <summary>
+	/// 注意
+	/// </summary>
+	[SerializeField]
+	GameObject Caution;
+
+	/// <summary>
 	/// アニメーター
 	/// </summary>
 	[SerializeField]
@@ -257,8 +263,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			}
 		}
 
-		//名札の方向
+		//名札と注意マークの方向
 		Nameplate.transform.LookAt(Nameplate.transform.position + (Nameplate.transform.position - Camera.main.transform.position));
+		Caution.transform.LookAt(Caution.transform.position + (Caution.transform.position - Camera.main.transform.position));
 
 		//アニメーション処理
 		AnimProcess();
@@ -314,6 +321,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//遷移変更
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)m_state);
+
+		//状態変化による処理
+		ProcessByStateChange();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -336,6 +346,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncState(PlayerBehaviorStatus state)
 	{
 		m_state = state;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 状態変化による処理
+	/// </summary>
+	void ProcessByStateChange()
+	{
+		//落下状態で注意表記
+		Caution.SetActive(m_state == PlayerBehaviorStatus.Falling);
 	}
 
 	//----------------------------------------------------------------------------------------------------

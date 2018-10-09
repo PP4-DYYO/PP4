@@ -249,6 +249,10 @@ public class MyPlayer : MonoBehaviour
 	/// 落下している
 	/// </summary>
 	bool m_isFalling;
+	public bool IsFalling
+	{
+		get { return m_isFalling; }
+	}
 	#endregion
 
 	#region 浮遊関係
@@ -284,6 +288,12 @@ public class MyPlayer : MonoBehaviour
 	float m_jetRecoveryRate;
 
 	/// <summary>
+	/// 回復操作の回数
+	/// </summary>
+	[SerializeField]
+	int m_numOfRecoveryOperations;
+
+	/// <summary>
 	/// 足場Ray
 	/// </summary>
 	Ray m_scaffoldRay = new Ray();
@@ -297,6 +307,11 @@ public class MyPlayer : MonoBehaviour
 	/// ジェット使用時間を数える
 	/// </summary>
 	float m_countJetUseTime;
+
+	/// <summary>
+	/// 回復操作の回数を数える
+	/// </summary>
+	int m_countNumOfRecoveryOperations;
 	#endregion
 
 	#region サポート
@@ -323,6 +338,11 @@ public class MyPlayer : MonoBehaviour
 	/// Rボタンを押しっぱなし
 	/// </summary>
 	bool m_isKeepPressingRButton;
+
+	/// <summary>
+	/// Rボタンを押した
+	/// </summary>
+	bool m_isPushedRButton;
 	#endregion
 
 	#region 作業用
@@ -368,6 +388,7 @@ public class MyPlayer : MonoBehaviour
 	{
 		m_isKeepPressingLButton = Input.GetButton("LButton");
 		m_isKeepPressingRButton = Input.GetButton("RButton");
+		m_isPushedRButton = Input.GetButtonDown("RButton");
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -385,8 +406,15 @@ public class MyPlayer : MonoBehaviour
 		else
 			MovementOnTheGround();
 
+		//落下中
+		if (m_isFalling)
+			Recovery();
+
 		//アニメーション処理
 		AnimProcess();
+
+		//入力のリセット
+		ResetInput();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -622,6 +650,26 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 回復
+	/// </summary>
+	void Recovery()
+	{
+		//Rボタンを押すとと回復操作
+		if(m_isPushedRButton)
+			m_countNumOfRecoveryOperations++;
+
+		//回復操作が指定数に達した
+		if(m_countNumOfRecoveryOperations >= m_numOfRecoveryOperations)
+		{
+			m_isFalling = false;
+			m_countNumOfRecoveryOperations = 0;
+			m_countJetUseTime = 0;
+			Rb.velocity = Vector3.zero;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// アニメーション処理
 	/// </summary>
 	void AnimProcess()
@@ -669,6 +717,15 @@ public class MyPlayer : MonoBehaviour
 			m_state = PlayerBehaviorStatus.IdleInTheAir;
 		else
 			m_state = PlayerBehaviorStatus.Idle;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 入力のリセット
+	/// </summary>
+	void ResetInput()
+	{
+		m_isPushedRButton = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -764,6 +821,9 @@ public class MyPlayer : MonoBehaviour
 	{
 		enabled = true;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+		//落下状態の初期化
+		m_countNumOfRecoveryOperations = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

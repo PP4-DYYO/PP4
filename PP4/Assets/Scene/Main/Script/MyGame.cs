@@ -142,6 +142,11 @@ public class MyGame : MonoBehaviour
 	/// フレーム前の状態
 	/// </summary>
 	GameStatus m_statePrev;
+
+	/// <summary>
+	/// 状態の時間を数える
+	/// </summary>
+	float m_countTheTimeOfTheState;
 	#endregion
 
 	#region 人を待つ状態
@@ -291,17 +296,6 @@ public class MyGame : MonoBehaviour
 	float m_supportRatePerMeter;
 
 	/// <summary>
-	/// バトルが終了して停止する時間
-	/// </summary>
-	[SerializeField]
-	float m_timeWhenTheBattleEndsAndStops;
-
-	/// <summary>
-	/// 状態の時間を数える
-	/// </summary>
-	float m_countTheTimeOfTheState;
-
-	/// <summary>
 	/// 順位の表示
 	/// </summary>
 	bool m_isDisplayRank;
@@ -310,6 +304,26 @@ public class MyGame : MonoBehaviour
 	/// 操作プレイヤーが落下フラグ
 	/// </summary>
 	bool m_isOperatingPlayerFall;
+	#endregion
+
+	#region バトル後状態
+	[Header("バトル後状態")]
+	/// <summary>
+	/// バトル後の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeAfterCombatEnd;
+
+	/// <summary>
+	/// バトルが終了して停止する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeWhenTheBattleEndsAndStops;
+
+	/// <summary>
+	/// バトル終了後のフェードアウトフラグ
+	/// </summary>
+	bool m_isFadeOutAfterBattleEnds;
 	#endregion
 
 	/// <summary>
@@ -612,7 +626,7 @@ public class MyGame : MonoBehaviour
 		int index;
 
 		//カメラを絶対的位置で登録
-		for(index = 0; index < m_numOfAbsolutePosOfCameraBeforeStartingBattle; index++)
+		for (index = 0; index < m_numOfAbsolutePosOfCameraBeforeStartingBattle; index++)
 		{
 			//カメラ初期位置とカメラ初期方向の設定
 			m_cameraPosForSpecifying[index] = m_firstCameraPosBeforeStartingBattle;
@@ -625,7 +639,7 @@ public class MyGame : MonoBehaviour
 			//プレイヤーの背後の位置からカメラ位置を生成
 			m_cameraPosForSpecifying[index] =
 				(OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch)
-				- (OperatingPlayer.transform.forward * OperatingCamera.DistanceToPlayer)) 
+				- (OperatingPlayer.transform.forward * OperatingCamera.DistanceToPlayer))
 				+ m_cameraPosRelativeToPlayerBeforeStartingBattle[index - m_numOfAbsolutePosOfCameraBeforeStartingBattle];
 
 			//プレイヤーを見る方向を生成
@@ -692,7 +706,7 @@ public class MyGame : MonoBehaviour
 		MainUi.SetRank(Players.HeightRanks, MyNetPlayerSetting.NetPlayerSettings.IndexOf(OperatingNetPlayerSetting));
 
 		//Yボタンを押した
-		if(m_isYButtonDown)
+		if (m_isYButtonDown)
 		{
 			m_isDisplayRank = !m_isDisplayRank;
 
@@ -728,14 +742,23 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
+			//プレイヤーとUIとフラグ
 			OperatingPlayer.MakeItBattleEndState();
 			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
 			OperatingNetPlayerSetting.NameplateDisplay();
 			MainUi.EndBattle();
+			m_isFadeOutAfterBattleEnds = false;
+		}
+
+		//フェードアウトしていないandフェードアウト時間
+		if (!m_isFadeOutAfterBattleEnds && m_countTheTimeOfTheState >= m_timeWhenTheBattleEndsAndStops)
+		{
+			m_isFadeOutAfterBattleEnds = true;
+			MainUi.StartFadeOut();
 		}
 
 		//バトル終了時間が過ぎた
-		if (m_countTheTimeOfTheState >= m_timeWhenTheBattleEndsAndStops)
+		if (m_countTheTimeOfTheState >= m_timeAfterCombatEnd)
 		{
 			m_state = GameStatus.Result;
 		}

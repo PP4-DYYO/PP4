@@ -504,7 +504,7 @@ public class MyMainUi : MonoBehaviour
 	/// <summary>
 	/// フェードアウトを開始
 	/// </summary>
-	void StartFadeOut()
+	public void StartFadeOut()
 	{
 		m_isFadeOutRunning = true;
 		m_isFadeInRunning = false;

@@ -175,6 +175,11 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Vector3 m_cameraDirectionWhenWaitingForPeople;
+
+	/// <summary>
+	/// プレイヤー人数
+	/// </summary>
+	public const int NUM_OF_PLAYERS = 1;
 	#endregion
 
 	#region 人が集まった状態
@@ -267,7 +272,7 @@ public class MyGame : MonoBehaviour
 	Vector3[] m_cameraDirectionForSpecifying;
 	#endregion
 
-#region バトル状態
+	#region バトル状態
 	[Header("バトル状態")]
 	/// <summary>
 	/// バトル時間
@@ -302,9 +307,9 @@ public class MyGame : MonoBehaviour
 	bool m_isDisplayRank;
 
 	/// <summary>
-	/// プレイヤー人数
+	/// 操作プレイヤーが落下フラグ
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 2;
+	bool m_isOperatingPlayerFall;
 	#endregion
 
 	/// <summary>
@@ -693,6 +698,22 @@ public class MyGame : MonoBehaviour
 
 			//順位の表示
 			MainUi.DisplayRank(m_isDisplayRank);
+		}
+
+		//被水している
+		if (OperatingPlayer.GetIsWearWater())
+			MainUi.WearWater();
+
+		//落下状態が変わった
+		if (m_isOperatingPlayerFall != OperatingPlayer.IsFalling)
+		{
+			m_isOperatingPlayerFall = OperatingPlayer.IsFalling;
+
+			//落下フラグ
+			if (m_isOperatingPlayerFall)
+				MainUi.StartOfFall();
+			else
+				MainUi.StopOfFall();
 		}
 	}
 

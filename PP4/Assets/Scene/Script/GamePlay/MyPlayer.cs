@@ -135,6 +135,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Transform BoardDirection;
+
+	/// <summary>
+	/// ジェットウォータ
+	/// </summary>
+	[SerializeField]
+	MyJetWater JetWater;
 	#endregion
 
 	#region トランスフォーム
@@ -183,6 +189,15 @@ public class MyPlayer : MonoBehaviour
 	/// 状態
 	/// </summary>
 	PlayerBehaviorStatus m_state;
+	public PlayerBehaviorStatus State
+	{
+		get { return m_state; }
+	}
+
+	/// <summary>
+	/// 水を被っている
+	/// </summary>
+	bool m_isWearWater;
 	#endregion
 
 	#region 移動速度
@@ -234,6 +249,10 @@ public class MyPlayer : MonoBehaviour
 	/// 落下している
 	/// </summary>
 	bool m_isFalling;
+	public bool IsFalling
+	{
+		get { return m_isFalling; }
+	}
 	#endregion
 
 	#region 浮遊関係
@@ -269,6 +288,12 @@ public class MyPlayer : MonoBehaviour
 	float m_jetRecoveryRate;
 
 	/// <summary>
+	/// 回復操作の回数
+	/// </summary>
+	[SerializeField]
+	int m_numOfRecoveryOperations;
+
+	/// <summary>
 	/// 足場Ray
 	/// </summary>
 	Ray m_scaffoldRay = new Ray();
@@ -282,6 +307,11 @@ public class MyPlayer : MonoBehaviour
 	/// ジェット使用時間を数える
 	/// </summary>
 	float m_countJetUseTime;
+
+	/// <summary>
+	/// 回復操作の回数を数える
+	/// </summary>
+	int m_countNumOfRecoveryOperations;
 	#endregion
 
 	#region サポート
@@ -308,6 +338,11 @@ public class MyPlayer : MonoBehaviour
 	/// Rボタンを押しっぱなし
 	/// </summary>
 	bool m_isKeepPressingRButton;
+
+	/// <summary>
+	/// Rボタンを押した
+	/// </summary>
+	bool m_isPushedRButton;
 	#endregion
 
 	#region 作業用
@@ -353,6 +388,7 @@ public class MyPlayer : MonoBehaviour
 	{
 		m_isKeepPressingLButton = Input.GetButton("LButton");
 		m_isKeepPressingRButton = Input.GetButton("RButton");
+		m_isPushedRButton = Input.GetButtonDown("RButton");
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -370,8 +406,15 @@ public class MyPlayer : MonoBehaviour
 		else
 			MovementOnTheGround();
 
+		//落下中
+		if (m_isFalling)
+			Recovery();
+
 		//アニメーション処理
 		AnimProcess();
+
+		//入力のリセット
+		ResetInput();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -607,6 +650,26 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 回復
+	/// </summary>
+	void Recovery()
+	{
+		//Rボタンを押すとと回復操作
+		if(m_isPushedRButton)
+			m_countNumOfRecoveryOperations++;
+
+		//回復操作が指定数に達した
+		if(m_countNumOfRecoveryOperations >= m_numOfRecoveryOperations)
+		{
+			m_isFalling = false;
+			m_countNumOfRecoveryOperations = 0;
+			m_countJetUseTime = 0;
+			Rb.velocity = Vector3.zero;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// アニメーション処理
 	/// </summary>
 	void AnimProcess()
@@ -658,6 +721,15 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 入力のリセット
+	/// </summary>
+	void ResetInput()
+	{
+		m_isPushedRButton = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 重なり続ける判定
 	/// </summary>
 	/// <param name="other">重なったもの</param>
@@ -675,6 +747,8 @@ public class MyPlayer : MonoBehaviour
 
 			//ジェットウォータに当たる分だけ水分回復
 			m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
+
+			m_isWearWater = true;
 		}
 	}
 
@@ -721,6 +795,7 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="state">状態</param>
 	public void SetAnimation(PlayerBehaviorStatus state)
 	{
+		m_state = state;
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
 	}
 
@@ -746,6 +821,19 @@ public class MyPlayer : MonoBehaviour
 	{
 		enabled = true;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+		//落下状態の初期化
+		m_countNumOfRecoveryOperations = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットウォータの起動
+	/// </summary>
+	/// <param name="isLaunch">起動するか</param>
+	public void LaunchJetWater(bool isLaunch)
+	{
+		JetWater.JetFire(isLaunch);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -756,6 +844,23 @@ public class MyPlayer : MonoBehaviour
 	public float GetPercentageOfRemainingWater()
 	{
 		return WaterGauge.localScale.x;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水を被るフラグを取得
+	/// </summary>
+	/// <returns>水を被ったか</returns>
+	public bool GetIsWearWater()
+	{
+		//水を被った
+		if(m_isWearWater)
+		{
+			m_isWearWater = false;
+			return true;
+		}
+
+		return false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

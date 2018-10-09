@@ -106,6 +106,18 @@ public class MyMainUi : MonoBehaviour
 	Text[] PlayerNamesOnTheMap;
 
 	/// <summary>
+	/// 被水
+	/// </summary>
+	[SerializeField]
+	MyImageAnimation[] WearWaters;
+
+	/// <summary>
+	/// 落下
+	/// </summary>
+	[SerializeField]
+	GameObject Falling;
+
+	/// <summary>
 	/// バトル終了
 	/// </summary>
 	[SerializeField]
@@ -192,6 +204,18 @@ public class MyMainUi : MonoBehaviour
 	Vector3 m_posToAvoidOnMapWhenRankingGoesUp;
 
 	/// <summary>
+	/// 被水する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToWearWater;
+
+	/// <summary>
+	/// 被水する時のα値
+	/// </summary>
+	[SerializeField]
+	float m_alphaValueWhenWearingWater;
+
+	/// <summary>
 	/// １分当たりの秒
 	/// </summary>
 	const int SECONDS_PER_MINUTE = 60;
@@ -225,6 +249,16 @@ public class MyMainUi : MonoBehaviour
 	/// 高さの順位たち
 	/// </summary>
 	int[] m_heightRanks;
+
+	/// <summary>
+	/// 被水する時間を数える
+	/// </summary>
+	float m_countTimeToWearWater;
+
+	/// <summary>
+	/// 被水するフラグ
+	/// </summary>
+	bool m_isWearWater;
 	#endregion
 
 	/// <summary>
@@ -247,6 +281,11 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	int m_workInt;
 
+	/// <summary>
+	/// 作業用のColor
+	/// </summary>
+	Color m_workColor;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -264,6 +303,10 @@ public class MyMainUi : MonoBehaviour
 		//プレイヤーの順位を上げる
 		if (m_isRankingOfOperationPlayerHasRisen)
 			RaisePlayerRankProcess();
+
+		//被水する
+		if (m_isWearWater)
+			WearWaterProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -345,6 +388,36 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 被水する処理
+	/// </summary>
+	void WearWaterProcess()
+	{
+		m_countTimeToWearWater += Time.deltaTime;
+
+		//全ての被水
+		foreach (var wearWater in WearWaters)
+		{
+			//α値の設定
+			m_workColor = wearWater.TargetImage.color;
+			m_workColor.a = m_alphaValueWhenWearingWater - (m_alphaValueWhenWearingWater * (m_countTimeToWearWater / m_timeToWearWater));
+			wearWater.TargetImage.color = m_workColor;
+		}
+
+		//終了
+		if(m_countTimeToWearWater >= m_timeToWearWater)
+		{
+			//全ての被水
+			foreach (var wearWater in WearWaters)
+			{
+				//アニメーションの停止
+				wearWater.StopAnimation();
+			}
+			m_isWearWater = false;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 人材募集をする
 	/// </summary>
 	public void WantedRecruitment()
@@ -357,6 +430,7 @@ public class MyMainUi : MonoBehaviour
 		BattleScreen.SetActive(false);
 		ReadyMessage.StopAnimation();
 		GoMessage.StopAnimation();
+		Falling.SetActive(false);
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
 		Win.SetActive(false);
@@ -549,6 +623,46 @@ public class MyMainUi : MonoBehaviour
 	public void DisplayRank(bool isDisplay = true)
 	{
 		Rank.SetActive(isDisplay);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水を被る
+	/// </summary>
+	public void WearWater()
+	{
+		//全ての被水
+		foreach(var wearWater in WearWaters)
+		{
+			//アニメーションの開始
+			wearWater.StartAnimation(false);
+
+			//α値の設定
+			m_workColor = wearWater.TargetImage.color;
+			m_workColor.a = m_alphaValueWhenWearingWater;
+			wearWater.TargetImage.color = m_workColor;
+		}
+
+		m_countTimeToWearWater = 0;
+		m_isWearWater = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下の開始
+	/// </summary>
+	public void StartOfFall()
+	{
+		Falling.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下の停止
+	/// </summary>
+	public void StopOfFall()
+	{
+		Falling.SetActive(false);
 	}
 
 	//----------------------------------------------------------------------------------------------------

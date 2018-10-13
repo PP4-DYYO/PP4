@@ -10,6 +10,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//----------------------------------------------------------------------------------------------------
+//Enum・Struct
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// 公開する戦績
+/// </summary>
+public struct PublishRecord
+{
+	/// <summary>
+	/// チーム
+	/// </summary>
+	public Team team;
+
+	/// <summary>
+	/// ランク
+	/// </summary>
+	public int rank;
+
+	/// <summary>
+	/// プレイヤー名
+	/// </summary>
+	public string playerName;
+
+	/// <summary>
+	/// 高度
+	/// </summary>
+	public int height;
+
+	/// <summary>
+	/// コインの数
+	/// </summary>
+	public int numOfCoins;
+
+	/// <summary>
+	/// スコア
+	/// </summary>
+	public int score;
+}
+
+//----------------------------------------------------------------------------------------------------
+//クラス
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
 /// <summary>
 /// メインのUI
 /// </summary>
@@ -136,6 +182,24 @@ public class MyMainUi : MonoBehaviour
 	GameObject BattleEnd;
 
 	/// <summary>
+	/// 勝敗
+	/// </summary>
+	[SerializeField]
+	GameObject WinningOrLosing;
+
+	/// <summary>
+	/// 勝ち
+	/// </summary>
+	[SerializeField]
+	Image Win;
+
+	/// <summary>
+	/// 負け
+	/// </summary>
+	[SerializeField]
+	Image Defeat;
+
+	/// <summary>
 	/// 結果画面
 	/// </summary>
 	[SerializeField]
@@ -154,16 +218,82 @@ public class MyMainUi : MonoBehaviour
 	Text ScoreOfTeam2;
 
 	/// <summary>
-	/// 勝ち
+	/// 戦績
 	/// </summary>
 	[SerializeField]
-	GameObject Win;
+	GameObject BattleRecords;
 
 	/// <summary>
-	/// 負け
+	/// 戦績のランク達
 	/// </summary>
 	[SerializeField]
-	GameObject Defeat;
+	Text[] RanksOfBattleRecord;
+
+	/// <summary>
+	/// 戦績のプレイヤー名たち
+	/// </summary>
+	[SerializeField]
+	Text[] PlayerNamesOfBattleRecord;
+
+	/// <summary>
+	/// 戦績の高度たち
+	/// </summary>
+	[SerializeField]
+	Text[] HeightsOfBattleRecord;
+
+	/// <summary>
+	/// 戦績のコイン枚数たち
+	/// </summary>
+	[SerializeField]
+	Text[] NumOfCoinsOfBattleRecord;
+
+	/// <summary>
+	/// 戦績のスコア達
+	/// </summary>
+	[SerializeField]
+	Text[] ScoresOfBattleRecord;
+
+	/// <summary>
+	/// 自分の戦績の矢印
+	/// </summary>
+	[SerializeField]
+	Image[] ArrowOfYourOwnAchievement;
+
+	/// <summary>
+	/// 経験値
+	/// </summary>
+	[SerializeField]
+	GameObject Exp;
+
+	/// <summary>
+	/// 経験値の割合
+	/// </summary>
+	[SerializeField]
+	Image PercentageOfExp;
+
+	/// <summary>
+	/// 経験値数
+	/// </summary>
+	[SerializeField]
+	Text ExpNum;
+
+	/// <summary>
+	/// 再戦
+	/// </summary>
+	[SerializeField]
+	GameObject Rematch;
+
+	/// <summary>
+	/// バトルを続ける
+	/// </summary>
+	[SerializeField]
+	Button ContinueBattle;
+
+	/// <summary>
+	/// バトルをやめる
+	/// </summary>
+	[SerializeField]
+	Button LeaveBattle;
 	#endregion
 
 	#region フェードインアウト
@@ -295,30 +425,76 @@ public class MyMainUi : MonoBehaviour
 	bool m_isCountdownOfBattleFinish;
 	#endregion
 
+	#region リザルト画面
+	[Header("リザルト画面")]
 	/// <summary>
-	/// チーム１のスコア
+	/// 勝敗の移動時間
 	/// </summary>
-	float m_team1Score;
+	[SerializeField]
+	float m_travelTimeOfWinOrLose;
 
 	/// <summary>
-	/// チーム２のスコア
+	/// 勝敗の初期位置
 	/// </summary>
-	float m_team2Score;
+	[SerializeField]
+	Vector3 m_initPosOfWinOrLose;
 
+	/// <summary>
+	/// 勝敗の移動量
+	/// </summary>
+	[SerializeField]
+	Vector3 m_movementAmountOfWinOrLose;
+
+	/// <summary>
+	/// 経験値の区切り
+	/// </summary>
+	[SerializeField]
+	string m_expBreak;
+
+	/// <summary>
+	/// 選択の色
+	/// </summary>
+	[SerializeField]
+	Color m_selectColor;
+
+	/// <summary>
+	/// 選択していない色
+	/// </summary>
+	[SerializeField]
+	Color m_nonSelectColor;
+
+	/// <summary>
+	/// 勝敗が移動しているフラグ
+	/// </summary>
+	bool m_isWinningOrLosingMoves;
+
+	/// <summary>
+	/// 勝敗の移動時間を数える
+	/// </summary>
+	float m_countTravelTimeOfWinOrLose;
+	#endregion
+	
 	/// <summary>
 	/// 対象の番号
 	/// </summary>
 	int m_targetNum;
 
+	#region 作業用
 	/// <summary>
 	/// 作業用のInt
 	/// </summary>
 	int m_workInt;
 
 	/// <summary>
+	/// 作業用のFloat
+	/// </summary>
+	float m_workFloat;
+
+	/// <summary>
 	/// 作業用のColor
 	/// </summary>
 	Color m_workColor;
+	#endregion
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -341,6 +517,10 @@ public class MyMainUi : MonoBehaviour
 		//被水する
 		if (m_isWearWater)
 			WearWaterProcess();
+
+		//勝敗の移動
+		if (m_isWinningOrLosingMoves)
+			MovementOfWinOrLosingProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -388,7 +568,7 @@ public class MyMainUi : MonoBehaviour
 		m_countRankChangeTime += Time.deltaTime;
 
 		//順位が下がるプレイヤー番号
-		for(var i = m_operatingPlayerRank; i < m_operatingPlayerRankPrev; i++)
+		for (var i = m_operatingPlayerRank; i < m_operatingPlayerRankPrev; i++)
 		{
 			//時間により下に移動
 			ParentsOfRank[i].GetChild(0).localPosition =
@@ -413,7 +593,7 @@ public class MyMainUi : MonoBehaviour
 		}
 
 		//順位を上げる処理の終了
-		if(m_countRankChangeTime >= m_rankChangeTime)
+		if (m_countRankChangeTime >= m_rankChangeTime)
 		{
 			m_isRankingOfOperationPlayerHasRisen = false;
 			m_operatingPlayerRankPrev = m_operatingPlayerRank;
@@ -438,7 +618,7 @@ public class MyMainUi : MonoBehaviour
 		}
 
 		//終了
-		if(m_countTimeToWearWater >= m_timeToWearWater)
+		if (m_countTimeToWearWater >= m_timeToWearWater)
 		{
 			//全ての被水
 			foreach (var wearWater in WearWaters)
@@ -447,6 +627,26 @@ public class MyMainUi : MonoBehaviour
 				wearWater.StopAnimation();
 			}
 			m_isWearWater = false;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 勝敗の移動処理
+	/// </summary>
+	void MovementOfWinOrLosingProcess()
+	{
+		m_countTravelTimeOfWinOrLose += Time.deltaTime;
+
+		//時間によって移動する
+		WinningOrLosing.transform.localPosition =
+			m_initPosOfWinOrLose + (m_movementAmountOfWinOrLose * (m_countTravelTimeOfWinOrLose / m_travelTimeOfWinOrLose));
+
+		//終了
+		if(m_countTravelTimeOfWinOrLose >= m_travelTimeOfWinOrLose)
+		{
+			WinningOrLosing.transform.localPosition = m_initPosOfWinOrLose + m_movementAmountOfWinOrLose;
+			m_isWinningOrLosingMoves = false;
 		}
 	}
 
@@ -467,8 +667,8 @@ public class MyMainUi : MonoBehaviour
 		Falling.SetActive(false);
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
-		Win.SetActive(false);
-		Defeat.SetActive(false);
+		Win.enabled = false;
+		Defeat.enabled = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -568,7 +768,7 @@ public class MyMainUi : MonoBehaviour
 		}
 
 		//通知していないandカウントダウンの時間になった
-		if(!m_isCountdownOfBattleFinish && (time <= m_countdownTimeBeforeBattleEnd))
+		if (!m_isCountdownOfBattleFinish && (time <= m_countdownTimeBeforeBattleEnd))
 		{
 			//カウントダウン開始
 			m_isCountdownOfBattleFinish = true;
@@ -685,7 +885,7 @@ public class MyMainUi : MonoBehaviour
 	public void WearWater()
 	{
 		//全ての被水
-		foreach(var wearWater in WearWaters)
+		foreach (var wearWater in WearWaters)
 		{
 			//アニメーションの開始
 			wearWater.StartAnimation(false);
@@ -729,63 +929,146 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// チーム１スコアの計算
+	/// スコアの代入
 	/// </summary>
-	/// <param name="scores">得点たち</param>
-	public void CalculateScoreOfTeam1(float[] scores)
+	/// <param name="score1">スコア１</param>
+	/// <param name="score2">スコア２</param>
+	public void ScoreAssignment(int score1, int score2)
 	{
-		m_team1Score = 0;
-
-		foreach (var score in scores)
-		{
-			m_team1Score += score;
-		}
-
-		ScoreOfTeam1.text = m_team1Score.ToString("F2") + StageInfo.UNIT_SYMBOL;
+		ScoreOfTeam1.text = score1.ToString();
+		ScoreOfTeam2.text = score2.ToString();
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// チーム２スコアの計算
+	/// 結果状態にする
 	/// </summary>
-	/// <param name="scores">得点たち</param>
-	public void CalculateScoreOfTeam2(float[] scores)
+	public void MakeItResultState()
 	{
-		m_team2Score = 0;
+		//不要オブジェクトの非表示
+		BattleScreen.SetActive(false);
+		BattleEnd.SetActive(false);
 
-		foreach (var score in scores)
-		{
-			m_team2Score += score;
-		}
+		StartFadeIn();
+	}
+	
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 勝敗の表示
+	/// </summary>
+	/// <param name="isWin">勝った</param>
+	public void IndicationOfVictoryOrDefeat(bool isWin)
+	{
+		//表示
+		WinningOrLosing.SetActive(true);
+		Win.enabled = isWin;
+		Defeat.enabled = !isWin;
 
-		ScoreOfTeam2.text = m_team2Score.ToString("F2") + StageInfo.UNIT_SYMBOL;
+		//初期位置
+		WinningOrLosing.transform.localPosition = m_initPosOfWinOrLose;
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 結果
+	/// 結果の表示
 	/// </summary>
-	public void Result()
+	/// <param name="publishRecords">公開する戦績たち</param>
+	/// <param name="myRecordNum">自分の戦績番号</param>
+	public void DisplayResults(PublishRecord[] publishRecords, int myRecordNum)
 	{
 		ResultScreen.SetActive(true);
+		BattleRecords.SetActive(true);
+		Exp.SetActive(false);
+		Rematch.SetActive(false);
 
-		//操作キャラのチーム
-		switch (Game.OperationgNetPlayerSettingScript.TeamNum)
+		var recordNum = 0;
+		var team1Num = 0;
+		var team2Num = MyGame.NUM_OF_TEAM_MEMBERS;
+
+		//全ての戦績
+		for (var i = 0; i < publishRecords.Length; i++)
 		{
-			case Team.Team1:
-				//勝敗
-				if (m_team1Score >= m_team2Score)
-					Win.SetActive(true);
-				else
-					Defeat.SetActive(true);
-				break;
-			case Team.Team2:
-				//勝敗
-				if (m_team1Score <= m_team2Score)
-					Win.SetActive(true);
-				else
-					Defeat.SetActive(true);
-				break;
+			//戦績番号の割り出し
+			recordNum = (publishRecords[i].team == Team.Team1) ? team1Num++ : team2Num++;
+
+			//戦績の代入
+			RanksOfBattleRecord[recordNum].text = publishRecords[i].rank.ToString();
+			PlayerNamesOfBattleRecord[recordNum].text = publishRecords[i].playerName;
+			HeightsOfBattleRecord[recordNum].text = publishRecords[i].height.ToString("N0");
+			NumOfCoinsOfBattleRecord[recordNum].text = publishRecords[i].numOfCoins.ToString();
+			ScoresOfBattleRecord[recordNum].text = publishRecords[i].score.ToString("N0");
+
+			//自分のレコード矢印
+			ArrowOfYourOwnAchievement[recordNum].enabled = (recordNum == myRecordNum);
 		}
+
+		m_isWinningOrLosingMoves = true;
+		m_countTravelTimeOfWinOrLose = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 経験値の表示
+	/// </summary>
+	/// <param name="originalExp">元の経験値数</param>
+	/// <param name="increasingExp">増える経験値数</param>
+	/// <param name="targetExp">目標経験値たち</param>
+	public void ShowExp(int originalExp, int increasingExp, int[] targetExp)
+	{
+		Exp.SetActive(true);
+
+		//経験値の合算
+		m_workInt = originalExp + increasingExp;
+
+		//経験値の反映
+		PercentageOfExp.fillAmount = (float)m_workInt / targetExp[targetExp.Length - 1];
+		ExpNum.text = m_workInt + m_expBreak + targetExp[targetExp.Length - 1];
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 再戦を表示
+	/// </summary>
+	public void ShowRematch()
+	{
+		//不要オブジェクトの非表示
+		WinningOrLosing.SetActive(false);
+		BattleRecords.SetActive(false);
+		foreach(var arrow in ArrowOfYourOwnAchievement)
+		{
+			arrow.enabled = false;
+		}
+		Exp.SetActive(false);
+		
+		Rematch.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 再戦の選択
+	/// </summary>
+	/// <param name="isContinue">続けるか</param>
+	public void SelectionOfRematch(bool isContinue)
+	{
+		ContinueBattle.image.color = isContinue ? m_selectColor : m_nonSelectColor;
+		LeaveBattle.image.color = !isContinue ? m_selectColor : m_nonSelectColor;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルを続けるをクリック
+	/// </summary>
+	public void OnClickContinueBattle()
+	{
+		Game.ContinueBattle();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルを辞めるをクリック
+	/// </summary>
+	public void OnClickLeaveBattle()
+	{
+		Game.LeaveBattle();
 	}
 }

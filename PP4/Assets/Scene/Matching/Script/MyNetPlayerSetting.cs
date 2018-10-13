@@ -98,12 +98,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		get { return m_teamOrder; }
 		set { m_teamOrder = value; }
 	}
-
-	/// <summary>
-	/// プレイヤー番号
-	/// </summary>
-	int m_playerNum;
-
+	
 	/// <summary>
 	/// プレイヤー名
 	/// </summary>
@@ -112,6 +107,50 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public string PlayerName
 	{
 		get { return m_playerName; }
+	}
+
+	/// <summary>
+	/// ランク
+	/// </summary>
+	[SyncVar(hook = "SyncRank")]
+	int m_rank;
+	public int Rank
+	{
+		get { return m_rank; }
+		set { m_rank = value; }
+	}
+
+	/// <summary>
+	/// 最終高度
+	/// </summary>
+	[SyncVar(hook = "SyncFinalAltitude")]
+	float m_finalAltitude;
+	public float FinalAltitude
+	{
+		get { return m_finalAltitude; }
+		set { m_finalAltitude = value; }
+	}
+
+	/// <summary>
+	/// コイン枚数
+	/// </summary>
+	[SyncVar(hook = "SyncNumOfCoins")]
+	int m_numOfCoins;
+	public int NumOfCoins
+	{
+		get { return m_numOfCoins; }
+		set { m_numOfCoins = value; }
+	}
+
+	/// <summary>
+	/// スコア
+	/// </summary>
+	[SyncVar(hook = "SyncScore")]
+	int m_score;
+	public int Score
+	{
+		get { return m_score; }
+		set { m_score = value; }
 	}
 	#endregion
 
@@ -370,10 +409,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			//状態によって、ジェットウォータの起動と停止
 			Player.LaunchJetWater(
 				!(m_state == PlayerBehaviorStatus.Idle || m_state == PlayerBehaviorStatus.Falling || m_state == PlayerBehaviorStatus.Stand
-				|| m_state == PlayerBehaviorStatus.HoldBoardInHand || m_state == PlayerBehaviorStatus.HoldBoardInHand2));
+				|| m_state == PlayerBehaviorStatus.HoldBoardInHand || m_state == PlayerBehaviorStatus.HoldBoardInHand2
+				|| m_state == PlayerBehaviorStatus.Result
+				|| m_state == PlayerBehaviorStatus.SuccessfulLanding || m_state == PlayerBehaviorStatus.LandingFailed
+				|| m_state == PlayerBehaviorStatus.Win || m_state == PlayerBehaviorStatus.Defeat));
 
 			m_statePrev = m_state;
-		}
+		}	
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -393,8 +435,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <returns>更新されたプレイヤー番号</returns>
 	public int GetPlayerNum()
 	{
-		m_playerNum = m_netPlayerSettings.IndexOf(this);
-		return m_playerNum;
+		return m_netPlayerSettings.IndexOf(this);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -416,7 +457,132 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		}
 
 		//プレイヤー人数が揃うか
-		return (m_netPlayerSettings.Count >= MyGame.NUM_OF_PLAYERS);
+		return (m_netPlayerSettings.Count >= Game.NumOfPlayers);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ランクの通知
+	/// </summary>
+	/// <param name="rank">ランク</param>
+	[Command]
+	public void CmdRank(int rank)
+	{
+		m_rank = rank;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ランクの同期
+	/// </summary>
+	/// <param name="rank">ランク</param>
+	[Client]
+	public void SyncRank(int rank)
+	{
+		m_rank = rank;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 戦績にプレイヤー情報を入れる
+	/// </summary>
+	/// <param name="battleRecords">戦績たち</param>
+	public static void PutPlayerInfoInBattleRecord(ref PublishRecord[] battleRecords)
+	{
+		//全ての戦績
+		for (var i = 0; i < battleRecords.Length; i++)
+		{
+			//プレイヤー情報の代入
+			battleRecords[i].team = m_netPlayerSettings[i].TeamNum;
+			battleRecords[i].rank = m_netPlayerSettings[i].Rank;
+			battleRecords[i].playerName = m_netPlayerSettings[i].m_playerName;
+			battleRecords[i].height = 0;
+			battleRecords[i].numOfCoins = 0;
+			battleRecords[i].score = 0;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 最終高度の通知
+	/// </summary>
+	/// <param name="finalAltitude">最終高度</param>
+	[Command]
+	public void CmdFinalAltitude(float finalAltitude)
+	{
+		m_finalAltitude = finalAltitude;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 最終高度の同期
+	/// </summary>
+	/// <param name="finalAltitude">最終高度</param>
+	[Client]
+	public void SyncFinalAltitude(float finalAltitude)
+	{
+		m_finalAltitude = finalAltitude;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// コイン枚数の通知
+	/// </summary>
+	/// <param name="numOfCoins">コイン枚数</param>
+	[Command]
+	public void CmdNumOfCoins(int numOfCoins)
+	{
+		m_numOfCoins = numOfCoins;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// コイン枚数の同期
+	/// </summary>
+	/// <param name="numOfCoins">コイン枚数</param>
+	[Client]
+	public void SyncNumOfCoins(int numOfCoins)
+	{
+		m_numOfCoins = numOfCoins;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// スコアの通知
+	/// </summary>
+	/// <param name="score">スコア</param>
+	[Command]
+	public void CmdScore(int score)
+	{
+		m_score = score;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// スコアの同期
+	/// </summary>
+	/// <param name="score">スコア</param>
+	[Client]
+	public void SyncScore(int score)
+	{
+		m_score = score;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 戦績にプレイヤー成果を入れる
+	/// </summary>
+	/// <param name="battleRecords">戦績たち</param>
+	public static void PutPlayerAchievementsInBattleRecord(ref PublishRecord[] battleRecords)
+	{
+		//全ての戦績
+		for (var i = 0; i < battleRecords.Length; i++)
+		{
+			//プレイヤー成果の代入
+			battleRecords[i].height = (int)m_netPlayerSettings[i].FinalAltitude;
+			battleRecords[i].numOfCoins = m_netPlayerSettings[i].NumOfCoins;
+			battleRecords[i].score = m_netPlayerSettings[i].Score;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -25,6 +25,10 @@ enum CameraMode
 	/// </summary>
 	Pursuit,
 	/// <summary>
+	/// 操作可能な追跡
+	/// </summary>
+	OperablePursuit,
+	/// <summary>
 	/// 固定
 	/// </summary>
 	Fixed,
@@ -235,6 +239,9 @@ public class MyCamera : MonoBehaviour
 			case CameraMode.Pursuit:
 				PursuitProcess();
 				break;
+			case CameraMode.OperablePursuit:
+				OperablePursuitProcess();
+				break;
 			case CameraMode.Fixed:
 				FixedProcess();
 				break;
@@ -246,35 +253,12 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 追跡処理
+	/// 追跡カメラ処理
 	/// </summary>
 	void PursuitProcess()
 	{
-		//カメラの位置リセット
-		if (Input.GetKey(KeyCode.Joystick1Button9))
-			SetPosition(-m_target.transform.forward + Vector3.up * m_playerHeight);
-
-		//カメラの回転量
-		m_rotX = Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity;
-		m_rotY = Input.GetAxis("Mouse Y") * Time.deltaTime * m_rotationSensitivity;
-
 		//プレイヤーの中心位置
 		m_playerCenterPos = m_target.transform.position + Vector3.up * m_heightToWatch;
-
-		//Y回転
-		transform.RotateAround(m_playerCenterPos, Vector3.up, m_rotX);
-
-		//X回転
-		//カメラがプレイヤーの真上や真下にあるときにそれ以上回転させないようにする
-		if (transform.forward.y > m_rotationalLimitingRatio && m_rotY > 0)
-		{
-			m_rotY = 0;
-		}
-		if (transform.forward.y < -m_rotationalLimitingRatio && m_rotY < 0)
-		{
-			m_rotY = 0;
-		}
-		transform.RotateAround(m_playerCenterPos, transform.right, -m_rotY);
 
 		// カメラとプレイヤーとの間の距離を調整
 		transform.position = m_playerCenterPos - transform.forward * m_distanceToPlayer;
@@ -303,6 +287,42 @@ public class MyCamera : MonoBehaviour
 			if (!m_hit.collider.isTrigger)
 				transform.position = m_hit.point;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 操作可能な追跡処理
+	/// </summary>
+	void OperablePursuitProcess()
+	{
+		//カメラの位置リセット
+		if (Input.GetKey(KeyCode.Joystick1Button9))
+			SetPosition(-m_target.transform.forward + Vector3.up * m_playerHeight);
+
+		//カメラの回転量
+		m_rotX = Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity;
+		m_rotY = Input.GetAxis("Mouse Y") * Time.deltaTime * m_rotationSensitivity;
+
+		//プレイヤーの中心位置
+		m_playerCenterPos = m_target.transform.position + Vector3.up * m_heightToWatch;
+
+		//Y回転
+		transform.RotateAround(m_playerCenterPos, Vector3.up, m_rotX);
+
+		//X回転
+		//カメラがプレイヤーの真上や真下にあるときにそれ以上回転させないようにする
+		if (transform.forward.y > m_rotationalLimitingRatio && m_rotY > 0)
+		{
+			m_rotY = 0;
+		}
+		if (transform.forward.y < -m_rotationalLimitingRatio && m_rotY < 0)
+		{
+			m_rotY = 0;
+		}
+		transform.RotateAround(m_playerCenterPos, transform.right, -m_rotY);
+
+		//追跡処理
+		PursuitProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -357,14 +377,33 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 操作可能な追跡カメラになる
+	/// </summary>
+	/// <param name="target">ターゲット</param>
+	public void BecomeOperablePursuitCamera(MonoBehaviour target = null)
+	{
+		m_mode = CameraMode.OperablePursuit;
+
+		if (target)
+			m_target = target;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 追跡カメラになる
 	/// </summary>
-	public void BecomePursuitCamera(MonoBehaviour target = null)
+	/// <param name="relativePos">相対的位置</param>
+	/// <param name="target">ターゲット</param>
+	public void BecomePursuitCamera(Vector3? relativePos = null, MonoBehaviour target = null)
 	{
 		m_mode = CameraMode.Pursuit;
 
 		if (target)
 			m_target = target;
+
+		//位置の指定
+		if (relativePos != null)
+			SetPosition((Vector3)relativePos);
 	}
 
 	//----------------------------------------------------------------------------------------------------

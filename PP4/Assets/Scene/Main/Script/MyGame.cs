@@ -184,7 +184,17 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// プレイヤー人数
 	/// </summary>
-	public const int NUM_OF_PLAYERS = 1;
+	[SerializeField]
+	int m_numOfPlayers;
+	public int NumOfPlayers
+	{
+		get { return m_numOfPlayers; }
+	}
+
+	/// <summary>
+	/// チームの人数
+	/// </summary>
+	public const int NUM_OF_TEAM_MEMBERS = 4;
 	#endregion
 
 	#region 人が集まった状態
@@ -326,31 +336,124 @@ public class MyGame : MonoBehaviour
 	bool m_isFadeOutAfterBattleEnds;
 	#endregion
 
+	#region 結果状態
+	[Header("結果状態")]
+	/// <summary>
+	/// 結果表示し始める時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToStartDisplayingResults;
+
+	/// <summary>
+	/// 経験値表示し始める時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToStartDisplayingExp;
+
+	/// <summary>
+	/// 再戦表示し始める時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToStartDisplayingRematch;
+
+	/// <summary>
+	/// 結果状態のプレイヤーの初期高さ
+	/// </summary>
+	[SerializeField]
+	float m_playerInitialHeightOfResultState;
+
+	/// <summary>
+	/// 結果表示中のプレイヤーから見たカメラ相対的位置たち
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_relativeCameraPosSeenFromDisplayingResult;
+
+	/// <summary>
+	/// 結果表示中のカメラ移動時間たち
+	/// </summary>
+	[SerializeField]
+	float[] m_cameraMovementTimeDisplayingResults;
+
+	/// <summary>
+	/// 高度に対するコイン倍率
+	/// </summary>
+	[SerializeField]
+	float m_coinMagnificationAgainstHeight;
+
+	/// <summary>
+	/// 目標経験値
+	/// </summary>
+	[SerializeField]
+	int[] m_targetExp;
+
+	/// <summary>
+	/// 参加した経験値
+	/// </summary>
+	[SerializeField]
+	int m_expParticipated;
+
+	/// <summary>
+	/// 経験値当たりの高さ
+	/// </summary>
+	[SerializeField]
+	int m_heightPerExp;
+
 	/// <summary>
 	/// チーム１のスコア
 	/// </summary>
-	float m_scoreOfTeam1;
-
-	/// <summary>
-	/// チーム１のスコア配列
-	/// </summary>
-	float[] m_scoreOfTeam1Array = new float[(NUM_OF_PLAYERS + 1) / 2];
+	int m_scoreOfTeam1;
 
 	/// <summary>
 	/// チーム２のスコア
 	/// </summary>
-	float m_scoreOfTeam2;
+	int m_scoreOfTeam2;
+	
+	/// <summary>
+	/// 勝ちフラグ
+	/// </summary>
+	bool m_isWin;
 
 	/// <summary>
-	/// チーム２のスコア配列
+	/// 着水フラグ
 	/// </summary>
-	float[] m_scoreOfTeam2Array = new float[(NUM_OF_PLAYERS + 1) / 2];
+	bool m_isLanding;
 
 	/// <summary>
-	/// 操作しているプレイヤーの番号
+	/// 結果表示フラグ
 	/// </summary>
-	int m_operatingPlayerNum;
+	bool m_isResultDisplay;
 
+	/// <summary>
+	/// 経験値の表示フラグ
+	/// </summary>
+	bool m_isDisplayOfExp;
+
+	/// <summary>
+	/// 追加する経験値
+	/// </summary>
+	int m_additionalExp;
+
+	/// <summary>
+	/// 次の目標経験値たち
+	/// </summary>
+	List<int> m_nextTargetExp = new List<int>();
+
+	/// <summary>
+	/// 戦績
+	/// </summary>
+	PublishRecord[] m_battleRecords;
+
+	/// <summary>
+	/// 再戦表示フラグ
+	/// </summary>
+	bool m_isRematchDisplay;
+
+	/// <summary>
+	/// バトルを続けるフラグ
+	/// </summary>
+	bool m_isContinueBattle;
+	#endregion
+	
 	#region キーボード関係
 	[Header("キーボード関係")]
 	/// <summary>
@@ -367,6 +470,58 @@ public class MyGame : MonoBehaviour
 	/// Yボタンを押した
 	/// </summary>
 	bool m_isYButtonDown;
+
+	/// <summary>
+	/// DパッドXがポジティブになった
+	/// </summary>
+	bool m_isDpadXBecamePositive;
+
+	/// <summary>
+	/// フレーム前にDパッドXがポジティブになった
+	/// </summary>
+	bool m_isDpadXBecamePositivePrev;
+
+	/// <summary>
+	/// DパッドXがネガティブになった
+	/// </summary>
+	bool m_isDpadXBecameNegative;
+
+	/// <summary>
+	/// フレーム前にDパッドXがネガティブになった
+	/// </summary>
+	bool m_isDpadXBecameNegativePrev;
+
+	/// <summary>
+	/// 水平移動量がポジティブになった
+	/// </summary>
+	bool m_isHorizontalBecamePositive;
+
+	/// <summary>
+	/// フレーム前に水平移動量がポジティブになった
+	/// </summary>
+	bool m_isHorizontalBecamePositivePrev;
+
+	/// <summary>
+	/// 水平移動量がネガティブになった
+	/// </summary>
+	bool m_isHorizontalBecameNegative;
+
+	/// <summary>
+	/// フレーム前に水平移動量がネガティブになった
+	/// </summary>
+	bool m_isHorizontalBecameNegativePrev;
+	#endregion
+
+	#region 作業用
+	/// <summary>
+	/// 作業用のVector3
+	/// </summary>
+	Vector3 m_workVector3;
+
+	/// <summary>
+	/// 作業用のInt
+	/// </summary>
+	int m_workInt;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -385,12 +540,34 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		InputProcess();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 入力処理
+	/// </summary>
+	void InputProcess()
+	{
+		//押したタイミングの取得
 		if (Input.GetButtonDown("AButton"))
 			m_isAButtonDown = true;
 		if (Input.GetButtonDown("BButton"))
 			m_isBButtonDown = true;
 		if (Input.GetButtonDown("YButton"))
 			m_isYButtonDown = true;
+		if (Input.GetAxis("DpadX") > 0 && !m_isDpadXBecamePositivePrev)
+			m_isDpadXBecamePositive = true;
+		m_isDpadXBecamePositivePrev = (Input.GetAxis("DpadX") > 0);
+		if (Input.GetAxis("DpadX") < 0 && !m_isDpadXBecameNegativePrev)
+			m_isDpadXBecameNegative = true;
+		m_isDpadXBecameNegativePrev = (Input.GetAxis("DpadX") < 0);
+		if (Input.GetAxis("Horizontal") > 0 && !m_isHorizontalBecamePositivePrev)
+			m_isHorizontalBecamePositive = true;
+		m_isHorizontalBecamePositivePrev = (Input.GetAxis("Horizontal") > 0);
+		if (Input.GetAxis("Horizontal") < 0 && !m_isHorizontalBecameNegativePrev)
+			m_isHorizontalBecameNegative = true;
+		m_isHorizontalBecameNegativePrev = (Input.GetAxis("Horizontal") < 0);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -463,6 +640,9 @@ public class MyGame : MonoBehaviour
 			GhostPlayers.SetActive(true);
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
 			MainUi.WantedRecruitment();
+
+			//ランクの同期
+			OperatingNetPlayerSetting.CmdRank(MyGameInfo.Instance.Rank);
 		}
 
 		//ゲームが開始できるか
@@ -536,6 +716,11 @@ public class MyGame : MonoBehaviour
 			//プレイヤーとUI
 			PlayerBattleSettings();
 			MainUi.BattleStartSetting();
+
+			//プレイヤー情報を戦績に代入
+			if (m_battleRecords == null)
+				m_battleRecords = new PublishRecord[MyNetPlayerSetting.NetPlayerSettings.Count];
+			MyNetPlayerSetting.PutPlayerInfoInBattleRecord(ref m_battleRecords);
 		}
 
 		//設定時間が過ぎた
@@ -553,7 +738,6 @@ public class MyGame : MonoBehaviour
 	void PlayerBattleSettings()
 	{
 		//チーム分け
-		m_operatingPlayerNum = OperatingNetPlayerSetting.GetPlayerNum();
 		MyNetPlayerSetting.NetPlayerSettings.CopyTo(Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray()));
 
 		//チームによる位置
@@ -666,7 +850,7 @@ public class MyGame : MonoBehaviour
 			//プレイヤーとカメラ
 			OperatingPlayer.MakeItBattleState();
 			OperatingNetPlayerSetting.NameplateDisplay(false);
-			OperatingCamera.BecomePursuitCamera();
+			OperatingCamera.BecomeOperablePursuitCamera();
 		}
 
 		//バトル時間が過ぎた
@@ -703,7 +887,7 @@ public class MyGame : MonoBehaviour
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
 
 		//順位の反映
-		MainUi.SetRank(Players.HeightRanks, MyNetPlayerSetting.NetPlayerSettings.IndexOf(OperatingNetPlayerSetting));
+		MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetPlayerNum());
 
 		//Yボタンを押した
 		if (m_isYButtonDown)
@@ -753,14 +937,69 @@ public class MyGame : MonoBehaviour
 		//フェードアウトしていないandフェードアウト時間
 		if (!m_isFadeOutAfterBattleEnds && m_countTheTimeOfTheState >= m_timeWhenTheBattleEndsAndStops)
 		{
+			//フェードアウト
 			m_isFadeOutAfterBattleEnds = true;
 			MainUi.StartFadeOut();
+
+			//バトル結果を記録
+			RecordBattleResults();
 		}
 
 		//バトル終了時間が過ぎた
 		if (m_countTheTimeOfTheState >= m_timeAfterCombatEnd)
 		{
 			m_state = GameStatus.Result;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル結果を記録
+	/// </summary>
+	void RecordBattleResults()
+	{
+		//高さの同期
+		OperatingNetPlayerSetting.CmdFinalAltitude(OperatingPlayer.transform.position.y);
+
+		//コインの同期
+		OperatingNetPlayerSetting.CmdNumOfCoins(OperatingPlayer.NumOfCoins);
+
+		//スコアの同期
+		OperatingNetPlayerSetting.CmdScore(
+			(int)(OperatingPlayer.transform.position.y * (1 + m_coinMagnificationAgainstHeight * OperatingPlayer.NumOfCoins)));
+
+		//経験値の計算
+		CalculationOfExp();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 経験値の計算
+	/// </summary>
+	void CalculationOfExp()
+	{
+		//経験値追加前の経験値
+		m_workInt = MyGameInfo.Instance.Exp;
+
+		//経験値の加算
+		m_additionalExp = m_expParticipated + ((int)(OperatingPlayer.transform.position.y) / m_heightPerExp);
+		MyGameInfo.Instance.Exp += m_additionalExp;
+
+		//目標経験値を求める
+		m_nextTargetExp.Clear();
+		for (var i = 0; i < m_targetExp.Length; i++)
+		{
+			//目標経験値を追加
+			if (m_workInt < m_targetExp[i])
+				m_nextTargetExp.Add(m_targetExp[i]);
+
+			//現在の目標経験値
+			if (MyGameInfo.Instance.Exp < m_targetExp[i])
+			{
+				//ランクの代入
+				MyGameInfo.Instance.Rank = i + 1;
+				break;
+			}
 		}
 	}
 
@@ -778,21 +1017,67 @@ public class MyGame : MonoBehaviour
 			//勝敗を決める
 			DecideOnWinningOrLosing();
 
-			//勝敗確認のため
+			//プレイヤーとカメラとUI
+			MakePlayerIntoResultState();
+			OperatingCamera.BecomePursuitCamera(Vector3.Scale(OperatingPlayer.transform.position, Vector3.right));
+			MainUi.MakeItResultState();
+
+			//フラグの初期化
+			m_isLanding = false;
+			m_isResultDisplay = false;
+			m_isDisplayOfExp = false;
+			m_isRematchDisplay = false;
+			m_isContinueBattle = true;
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(false);
 		}
 
-		//もう一度か終了か
-		if (m_isAButtonDown)
+		//着水していないandプレイヤーが着水
+		if (!m_isLanding && OperatingPlayer.transform.position.y <= 0f)
 		{
-			m_state = GameStatus.RecruitPeople;
-			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
-			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
+			m_isLanding = true;
+
+			//バトル結果
+			BattleResult();
 		}
-		else if (m_isBButtonDown)
+
+		//結果表示していないand結果表示する時間
+		if (!m_isResultDisplay && m_countTheTimeOfTheState >= m_timeToStartDisplayingResults)
 		{
-			Debug.Log("終了");
+			m_isResultDisplay = true;
+
+			//バトル結果表示
+			BattleResultDisplay();
 		}
+
+		//経験値を表示していないand経験値を表示する時間
+		if (!m_isDisplayOfExp && m_countTheTimeOfTheState >= m_timeToStartDisplayingExp)
+		{
+			m_isDisplayOfExp = true;
+
+			//経験値の表示
+			MainUi.ShowExp((MyGameInfo.Instance.Exp - m_additionalExp), m_additionalExp, m_nextTargetExp.ToArray());
+		}
+
+		//再戦表示していないand再戦表示する時間
+		if (!m_isRematchDisplay && m_countTheTimeOfTheState >= m_timeToStartDisplayingRematch)
+		{
+			m_isRematchDisplay = true;
+
+			//再戦表示
+			MainUi.ShowRematch();
+		}
+
+		//再戦表示済み
+		if (m_isRematchDisplay)
+		{
+			//再戦の選択
+			SelectRematch();
+		}
+
+		//プレイヤーの向き
+		m_workVector3 = OperatingCamera.transform.position;
+		m_workVector3.y = OperatingPlayer.transform.position.y;
+		OperatingPlayer.transform.LookAt(m_workVector3);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -801,14 +1086,210 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void DecideOnWinningOrLosing()
 	{
-		//高さの取得
-		m_scoreOfTeam1 = Players.GetTeam1HeightTotal(ref m_scoreOfTeam1Array);
-		m_scoreOfTeam2 = Players.GetTeam2HeightTotal(ref m_scoreOfTeam2Array);
+		//戦績の取得
+		MyNetPlayerSetting.PutPlayerAchievementsInBattleRecord(ref m_battleRecords);
 
-		//表示
-		MainUi.CalculateScoreOfTeam1(m_scoreOfTeam1Array);
-		MainUi.CalculateScoreOfTeam2(m_scoreOfTeam2Array);
-		MainUi.Result();
+		//チームスコアの初期化
+		m_scoreOfTeam1 = 0;
+		m_scoreOfTeam2 = 0;
+
+		//全ての戦績
+		foreach(var battleRecord in m_battleRecords)
+		{
+			//チーム毎のスコア
+			switch(battleRecord.team)
+			{
+				case Team.Team1:
+					m_scoreOfTeam1 += battleRecord.score;
+					break;
+				case Team.Team2:
+					m_scoreOfTeam2 += battleRecord.score;
+					break;
+			}
+		}
+
+		//チームスコアの代入
+		MainUi.ScoreAssignment(m_scoreOfTeam1, m_scoreOfTeam2);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤーを結果状態にする
+	/// </summary>
+	void MakePlayerIntoResultState()
+	{
+		OperatingPlayer.MakeItResultState();
+
+		//プレイヤーが指定高度より高い
+		if (OperatingPlayer.transform.position.y >= m_playerInitialHeightOfResultState)
+		{
+			//高さの変更
+			m_workVector3 = OperatingPlayer.transform.position;
+			m_workVector3.y = m_playerInitialHeightOfResultState;
+			OperatingPlayer.transform.position = m_workVector3;
+		}
+
+		//チームによる指定位置
+		switch (OperatingNetPlayerSetting.TeamNum)
+		{
+			case Team.Team1:
+				m_workVector3 = Stage.CurrentFieldScript.Team1StartPositions[OperatingNetPlayerSetting.TeamOrder];
+				break;
+			case Team.Team2:
+				m_workVector3 = Stage.CurrentFieldScript.Team2StartPositions[OperatingNetPlayerSetting.TeamOrder];
+				break;
+		}
+
+		//高さを除いた位置を代入
+		m_workVector3.y = OperatingPlayer.transform.position.y;
+		OperatingPlayer.transform.position = m_workVector3;
+
+		//Z軸を中心として外側を見る
+		OperatingPlayer.transform.LookAt(Vector3.Scale(OperatingPlayer.transform.position, Vector3.one + (Vector3.right * 2)));
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル結果
+	/// </summary>
+	void BattleResult()
+	{
+		//チーム
+		switch (OperatingNetPlayerSetting.TeamNum)
+		{
+			case Team.Team1:
+				//得点により勝ち負け
+				if (m_scoreOfTeam1 < m_scoreOfTeam2)
+					LoseBattle();
+				else
+					WinBattle();
+				break;
+			case Team.Team2:
+				//得点により勝ち負け
+				if (m_scoreOfTeam1 < m_scoreOfTeam2)
+					WinBattle();
+				else
+					LoseBattle();
+				break;
+		}
+
+		//UIに勝敗の表示
+		MainUi.IndicationOfVictoryOrDefeat(m_isWin);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルに勝つ
+	/// </summary>
+	void WinBattle()
+	{
+		m_isWin = true;
+		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.SuccessfulLanding);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルに負ける
+	/// </summary>
+	void LoseBattle()
+	{
+		m_isWin = false;
+		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.LandingFailed);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル結果表示
+	/// </summary>
+	void BattleResultDisplay()
+	{
+		//プレイヤーアニメーション
+		OperatingPlayer.SetAnimation(m_isWin ? PlayerBehaviorStatus.Win : PlayerBehaviorStatus.Defeat);
+
+		//カメラ設定
+		CameraSettingOfBattleResultDisplay();
+
+		//UI表示
+		MainUi.DisplayResults(m_battleRecords, OperatingNetPlayerSetting.GetPlayerNum());
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル結果表示のカメラ設定
+	/// </summary>
+	void CameraSettingOfBattleResultDisplay()
+	{
+		//指定カメラの位置と方向
+		m_cameraPosForSpecifying = new Vector3[m_relativeCameraPosSeenFromDisplayingResult.Length];
+		m_cameraDirectionForSpecifying = new Vector3[m_relativeCameraPosSeenFromDisplayingResult.Length];
+
+		//指定カメラに必要な位置と方向の作成
+		for (var i = 0; i < m_relativeCameraPosSeenFromDisplayingResult.Length; i++)
+		{
+			//プレイヤーの前方位置からカメラ位置を生成(プレイヤーの向きに応じた位置)
+			m_cameraPosForSpecifying[i] =
+				(OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch)
+				+ (OperatingPlayer.transform.forward * OperatingCamera.DistanceToPlayer))
+				+ OperatingPlayer.transform.right * m_relativeCameraPosSeenFromDisplayingResult[i].x
+				+ OperatingPlayer.transform.up * m_relativeCameraPosSeenFromDisplayingResult[i].y
+				+ OperatingPlayer.transform.forward * m_relativeCameraPosSeenFromDisplayingResult[i].z;
+
+			//プレイヤーを見る方向を生成
+			m_cameraDirectionForSpecifying[i] =
+				OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch) - m_cameraPosForSpecifying[0];
+		}
+
+		//指定位置をたどるカメラ
+		OperatingCamera.BecomeFollowSpecifiedPosCamera(
+			m_cameraPosForSpecifying, m_cameraDirectionForSpecifying, m_cameraMovementTimeDisplayingResults);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 再戦の選択
+	/// </summary>
+	void SelectRematch()
+	{
+		//Dパッドか左スティックの横方向の入力あり
+		if (m_isDpadXBecamePositive || m_isDpadXBecameNegative || m_isHorizontalBecamePositive || m_isHorizontalBecameNegative)
+			m_isContinueBattle = !m_isContinueBattle;
+
+		//ボタンの色変更
+		MainUi.SelectionOfRematch(m_isContinueBattle);
+
+		//もう一度か終了か
+		if (m_isAButtonDown)
+		{
+			//バトルを続けるか辞めるか
+			if (m_isContinueBattle)
+				ContinueBattle();
+			else
+				LeaveBattle();
+		}
+		else if (m_isBButtonDown)
+		{
+			LeaveBattle();
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルを続ける
+	/// </summary>
+	public void ContinueBattle()
+	{
+		m_state = GameStatus.RecruitPeople;
+		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
+		OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトルを辞める
+	/// </summary>
+	public void LeaveBattle()
+	{
+		Debug.Log("終了");
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -820,5 +1301,9 @@ public class MyGame : MonoBehaviour
 		m_isAButtonDown = false;
 		m_isBButtonDown = false;
 		m_isYButtonDown = false;
+		m_isDpadXBecamePositive = false;
+		m_isDpadXBecameNegative = false;
+		m_isHorizontalBecamePositive = false;
+		m_isHorizontalBecameNegative = false;
 	}
 }

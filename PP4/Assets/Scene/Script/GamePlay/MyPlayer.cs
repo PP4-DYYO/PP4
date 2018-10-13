@@ -56,6 +56,26 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	HoldBoardInHand2,
 	/// <summary>
+	/// 結果
+	/// </summary>
+	Result,
+	/// <summary>
+	/// 着地成功
+	/// </summary>
+	SuccessfulLanding,
+	/// <summary>
+	/// 着地失敗
+	/// </summary>
+	LandingFailed,
+	/// <summary>
+	/// 勝ち
+	/// </summary>
+	Win,
+	/// <summary>
+	/// 負け
+	/// </summary>
+	Defeat,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,
@@ -71,7 +91,7 @@ public struct PlayerInfo
 	/// タグ
 	/// </summary>
 	public const string TAG = "Player";
-	
+
 	/// <summary>
 	/// アニメーションパラメータ名
 	/// </summary>
@@ -324,6 +344,18 @@ public class MyPlayer : MonoBehaviour
 	public float SupportRate
 	{
 		set { m_supportRate = value; }
+	}
+	#endregion
+
+	#region コイン
+	[Header("コイン")]
+	/// <summary>
+	/// コイン枚数
+	/// </summary>
+	int m_numOfCoins = 3;
+	public int NumOfCoins
+	{
+		get { return m_numOfCoins; }
 	}
 	#endregion
 
@@ -655,11 +687,11 @@ public class MyPlayer : MonoBehaviour
 	void Recovery()
 	{
 		//Rボタンを押すとと回復操作
-		if(m_isPushedRButton)
+		if (m_isPushedRButton)
 			m_countNumOfRecoveryOperations++;
 
 		//回復操作が指定数に達した
-		if(m_countNumOfRecoveryOperations >= m_numOfRecoveryOperations)
+		if (m_countNumOfRecoveryOperations >= m_numOfRecoveryOperations)
 		{
 			m_isFalling = false;
 			m_countNumOfRecoveryOperations = 0;
@@ -854,7 +886,7 @@ public class MyPlayer : MonoBehaviour
 	public bool GetIsWearWater()
 	{
 		//水を被った
-		if(m_isWearWater)
+		if (m_isWearWater)
 		{
 			m_isWearWater = false;
 			return true;
@@ -874,5 +906,19 @@ public class MyPlayer : MonoBehaviour
 
 		//水を満タンにする
 		WaterGauge.localScale = Vector3.one;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 結果状態にする
+	/// </summary>
+	public void MakeItResultState()
+	{
+		//リジッドボディの設定
+		Rb.constraints = RigidbodyConstraints.FreezeRotation;
+		Rb.useGravity = true;
+
+		//アニメーション
+		SetAnimation(PlayerBehaviorStatus.Result);
 	}
 }

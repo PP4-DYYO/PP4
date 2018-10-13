@@ -55,6 +55,26 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		set { m_playerName = value; }
 	}
 
+	/// <summary>
+	/// ランク
+	/// </summary>
+	int m_rank = 1;
+	public int Rank
+	{
+		get { return m_rank; }
+		set { m_rank = value; }
+	}
+
+	/// <summary>
+	/// 経験値
+	/// </summary>
+	int m_exp = 0;
+	public int Exp
+	{
+		get { return m_exp; }
+		set { m_exp = value; }
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// データをリセットする

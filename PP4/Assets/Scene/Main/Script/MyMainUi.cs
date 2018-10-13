@@ -999,7 +999,7 @@ public class MyMainUi : MonoBehaviour
 			ScoresOfBattleRecord[recordNum].text = publishRecords[i].score.ToString("N0");
 
 			//自分のレコード矢印
-			ArrowOfYourOwnAchievement[recordNum].enabled = (recordNum == myRecordNum);
+			ArrowOfYourOwnAchievement[recordNum].enabled = (i == myRecordNum);
 		}
 
 		m_isWinningOrLosingMoves = true;

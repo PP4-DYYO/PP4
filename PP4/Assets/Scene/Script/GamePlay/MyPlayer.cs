@@ -76,6 +76,10 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	Defeat,
 	/// <summary>
+	/// 怯える
+	/// </summary>
+	BeFrightened,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,

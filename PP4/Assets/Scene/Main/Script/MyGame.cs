@@ -713,6 +713,9 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
+			//ステージの初期化
+			Stage.CurrentFieldScript.ResetField();
+
 			//プレイヤーとUI
 			PlayerBattleSettings();
 			MainUi.BattleStartSetting();

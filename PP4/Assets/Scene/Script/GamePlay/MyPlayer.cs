@@ -356,7 +356,7 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// コイン枚数
 	/// </summary>
-	int m_numOfCoins = 3;
+	int m_numOfCoins;
 	public int NumOfCoins
 	{
 		get { return m_numOfCoins; }
@@ -766,6 +766,21 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 重なり始め判定
+	/// </summary>
+	/// <param name="other">重なったもの</param>
+	void OnTriggerEnter(Collider other)
+	{
+		//コイン
+		if(other.tag.Equals(ItemInfo.TAG))
+		{
+			//枚数増加
+			m_numOfCoins++;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 重なり続ける判定
 	/// </summary>
 	/// <param name="other">重なったもの</param>
@@ -860,6 +875,9 @@ public class MyPlayer : MonoBehaviour
 
 		//落下状態の初期化
 		m_countNumOfRecoveryOperations = 0;
+
+		//コインの初期化
+		m_numOfCoins = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

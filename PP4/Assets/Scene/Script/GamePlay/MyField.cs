@@ -43,4 +43,30 @@ public class MyField : MonoBehaviour
 	{
 		get { return m_fieldRudius; }
 	}
+
+	/// <summary>
+	/// コイン
+	/// </summary>
+	[SerializeField]
+	MyItem Coin;
+
+	/// <summary>
+	/// フィールド上のコイン
+	/// </summary>
+	[SerializeField]
+	MyItem[] FieldCoins;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// フィールドのリセット
+	/// </summary>
+	public void ResetField()
+	{
+		//全コイン
+		foreach(var coin in FieldCoins)
+		{
+			//リセット
+			coin.ResetItem();
+		}
+	}
 }

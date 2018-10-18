@@ -250,6 +250,10 @@ public class MyArmedCharacters : MonoBehaviour
 	/// <param name="characterNum">キャラクター番号</param>
 	public void AnimCharacter(PlayerBehaviorStatus state, int characterNum = int.MaxValue)
 	{
+		//子供なし
+		if (transform.childCount == 0)
+			return;
+
 		//全キャラクターが対象
 		if (characterNum == int.MaxValue)
 		{

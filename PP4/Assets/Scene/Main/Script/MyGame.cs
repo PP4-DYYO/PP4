@@ -399,6 +399,12 @@ public class MyGame : MonoBehaviour
 	int m_heightPerExp;
 
 	/// <summary>
+	/// パワーの収集回数
+	/// </summary>
+	[SerializeField]
+	int m_powerCollectionCount;
+
+	/// <summary>
 	/// チーム１のスコア
 	/// </summary>
 	int m_scoreOfTeam1;
@@ -973,6 +979,12 @@ public class MyGame : MonoBehaviour
 
 		//経験値の計算
 		CalculationOfExp();
+
+		//パワーの計算
+		CalculationOfPower();
+
+		//キャラクター戦歴の保存
+		MyGameInfo.Instance.SaveVariable();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1004,6 +1016,26 @@ public class MyGame : MonoBehaviour
 				break;
 			}
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// パワーの計算
+	/// </summary>
+	void CalculationOfPower()
+	{
+		//今回のパワー
+		m_workInt = (int)(OperatingPlayer.transform.position.y * (1 + m_coinMagnificationAgainstHeight * OperatingPlayer.NumOfCoins));
+
+		//パワーが記録されている
+		if(MyGameInfo.Instance.Power != 0)
+		{
+			//疑似的にパワーの平均値を求める
+			m_workInt = (MyGameInfo.Instance.Power * (m_powerCollectionCount - 1) + m_workInt) / m_powerCollectionCount;
+		}
+
+		//パワーの代入
+		MyGameInfo.Instance.Power = m_workInt;
 	}
 
 	//----------------------------------------------------------------------------------------------------

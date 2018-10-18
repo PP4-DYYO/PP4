@@ -53,6 +53,11 @@ public struct PlayerPrefsKeys
 	/// キャラクター経験値
 	/// </summary>
 	public const string CHARACTER_EXP = "CharacterExp";
+
+	/// <summary>
+	/// キャラクターのパワー
+	/// </summary>
+	public const string CHARACTER_POWER = "CharacterPower";
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -83,9 +88,14 @@ public struct DisclosedCharacterInfo
 public class MyGameInfo : MySingleton<MyGameInfo>
 {
 	/// <summary>
+	/// キャラクター番号
+	/// </summary>
+	int m_characterNum;
+
+	/// <summary>
 	/// 種類番号
 	/// </summary>
-	int m_typeNum;
+	int m_typeNum = 0;
 
 	/// <summary>
 	/// プレイヤー名
@@ -117,6 +127,16 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		set { m_exp = value; }
 	}
 
+	/// <summary>
+	/// パワー
+	/// </summary>
+	int m_power = 0;
+	public int Power
+	{
+		get { return m_power; }
+		set { m_power = value; }
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// データをリセットする
@@ -126,11 +146,12 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		//PlayerPrefsに保存されているプレイヤーのリセット
 		for (var i = 0; i < PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS); i++)
 		{
-			//種類番号と名前とランクと経験値の初期化
+			//種類番号と名前とランクと経験値とパワーの初期化
 			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_TYPE_NUM + i, 0);
 			PlayerPrefs.SetString(PlayerPrefsKeys.CHARACTER_NAME + i, "");
 			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_RANK + i, 0);
 			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_EXP + i, 0);
+			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_POWER + i, 0);
 		}
 
 		//保存人数のリセット
@@ -145,16 +166,18 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 	/// <param name="name">名前</param>
 	/// <param name="rank">ランク</param>
 	/// <param name="exp">経験値</param>
-	public void CharacterRegistration(int typeNum, string name, int rank = 0, int exp = 0)
+	/// <param name="power">パワー</param>
+	public void CharacterRegistration(int typeNum, string name, int rank = 1, int exp = 0, int power = 0)
 	{
 		//登録されているキャラクター数
 		var numOfCharacters = PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS);
 
-		//種類番号と名前とランクと経験値の登録
+		//種類番号と名前とランクと経験値とパワーの登録
 		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_TYPE_NUM + numOfCharacters, typeNum);
 		PlayerPrefs.SetString(PlayerPrefsKeys.CHARACTER_NAME + numOfCharacters, name);
 		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_RANK + numOfCharacters, rank);
 		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_EXP + numOfCharacters, exp);
+		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_POWER + numOfCharacters, power);
 
 		//登録したキャラクター数
 		PlayerPrefs.SetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS, numOfCharacters + 1);
@@ -176,6 +199,9 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		m_playerName = PlayerPrefs.GetString(PlayerPrefsKeys.CHARACTER_NAME + characterNum);
 		m_rank = PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_RANK + characterNum);
 		m_exp = PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_EXP + characterNum);
+		m_power = PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_POWER + characterNum);
+
+		m_characterNum = characterNum;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -215,11 +241,12 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		//PlayerPrefsに保存されているプレイヤー
 		for (index = characterNum; index < PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS) - 1; index++)
 		{
-			//データ（種類番号と名前とランクと経験値）を詰める
+			//データ（種類番号と名前とランクと経験値とパワー）を詰める
 			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_TYPE_NUM + index, PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_TYPE_NUM + (index + 1)));
 			PlayerPrefs.SetString(PlayerPrefsKeys.CHARACTER_NAME + index, PlayerPrefs.GetString(PlayerPrefsKeys.CHARACTER_NAME + (index + 1)));
 			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_RANK + index, PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_RANK + (index + 1)));
 			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_EXP + index, PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_EXP + (index + 1)));
+			PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_POWER + index, PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_POWER + (index + 1)));
 		}
 
 		//最後のデータをリセット
@@ -227,8 +254,21 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		PlayerPrefs.SetString(PlayerPrefsKeys.CHARACTER_NAME + index, "");
 		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_RANK + index, 0);
 		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_EXP + index, 0);
+		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_POWER + index, 0);
 
 		//保存人数を減らす
 		PlayerPrefs.SetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS, PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS) - 1);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 変数の保存
+	/// </summary>
+	public void SaveVariable()
+	{
+		//ランクと経験値とパワーの保存
+		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_RANK + m_characterNum, m_rank);
+		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_EXP + m_characterNum, m_exp);
+		PlayerPrefs.SetInt(PlayerPrefsKeys.CHARACTER_POWER + m_characterNum, m_power);
 	}
 }

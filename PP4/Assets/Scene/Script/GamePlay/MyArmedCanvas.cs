@@ -357,6 +357,10 @@ public class MyArmedCanvas : MonoBehaviour
 		//時間の初期化
 		m_countTimeToDelete = 0;
 
+		//InputFieldの初期化
+		PlayerName.text = "";
+		PlayerName.placeholder.GetComponent<Text>().enabled = false;
+
 		//選択画面を再読み込み
 		DisplayOfCharacterSelectionScreen();
 	}

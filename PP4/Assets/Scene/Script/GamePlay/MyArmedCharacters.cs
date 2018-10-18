@@ -70,6 +70,12 @@ public class MyArmedCharacters : MonoBehaviour
 	Vector3 m_characterRightMovementLocation;
 
 	/// <summary>
+	/// 描画順番
+	/// </summary>
+	[SerializeField]
+	int m_drawingOrder;
+
+	/// <summary>
 	/// キャラクター移動時間を数える
 	/// </summary>
 	float m_countCharacterMovementTime;
@@ -282,7 +288,7 @@ public class MyArmedCharacters : MonoBehaviour
 		for (var i = 0; i < CharacterMaterials.Length; i++)
 		{
 			//描画順
-			CharacterMaterials[i].renderQueue = CharacterMaterials[i].renderQueue + i;
+			CharacterMaterials[i].renderQueue = m_drawingOrder + i;
 
 			//α値の反映
 			m_workColor = CharacterMaterials[i].color;

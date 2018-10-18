@@ -300,6 +300,12 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
+	/// マップ上にチームカラーを表示する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToDisplayTeamColorOnMap;
+
+	/// <summary>
 	/// １ｍ毎のサポート率
 	/// </summary>
 	[SerializeField]
@@ -314,6 +320,11 @@ public class MyGame : MonoBehaviour
 	/// 操作プレイヤーが落下フラグ
 	/// </summary>
 	bool m_isOperatingPlayerFall;
+
+	/// <summary>
+	/// マップ上にチームカラーを表示する時間が過ぎたフラグ
+	/// </summary>
+	bool m_isTimeToDisplayTeamColorOnMapHasPassed;
 	#endregion
 
 	#region バトル後状態
@@ -856,10 +867,19 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとカメラ
+			//プレイヤーとカメラとフラグ
 			OperatingPlayer.MakeItBattleState();
 			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomeOperablePursuitCamera();
+			m_isTimeToDisplayTeamColorOnMapHasPassed = false;
+		}
+
+		//時間が過ぎていないフラグandマップ上にチームカラーを表示する時間が過ぎた
+		if (!m_isTimeToDisplayTeamColorOnMapHasPassed && m_countTheTimeOfTheState >= m_timeToDisplayTeamColorOnMap)
+		{
+			m_isTimeToDisplayTeamColorOnMapHasPassed = true;
+
+			MainUi.HideTeamColorOnMap();
 		}
 
 		//バトル時間が過ぎた

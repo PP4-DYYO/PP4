@@ -152,6 +152,12 @@ public class MyMainUi : MonoBehaviour
 	Text[] PlayerNamesOnTheMap;
 
 	/// <summary>
+	/// マップ上のプレイヤーのチームカラー
+	/// </summary>
+	[SerializeField]
+	Image[] TeamColorOfPlayerOnMap;
+
+	/// <summary>
 	/// 被水
 	/// </summary>
 	[SerializeField]
@@ -327,6 +333,18 @@ public class MyMainUi : MonoBehaviour
 
 	#region バトル画面
 	[Header("バトル画面")]
+	/// <summary>
+	/// マップ上のチーム１の画像
+	/// </summary>
+	[SerializeField]
+	Sprite Team1ImageOnMap;
+
+	/// <summary>
+	/// マップ上のチーム２の画像
+	/// </summary>
+	[SerializeField]
+	Sprite Team2ImageOnMap;
+
 	/// <summary>
 	/// 順位入れ替え時間
 	/// </summary>
@@ -799,7 +817,10 @@ public class MyMainUi : MonoBehaviour
 			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
 				return;
 
+			//プレイヤー名とチーム画像
 			PlayerNamesOnTheMap[i].text = MyNetPlayerSetting.NetPlayerSettings[i].PlayerName;
+			TeamColorOfPlayerOnMap[i].color = Color.white;
+			TeamColorOfPlayerOnMap[i].sprite = MyNetPlayerSetting.NetPlayerSettings[i].TeamNum == Team.Team1 ? Team1ImageOnMap : Team2ImageOnMap;
 		}
 	}
 
@@ -916,6 +937,23 @@ public class MyMainUi : MonoBehaviour
 	public void StopOfFall()
 	{
 		Falling.SetActive(false);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マップ上のチームカラーを隠す
+	/// </summary>
+	public void HideTeamColorOnMap()
+	{
+		for (var i = 0; i < TeamColorOfPlayerOnMap.Length; i++)
+		{
+			//ネットプレイヤー設定がない
+			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
+				return;
+
+			//チーム画像
+			TeamColorOfPlayerOnMap[i].color = Color.clear;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

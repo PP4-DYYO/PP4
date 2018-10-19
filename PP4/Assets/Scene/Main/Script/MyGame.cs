@@ -923,9 +923,9 @@ public class MyGame : MonoBehaviour
 		{
 			//落下
 			if (OperatingPlayer.IsFalling)
-				OperatingCamera.BecomeCustomOperablePursuitCamera();
+				OperatingCamera.BecomeCustomOperablePursuitCamera(true);
 			else
-				OperatingCamera.BecomeOperablePursuitCamera();
+				OperatingCamera.BecomeOperablePursuitCamera(true);
 		}
 	}
 
@@ -1100,7 +1100,7 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーとカメラとUI
 			MakePlayerIntoResultState();
-			OperatingCamera.BecomePursuitCamera(Vector3.Scale(OperatingPlayer.transform.position, Vector3.right));
+			OperatingCamera.BecomePursuitCamera(false, Vector3.Scale(OperatingPlayer.transform.position, Vector3.right));
 			MainUi.MakeItResultState();
 
 			//フラグの初期化

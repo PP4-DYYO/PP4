@@ -130,6 +130,42 @@ public class MyCamera : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	CameraMode m_mode;
+
+	/// <summary>
+	/// モード切替時間
+	/// </summary>
+	[SerializeField]
+	float m_modeSwitchingTime;
+
+	/// <summary>
+	/// モード切替の移動フラグ
+	/// </summary>
+	bool m_isMoveModeSwitch;
+
+	/// <summary>
+	/// 現在の相対的位置
+	/// </summary>
+	Vector3 m_currentRelativePos;
+	
+	/// <summary>
+	/// 目標の相対的位置
+	/// </summary>
+	Vector3 m_targetRelativePos;
+
+	/// <summary>
+	/// 現在の回転
+	/// </summary>
+	Vector3 m_currentRotation;
+
+	/// <summary>
+	/// 目標のの回転
+	/// </summary>
+	Vector3 m_targetRotation;
+
+	/// <summary>
+	/// モード切替時間を数える
+	/// </summary>
+	float m_countModeSwithingTime;
 	#endregion
 
 	#region 追跡カメラ
@@ -342,6 +378,10 @@ public class MyCamera : MonoBehaviour
 				FollowSpecifiedPosProcess();
 				break;
 		}
+
+		//モード切替の移動
+		if (m_isMoveModeSwitch)
+			MoveModeSwitch();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -503,12 +543,57 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// モード切替の移動
+	/// </summary>
+	void MoveModeSwitch()
+	{
+		//目標位置が未設定
+		if (m_targetRelativePos == m_currentRelativePos)
+			m_targetRelativePos = transform.position - m_target.transform.position;
+
+		//目標回転が未設定
+		if (m_targetRotation == m_currentRotation)
+			m_targetRotation = transform.rotation.eulerAngles;
+
+		m_countModeSwithingTime += Time.deltaTime;
+
+		//位置
+		transform.position = m_currentRelativePos +
+			(m_targetRelativePos - m_currentRelativePos) * (m_countModeSwithingTime / m_modeSwitchingTime) + m_target.transform.position;
+
+		//回転
+		transform.eulerAngles =	m_currentRotation +
+			(m_targetRotation - m_currentRotation) * (m_countModeSwithingTime / m_modeSwitchingTime);
+
+		//終了
+		if (m_countModeSwithingTime >= m_modeSwitchingTime)
+		{
+			transform.position = m_targetRelativePos + m_target.transform.position;
+			transform.eulerAngles = m_targetRotation;
+			m_isMoveModeSwitch = false;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 固定カメラになる
 	/// </summary>
 	/// <param name="pos">位置</param>
 	/// <param name="direction">方向</param>
-	public void BecomeFixedCamera(Vector3 pos, Vector3 direction)
+	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
+	public void BecomeFixedCamera(Vector3 pos, Vector3 direction, bool isMoveModeSwitch = false)
 	{
+		//モード切替の移動フラグ
+		if(isMoveModeSwitch)
+		{
+			m_isMoveModeSwitch = true;
+			m_currentRelativePos = transform.position - m_target.transform.position;
+			m_targetRelativePos = pos - m_target.transform.position;
+			m_currentRotation = transform.eulerAngles;
+			m_targetRotation = m_currentRotation;
+			m_countModeSwithingTime = 0;
+		}
+
 		m_mode = CameraMode.Fixed;
 		transform.position = pos;
 		transform.LookAt(transform.position + direction);
@@ -518,9 +603,21 @@ public class MyCamera : MonoBehaviour
 	/// <summary>
 	/// 操作可能な追跡カメラになる
 	/// </summary>
+	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
 	/// <param name="target">ターゲット</param>
-	public void BecomeOperablePursuitCamera(MonoBehaviour target = null)
+	public void BecomeOperablePursuitCamera(bool isMoveModeSwitch = false, MonoBehaviour target = null)
 	{
+		//モード切替の移動フラグ
+		if (isMoveModeSwitch)
+		{
+			m_isMoveModeSwitch = true;
+			m_currentRelativePos = transform.position - (target == null ? m_target.transform.position : target.transform.position);
+			m_targetRelativePos = m_currentRelativePos;
+			m_currentRotation = transform.eulerAngles;
+			m_targetRotation = m_currentRotation;
+			m_countModeSwithingTime = 0;
+		}
+
 		m_mode = CameraMode.OperablePursuit;
 
 		if (target)
@@ -531,10 +628,22 @@ public class MyCamera : MonoBehaviour
 	/// <summary>
 	/// 特別仕様の操作可能な追跡カメラになる
 	/// </summary>
+	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
 	/// <param name="numOfCustomCamera">カスタムカメラ番号</param>
 	/// <param name="target">ターゲット</param>
-	public void BecomeCustomOperablePursuitCamera(int numOfCustomCamera = 0, MonoBehaviour target = null)
+	public void BecomeCustomOperablePursuitCamera(bool isMoveModeSwitch = false, int numOfCustomCamera = 0, MonoBehaviour target = null)
 	{
+		//モード切替の移動フラグ
+		if (isMoveModeSwitch)
+		{
+			m_isMoveModeSwitch = true;
+			m_currentRelativePos = transform.position - (target == null ? m_target.transform.position : target.transform.position);
+			m_targetRelativePos = m_currentRelativePos;
+			m_currentRotation = transform.eulerAngles;
+			m_targetRotation = m_currentRotation;
+			m_countModeSwithingTime = 0;
+		}
+
 		m_mode = CameraMode.CustomOperablePursuit;
 		m_numOfCustomCamera = numOfCustomCamera;
 
@@ -549,10 +658,22 @@ public class MyCamera : MonoBehaviour
 	/// <summary>
 	/// 追跡カメラになる
 	/// </summary>
+	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
 	/// <param name="relativePos">相対的位置</param>
 	/// <param name="target">ターゲット</param>
-	public void BecomePursuitCamera(Vector3? relativePos = null, MonoBehaviour target = null)
+	public void BecomePursuitCamera(bool isMoveModeSwitch = false, Vector3 ? relativePos = null, MonoBehaviour target = null)
 	{
+		//モード切替の移動フラグ
+		if (isMoveModeSwitch)
+		{
+			m_isMoveModeSwitch = true;
+			m_currentRelativePos = transform.position - (target == null ? m_target.transform.position : target.transform.position);
+			m_targetRelativePos = m_currentRelativePos;
+			m_currentRotation = transform.eulerAngles;
+			m_targetRotation = m_currentRotation;
+			m_countModeSwithingTime = 0;
+		}
+
 		m_mode = CameraMode.Pursuit;
 
 		if (target)
@@ -570,8 +691,20 @@ public class MyCamera : MonoBehaviour
 	/// <param name="pos">位置</param>
 	/// <param name="direction">方向</param>
 	/// <param name="movingTime">移動時間</param>
-	public void BecomeFollowSpecifiedPosCamera(Vector3[] pos, Vector3[] direction, float[] movingTime)
+	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
+	public void BecomeFollowSpecifiedPosCamera(Vector3[] pos, Vector3[] direction, float[] movingTime, bool isMoveModeSwitch = false)
 	{
+		//モード切替の移動フラグ
+		if (isMoveModeSwitch)
+		{
+			m_isMoveModeSwitch = true;
+			m_currentRelativePos = transform.position - m_target.transform.position;
+			m_targetRelativePos = m_currentRelativePos;
+			m_currentRotation = transform.eulerAngles;
+			m_targetRotation = m_currentRotation;
+			m_countModeSwithingTime = 0;
+		}
+
 		//引数の要素数が違っている
 		if (pos.Length != direction.Length || direction.Length != movingTime.Length)
 			Debug.LogError("引数の要素数を合わせてください");

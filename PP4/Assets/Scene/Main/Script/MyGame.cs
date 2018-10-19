@@ -656,7 +656,7 @@ public class MyGame : MonoBehaviour
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
 			GhostPlayers.SetActive(true);
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
-			MainUi.WantedRecruitment();
+			MainUi.WantedRecruitment(MyGameInfo.Instance.Rank, MyGameInfo.Instance.Exp, MyGameInfo.Instance.Power);
 
 			//ランクの同期
 			OperatingNetPlayerSetting.CmdRank(MyGameInfo.Instance.Rank);

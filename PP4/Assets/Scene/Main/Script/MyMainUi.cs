@@ -92,6 +92,24 @@ public class MyMainUi : MonoBehaviour
 	Text TimeToWaitWorPeople;
 
 	/// <summary>
+	/// 自分情報のランク
+	/// </summary>
+	[SerializeField]
+	Text RankOfYourOwnInfo;
+
+	/// <summary>
+	/// 自分情報の経験値
+	/// </summary>
+	[SerializeField]
+	Text ExpOfYourOwnInfo;
+
+	/// <summary>
+	/// 自分情報のパワー
+	/// </summary>
+	[SerializeField]
+	Text PowerOfYourOwnInfo;
+
+	/// <summary>
 	/// ゲームを開始するメッセージ
 	/// </summary>
 	[SerializeField]
@@ -672,7 +690,10 @@ public class MyMainUi : MonoBehaviour
 	/// <summary>
 	/// 人材募集をする
 	/// </summary>
-	public void WantedRecruitment()
+	/// <param name="rank">ランク</param>
+	/// <param name="exp">経験値</param>
+	/// <param name="power">パワー</param>
+	public void WantedRecruitment(int rank, int exp, int power)
 	{
 		//全体の表示
 		RecruitPeopleScreen.SetActive(true);
@@ -687,6 +708,11 @@ public class MyMainUi : MonoBehaviour
 		ResultScreen.SetActive(false);
 		Win.enabled = false;
 		Defeat.enabled = false;
+
+		//設定
+		RankOfYourOwnInfo.text = rank.ToString();
+		ExpOfYourOwnInfo.text = exp.ToString();
+		PowerOfYourOwnInfo.text = power.ToString();
 	}
 
 	//----------------------------------------------------------------------------------------------------

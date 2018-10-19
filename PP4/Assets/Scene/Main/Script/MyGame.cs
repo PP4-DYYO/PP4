@@ -891,15 +891,41 @@ public class MyGame : MonoBehaviour
 		}
 		else
 		{
-			//プレイヤー順位の更新
-			Players.UpdateHeightRank();
-
-			//UI
+			//プレイヤーとカメラとUI
+			BattleStatePlayer();
+			BattleStateCamera();
 			BattleStateUi();
+		}
+	}
 
-			//プレイヤーサポート(サポート率０回避付き)
-			OperatingPlayer.SupportRate = 1 +
-				(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル状態のプレイヤー
+	/// </summary>
+	void BattleStatePlayer()
+	{
+		//プレイヤー順位の更新
+		Players.UpdateHeightRank();
+
+		//プレイヤーサポート(サポート率０回避付き)
+		OperatingPlayer.SupportRate = 1 +
+			(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル状態のカメラ
+	/// </summary>
+	void BattleStateCamera()
+	{
+		//落下状態が変わった
+		if (m_isOperatingPlayerFall != OperatingPlayer.IsFalling)
+		{
+			//落下
+			if (OperatingPlayer.IsFalling)
+				OperatingCamera.BecomeCustomOperablePursuitCamera();
+			else
+				OperatingCamera.BecomeOperablePursuitCamera();
 		}
 	}
 

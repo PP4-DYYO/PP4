@@ -29,6 +29,10 @@ enum CameraMode
 	/// </summary>
 	OperablePursuit,
 	/// <summary>
+	/// 特別仕様の操作可能な追跡
+	/// </summary>
+	CustomOperablePursuit,
+	/// <summary>
 	/// 固定
 	/// </summary>
 	Fixed,
@@ -36,6 +40,59 @@ enum CameraMode
 	/// 指定位置をたどる
 	/// </summary>
 	FollowSpecifiedPos,
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// 特別仕様のカメラ
+/// </summary>
+[System.Serializable]
+public struct CustomCamera
+{
+	/// <summary>
+	/// カメラとプレイヤーとの距離[m]
+	/// </summary>
+	public float distanceToPlayer;
+
+	/// <summary>
+	/// 注視点の高さ[m]
+	/// </summary>
+	public float heightToWatch;
+
+	/// <summary>
+	/// 回転感度
+	/// </summary>
+	public float rotationSensitivity;
+
+	/// <summary>
+	/// 回転する限界比率
+	/// </summary>
+	public float rotationalLimitingRatio;
+
+	/// <summary>
+	/// プレイヤーの高さ
+	/// </summary>
+	public float playerHeight;
+
+	/// <summary>
+	/// 水平移動フラグ
+	/// </summary>
+	public bool isHorizontalMovement;
+
+	/// <summary>
+	/// 垂直移動フラグ
+	/// </summary>
+	public bool isVerticalMovement;
+
+	/// <summary>
+	/// 初期の相対的位置
+	/// </summary>
+	public Vector3 initialRelativePos;
+
+	/// <summary>
+	/// Zの回転値
+	/// </summary>
+	public float rotationValueOfZ;
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -146,6 +203,20 @@ public class MyCamera : MonoBehaviour
 	RaycastHit m_hit;
 	#endregion
 
+	#region カスタム追跡カメラ
+	[Header("カスタム追跡カメラ")]
+	/// <summary>
+	/// 特別仕様のカメラ
+	/// </summary>
+	[SerializeField, Tooltip("特別仕様のカメラ")]
+	CustomCamera[] m_customCamera;
+
+	/// <summary>
+	/// カスタムカメラの番号
+	/// </summary>
+	int m_numOfCustomCamera;
+	#endregion
+
 	#region 指定位置をたどるカメラ
 	[Header("指定位置をたどるカメラ")]
 	/// <summary>
@@ -213,6 +284,25 @@ public class MyCamera : MonoBehaviour
 		if (m_isSearchForTheTargetOnYourOwn_debug)
 		{
 			m_target = FindObjectOfType<MyPlayer>();
+
+			//モード毎に初期化
+			switch(m_mode)
+			{
+				case CameraMode.Pursuit:
+					BecomePursuitCamera();
+					break;
+				case CameraMode.OperablePursuit:
+					BecomeOperablePursuitCamera();
+					break;
+				case CameraMode.CustomOperablePursuit:
+					BecomeCustomOperablePursuitCamera();
+					break;
+				case CameraMode.Fixed:
+					BecomeFixedCamera(transform.position, m_target.transform.position - transform.position);
+					break;
+				case CameraMode.FollowSpecifiedPos:
+					break;
+			}
 			return;
 		}
 #endif
@@ -241,6 +331,9 @@ public class MyCamera : MonoBehaviour
 				break;
 			case CameraMode.OperablePursuit:
 				OperablePursuitProcess();
+				break;
+			case CameraMode.CustomOperablePursuit:
+				CustomOperablePursuitProcess();
 				break;
 			case CameraMode.Fixed:
 				FixedProcess();
@@ -327,6 +420,52 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 特別仕様の操作可能な追跡カメラ処理
+	/// </summary>
+	void CustomOperablePursuitProcess()
+	{
+		//カメラの位置リセット
+		if (Input.GetKey(KeyCode.Joystick1Button9))
+			SetPosition(-m_target.transform.forward + Vector3.up * m_customCamera[m_numOfCustomCamera].playerHeight);
+
+		//カメラの回転量
+		m_rotX = (m_customCamera[m_numOfCustomCamera].isHorizontalMovement ?
+			Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity : 0);
+		m_rotY = (m_customCamera[m_numOfCustomCamera].isVerticalMovement ?
+			Input.GetAxis("Mouse Y") * Time.deltaTime * m_rotationSensitivity : 0);
+
+		//プレイヤーの中心位置
+		m_playerCenterPos = m_target.transform.position + Vector3.up * m_customCamera[m_numOfCustomCamera].heightToWatch;
+
+		//Y回転
+		transform.RotateAround(m_playerCenterPos, Vector3.up, m_rotX);
+
+		//X回転
+		//カメラがプレイヤーの真上や真下にあるときにそれ以上回転させないようにする
+		if (transform.forward.y > m_customCamera[m_numOfCustomCamera].rotationalLimitingRatio && m_rotY > 0)
+		{
+			m_rotY = 0;
+		}
+		if (transform.forward.y < -m_customCamera[m_numOfCustomCamera].rotationalLimitingRatio && m_rotY < 0)
+		{
+			m_rotY = 0;
+		}
+		transform.RotateAround(m_playerCenterPos, transform.right, -m_rotY);
+
+		// カメラとプレイヤーとの間の距離を調整
+		transform.position = m_playerCenterPos - transform.forward * m_customCamera[m_numOfCustomCamera].distanceToPlayer;
+
+		// 視点の設定
+		transform.LookAt(m_playerCenterPos);
+
+		transform.Rotate(Vector3.forward, m_customCamera[m_numOfCustomCamera].rotationValueOfZ);
+
+		//壁のチェック
+		CheckWall();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 固定カメラ処理
 	/// </summary>
 	void FixedProcess()
@@ -386,6 +525,24 @@ public class MyCamera : MonoBehaviour
 
 		if (target)
 			m_target = target;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 特別仕様の操作可能な追跡カメラになる
+	/// </summary>
+	/// <param name="numOfCustomCamera">カスタムカメラ番号</param>
+	/// <param name="target">ターゲット</param>
+	public void BecomeCustomOperablePursuitCamera(int numOfCustomCamera = 0, MonoBehaviour target = null)
+	{
+		m_mode = CameraMode.CustomOperablePursuit;
+		m_numOfCustomCamera = numOfCustomCamera;
+
+		if (target)
+			m_target = target;
+
+		//初期位置
+		SetPosition(m_customCamera[numOfCustomCamera].initialRelativePos);
 	}
 
 	//----------------------------------------------------------------------------------------------------

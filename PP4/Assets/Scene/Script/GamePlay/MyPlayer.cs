@@ -236,18 +236,6 @@ public class MyPlayer : MonoBehaviour
 	#region ジェットボードの移動
 	[Header("ジェットボードの移動")]
 	/// <summary>
-	/// 上昇する力
-	/// </summary>
-	[SerializeField]
-	float m_risingForce;
-
-	/// <summary>
-	/// 下降する力
-	/// </summary>
-	[SerializeField]
-	float m_descendingForce;
-
-	/// <summary>
 	/// 水圧による移動量
 	/// </summary>
 	[SerializeField]
@@ -534,13 +522,14 @@ public class MyPlayer : MonoBehaviour
 		//落ちていない
 		if (!m_isFalling)
 		{
-			//Lボタンでジェット下降
+			//Lボタンでジェット下降(ボードの向きで加速)
 			if (m_isKeepPressingLButton)
-				transform.position -= Vector3.up * m_descendingForce * Time.deltaTime;
+				transform.position -= Vector3.Scale(BoardDirection.forward, Vector3.up) * (m_transferAmountByWaterPressure * Time.deltaTime);
 
-			//Rボタンでジェット上昇
+			//Rボタンでジェット上昇(ボードの向きで加速)
 			if (m_isKeepPressingRButton)
-				transform.position += Vector3.up * m_risingForce * m_supportRate * Time.deltaTime;
+				transform.position +=
+					Vector3.Scale(BoardDirection.forward, Vector3.up) * (m_transferAmountByWaterPressure * m_supportRate * Time.deltaTime);
 
 			//ジェット上昇下降なし
 			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
@@ -794,7 +783,7 @@ public class MyPlayer : MonoBehaviour
 				return;
 
 			//相手のジェットウォータ―で下降する
-			transform.position -= Vector3.up * m_risingForce * Time.deltaTime;
+			transform.position -= Vector3.up * m_transferAmountByWaterPressure * Time.deltaTime;
 
 			//ジェットウォータに当たる分だけ水分回復
 			m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));

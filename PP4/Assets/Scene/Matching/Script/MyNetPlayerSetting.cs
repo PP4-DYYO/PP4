@@ -60,6 +60,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	Animator Anim;
 	#endregion
 
+	#region プレイヤーのタイプ
+	[Header("プレイヤーのタイプ")]
+	/// <summary>
+	/// スキン達
+	/// </summary>
+	[SerializeField]
+	GameObject[] Skin;
+	#endregion
+
 	#region プレイヤーの情報
 	[Header("プレイヤーの情報")]
 	/// <summary>
@@ -108,6 +117,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_playerName; }
 	}
+
+	/// <summary>
+	/// プレイヤータイプ
+	/// </summary>
+	[SyncVar(hook = "SyncPlayerType")]
+	int m_playerType;
 
 	/// <summary>
 	/// ランク
@@ -212,6 +227,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//名前の登録
 		CmdRegisterPlayerName(MyGameInfo.Instance.PlayerName);
 
+		//タイプの登録
+		CmdRegisterPlayerType(MyGameInfo.Instance.TypeNum);
+
 		//準備完了
 		CmdNotifyOfIsReady(true);
 	}
@@ -253,6 +271,44 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		{
 			//プレイヤー名の登録
 			Nameplate.text = playerName;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤータイプ登録のサーバ通知
+	/// </summary>
+	/// <param name="typeNum">タイプ番号</param>
+	[Command]
+	void CmdRegisterPlayerType(int typeNum)
+	{
+		m_playerType = typeNum;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤータイプを同期する
+	/// </summary>
+	/// <param name="typeNum">タイプ番号</param>
+	[Client]
+	void SyncPlayerType(int typeNum)
+	{
+		m_playerType = typeNum;
+
+		//自分のタイプの同期
+		if (isLocalPlayer)
+		{
+			//既存プレイヤーのタイプ登録
+			foreach (var player in m_netPlayerSettings)
+			{
+				Instantiate(player.Skin[player.m_playerType], player.transform)
+					.GetComponent<MySkin>().SetSkin(player.GetComponent<MyPlayer>(), player.GetComponent<MyNetPlayerSetting>());
+			}
+		}
+		else
+		{
+			//タイプの変更
+			Instantiate(Skin[typeNum], transform).GetComponent<MySkin>().SetSkin(GetComponent<MyPlayer>(), GetComponent<MyNetPlayerSetting>());
 		}
 	}
 
@@ -416,6 +472,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 			m_statePrev = m_state;
 		}	
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// スキンを設定
+	/// </summary>
+	/// <param name="anim">アニメータ</param>
+	public void SetSkin(Animator anim)
+	{
+		Anim = anim;
 	}
 
 	//----------------------------------------------------------------------------------------------------

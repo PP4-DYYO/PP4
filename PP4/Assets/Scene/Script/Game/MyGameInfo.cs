@@ -96,6 +96,10 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 	/// 種類番号
 	/// </summary>
 	int m_typeNum = 0;
+	public int TypeNum
+	{
+		get { return m_typeNum; }
+	}
 
 	/// <summary>
 	/// プレイヤー名

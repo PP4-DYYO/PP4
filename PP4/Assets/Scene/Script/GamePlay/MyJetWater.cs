@@ -40,6 +40,10 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyPlayer Player;
+	public MyPlayer PlayerScript
+	{
+		set { Player = value; }
+	}
 
 	/// <summary>
 	/// 水発射点のオブジェクト1

@@ -821,6 +821,22 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// スキンを設定
+	/// </summary>
+	/// <param name="anim">アニメータ</param>
+	/// <param name="boardWaterGauge">ボードのウォータゲージ</param>
+	/// <param name="boardDirection">ボードの方向</param>
+	/// <param name="boardJetWater">ボードのジェットウォータ</param>
+	public void SetSkin(Animator anim, Transform boardWaterGauge, Transform boardDirection, MyJetWater boardJetWater)
+	{
+		Anim = anim;
+		WaterGauge = boardWaterGauge;
+		BoardDirection = boardDirection;
+		JetWater = boardJetWater;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 権限のないプレイヤーになる
 	/// </summary>
 	public void BecomeUnauthorizedPlayer()

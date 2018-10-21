@@ -318,14 +318,15 @@ public class MyArmedCanvas : MonoBehaviour
 		//Bボタン長押しで削除時間を増やす
 		if (m_isKeepressingBButton)
 		{
+			//プレイヤーが消えかける
 			m_countTimeToDelete += Time.deltaTime;
 			Characters.AnimCharacter(PlayerBehaviorStatus.BeFrightened, m_characterNumBeingDisplayed);
 			Characters.MakeCharacterTransparent(1 - (m_countTimeToDelete / m_timeToDelete));
 		}
 		else
 		{
-			//キャラクターは常にStand状態
-			Characters.AnimCharacter(PlayerBehaviorStatus.Stand, m_characterNumBeingDisplayed);
+			//キャラクターは常にSelect状態
+			Characters.AnimCharacter(PlayerBehaviorStatus.Select, m_characterNumBeingDisplayed);
 			Characters.MakeCharacterTransparent(1);
 		}
 
@@ -452,6 +453,9 @@ public class MyArmedCanvas : MonoBehaviour
 		//ホームボタンでゲームスタート
 		if (m_isHomeButtonDown)
 			OnClickButtonToStartGame();
+
+		//キャラクターは常にSelect状態
+		Characters.AnimCharacter(PlayerBehaviorStatus.Select, m_characterNumBeingDisplayed);
 
 		//キャラクターの種類が少ない
 		ButtonToDisplayPrev.interactable = (CharactersKind.Length >= m_numNeededToSelectCharacter);

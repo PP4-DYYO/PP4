@@ -80,6 +80,10 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	BeFrightened,
 	/// <summary>
+	/// 選択
+	/// </summary>
+	Select,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,

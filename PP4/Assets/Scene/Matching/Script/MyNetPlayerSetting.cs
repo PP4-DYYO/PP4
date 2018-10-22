@@ -58,6 +58,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	Animator Anim;
+
+	/// <summary>
+	/// 選択されたスキン
+	/// </summary>
+	MySkin m_selectSkin;
+	public MySkin SelectSkin
+	{
+		get { return m_selectSkin; }
+	}
 	#endregion
 
 	#region プレイヤーのタイプ
@@ -301,14 +310,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			//既存プレイヤーのタイプ登録
 			foreach (var player in m_netPlayerSettings)
 			{
-				Instantiate(player.Skin[player.m_playerType], player.transform)
-					.GetComponent<MySkin>().SetSkin(player.GetComponent<MyPlayer>(), player.GetComponent<MyNetPlayerSetting>());
+				//スキンの生成と設定
+				player.m_selectSkin = Instantiate(player.Skin[player.m_playerType], player.transform).GetComponent<MySkin>();
+				player.m_selectSkin.SetSkin(player.GetComponent<MyPlayer>(), player.GetComponent<MyNetPlayerSetting>());
 			}
 		}
 		else
 		{
-			//タイプの変更
-			Instantiate(Skin[typeNum], transform).GetComponent<MySkin>().SetSkin(GetComponent<MyPlayer>(), GetComponent<MyNetPlayerSetting>());
+			//スキンの生成と設定
+			m_selectSkin = Instantiate(Skin[typeNum], transform).GetComponent<MySkin>();
+			m_selectSkin.SetSkin(GetComponent<MyPlayer>(), GetComponent<MyNetPlayerSetting>());
 		}
 	}
 

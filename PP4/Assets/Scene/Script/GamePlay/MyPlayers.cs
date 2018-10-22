@@ -34,6 +34,8 @@ public enum Team
 /// </summary>
 public class MyPlayers : MonoBehaviour
 {
+	#region 外部のインスタンス
+	[Header("外部のインスタンス")]
 	/// <summary>
 	/// ゲーム
 	/// </summary>
@@ -65,6 +67,22 @@ public class MyPlayers : MonoBehaviour
 	{
 		get { return Splashes; }
 	}
+	#endregion
+
+	#region チームカラー
+	[Header("チームカラー")]
+	/// <summary>
+	/// チーム１のカラー
+	/// </summary>
+	[SerializeField]
+	Color Team1Color;
+
+	/// <summary>
+	/// チーム２のカラー
+	/// </summary>
+	[SerializeField]
+	Color Team2Color;
+	#endregion
 
 	/// <summary>
 	/// ネットワークプレイヤー設定たち
@@ -114,19 +132,22 @@ public class MyPlayers : MonoBehaviour
 
 		for (var i = 0; i < m_netPlayerSettings.Length; i++)
 		{
-
 			//交互にチーム分け
 			if (i % 2 == 0)
 			{
+				//親とチームとチーム番号とスキンの変更
 				m_netPlayerSettings[i].transform.parent = Team1.transform;
 				m_netPlayerSettings[i].TeamNum = Team.Team1;
 				m_netPlayerSettings[i].TeamOrder = team1Order++;
+				m_netPlayerSettings[i].SelectSkin.SetTeamColor(Team1Color);
 			}
 			else
 			{
+				//親とチームとチーム番号とスキンの変更
 				m_netPlayerSettings[i].transform.parent = Team2.transform;
 				m_netPlayerSettings[i].TeamNum = Team.Team2;
 				m_netPlayerSettings[i].TeamOrder = team2Order++;
+				m_netPlayerSettings[i].SelectSkin.SetTeamColor(Team2Color);
 			}
 		}
 
@@ -140,7 +161,7 @@ public class MyPlayers : MonoBehaviour
 	public void UpdateHeightRank()
 	{
 		//初期化
-		for(m_targetNum = 0; m_targetNum < m_heightRanks.Length; m_targetNum++)
+		for (m_targetNum = 0; m_targetNum < m_heightRanks.Length; m_targetNum++)
 		{
 			//順位
 			m_heightRanks[m_targetNum] = 0;

@@ -884,6 +884,7 @@ public class MyPlayer : MonoBehaviour
 	public void MakeItBattleState()
 	{
 		enabled = true;
+		m_isFly = false;
 		Rb.isKinematic = false;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
 

@@ -124,6 +124,24 @@ public class MyPlayers : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// チームカラーのリセット
+	/// </summary>
+	public void ResetTeamColor()
+	{
+		//ネットプレイヤー設定がない
+		if (m_netPlayerSettings == null)
+			return;
+
+		//全プレイヤー
+		foreach(var netPlayerSetting in m_netPlayerSettings)
+		{
+			//スキンのデフォルト化
+			netPlayerSetting.SelectSkin.DefaultSkinColor();
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// チームを決める
 	/// </summary>
 	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>

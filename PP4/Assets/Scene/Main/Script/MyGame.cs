@@ -672,7 +672,7 @@ public class MyGame : MonoBehaviour
 			//プレイヤーとカメラとUI
 			OperatingNetPlayerSetting.NameplateDisplay();
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
-			OperatingNetPlayerSetting.SelectSkin.DefaultSkinColor();
+			Players.ResetTeamColor();
 			GhostPlayers.SetActive(true);
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
 			MainUi.WantedRecruitment(MyGameInfo.Instance.Rank, MyGameInfo.Instance.Exp, MyGameInfo.Instance.Power);

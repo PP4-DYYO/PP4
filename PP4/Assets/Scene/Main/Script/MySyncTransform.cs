@@ -56,7 +56,7 @@ public class MySyncTransform : NetworkBehaviour
 	/// <summary>
 	/// しきい値（境目の値）
 	/// </summary>
-	const float THRESHOLD = 0.0078125f;
+	const float THRESHOLD = 0.01f;
 
 	/// <summary>
 	/// しきい値（境目の回転値）
@@ -108,17 +108,6 @@ public class MySyncTransform : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// フレームメソッド
-	/// </summary>
-	void Update()
-	{
-		//２点間の補間
-		LerpPosition();
-		LerpRotations();
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	/// 一定フレームメソッド
 	/// </summary>
 	void FixedUpdate()
@@ -126,6 +115,10 @@ public class MySyncTransform : NetworkBehaviour
 		//情報を送る
 		TransmitPosition();
 		TransmitRotations();
+
+		//２点間の補間
+		LerpPosition();
+		LerpRotations();
 	}
 
 	//----------------------------------------------------------------------------------------------------

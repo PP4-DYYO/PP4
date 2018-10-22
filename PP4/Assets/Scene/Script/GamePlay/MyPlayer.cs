@@ -169,6 +169,10 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyJetWater JetWater;
+	public MyJetWater JetWaterScript
+	{
+		get { return JetWater; }
+	}
 	#endregion
 
 	#region トランスフォーム
@@ -880,6 +884,7 @@ public class MyPlayer : MonoBehaviour
 	public void MakeItBattleState()
 	{
 		enabled = true;
+		Rb.isKinematic = false;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
 
 		//落下状態の初期化

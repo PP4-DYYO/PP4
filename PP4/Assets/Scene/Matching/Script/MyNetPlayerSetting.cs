@@ -131,7 +131,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// プレイヤータイプ
 	/// </summary>
 	[SyncVar(hook = "SyncPlayerType")]
-	int m_playerType;
+	int m_playerType = int.MaxValue;
 
 	/// <summary>
 	/// パワー
@@ -187,12 +187,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		set { m_score = value; }
 	}
 	#endregion
-
-	/// <summary>
-	/// フレーム前のゲーム状態
-	/// </summary>
-	GameStatus m_gameStatePrev;
-
+	
 	/// <summary>
 	/// 準備完了フラグ
 	/// </summary>
@@ -202,16 +197,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_isReady; }
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 初期
-	/// </summary>
-	void Start()
-	{
-		m_gameStatePrev = GameStatus.Result;
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// クライアントの初期
@@ -223,6 +209,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//インスタンスの取得
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
+
+		//権限のないプレイヤーになる
+		Player.BecomeUnauthorizedPlayer();
 
 		m_netPlayerSettings.Add(this);
 	}
@@ -245,7 +234,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//名前の登録
 		CmdRegisterPlayerName(MyGameInfo.Instance.PlayerName);
-
+		
 		//タイプの登録
 		CmdRegisterPlayerType(MyGameInfo.Instance.TypeNum);
 
@@ -364,21 +353,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//インスタンスの取得
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
-
-		//ゲーム状態が変わった
-		if (Game.State != m_gameStatePrev)
-		{
-			m_gameStatePrev = Game.State;
-
-			//ゲーム状態
-			switch (Game.State)
-			{
-				case GameStatus.RecruitPeople:
-					GameStateGotPeopleToGather();
-					break;
-			}
-		}
-
+		
 		//名札と注意マークの方向
 		Nameplate.transform.LookAt(Nameplate.transform.position + (Nameplate.transform.position - Camera.main.transform.position));
 		Caution.transform.LookAt(Caution.transform.position + (Caution.transform.position - Camera.main.transform.position));
@@ -389,21 +364,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//ジェットウォータ処理
 		JetWaterProcess();
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// ゲーム状態が人を集める状態になった
-	/// </summary>
-	void GameStateGotPeopleToGather()
-	{
-		//権限がないプレイヤー
-		if (!isLocalPlayer && isClient)
-		{
-			//権限のないプレイヤーになる
-			Player.BecomeUnauthorizedPlayer();
-		}
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// アニメーション処理
@@ -422,6 +383,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			}
 			return;
 		}
+
+		//未設定
+		if (Anim == null)
+			return;
 
 		//状態とアニメーション遷移が同じ
 		if ((int)m_state == Anim.GetInteger(PlayerInfo.ANIM_PARAMETER_NAME))
@@ -480,6 +445,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void JetWaterProcess()
 	{
+		//未設定
+		if (Player.JetWaterScript == null)
+			return;
+
 		//状態が変わった
 		if (m_state != m_statePrev)
 		{

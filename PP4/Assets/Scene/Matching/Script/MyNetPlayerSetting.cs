@@ -311,6 +311,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			{
 				//スキンの生成と設定
 				player.m_selectSkin = Instantiate(player.Skin[player.m_playerType], player.transform).GetComponent<MySkin>();
+				ResetTransform(player.m_selectSkin.transform);
 				player.m_selectSkin.SetSkin(player.GetComponent<MyPlayer>(), player.GetComponent<MyNetPlayerSetting>());
 			}
 		}
@@ -318,8 +319,21 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		{
 			//スキンの生成と設定
 			m_selectSkin = Instantiate(Skin[typeNum], transform).GetComponent<MySkin>();
+			ResetTransform(m_selectSkin.transform);
 			m_selectSkin.SetSkin(GetComponent<MyPlayer>(), GetComponent<MyNetPlayerSetting>());
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// Transformのリセット
+	/// </summary>
+	/// <param name="trans"></param>
+	void ResetTransform(Transform trans)
+	{
+		trans.localPosition = Vector3.zero;
+		trans.localRotation = Quaternion.identity;
+		trans.localScale = Vector3.one;
 	}
 
 	//----------------------------------------------------------------------------------------------------

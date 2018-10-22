@@ -20,6 +20,10 @@ using UnityEngine;
 public enum GameStatus
 {
 	/// <summary>
+	/// スキンの生成
+	/// </summary>
+	CreateSkin,
+	/// <summary>
 	/// 人を募集
 	/// </summary>
 	RecruitPeople,
@@ -547,7 +551,7 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void Start()
 	{
-		m_state = GameStatus.RecruitPeople;
+		m_state = GameStatus.CreateSkin;
 		m_statePrev = GameStatus.Result;
 	}
 
@@ -602,6 +606,9 @@ public class MyGame : MonoBehaviour
 		//状態
 		switch (m_state)
 		{
+			case GameStatus.CreateSkin:
+				CreateSkinStateProcess();
+				break;
 			case GameStatus.RecruitPeople:
 				RecruitPeopleStateProcess();
 				break;
@@ -634,22 +641,33 @@ public class MyGame : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 人を募集する状態の処理
+	/// スキンの生成状態の処理
 	/// </summary>
-	void RecruitPeopleStateProcess()
+	void CreateSkinStateProcess()
 	{
 		//操作しているプレイヤーが登録されていない
 		if (!OperatingPlayer)
 			return;
 
+		//必要なインスタンス
+		if (!OperatingNetPlayerSetting)
+			OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
+
+		//スキンの生成が終了
+		if (OperatingNetPlayerSetting.SelectSkin != null)
+			m_state = GameStatus.RecruitPeople;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人を募集する状態の処理
+	/// </summary>
+	void RecruitPeopleStateProcess()
+	{
 		//状態初期設定
 		if (m_state != m_statePrev)
 		{
 			m_statePrev = m_state;
-
-			//必要なインスタンス
-			if (!OperatingNetPlayerSetting)
-				OperatingNetPlayerSetting = OperatingPlayer.GetComponent<MyNetPlayerSetting>();
 
 			//プレイヤーとカメラとUI
 			OperatingNetPlayerSetting.NameplateDisplay();

@@ -659,8 +659,9 @@ public class MyGame : MonoBehaviour
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
 			MainUi.WantedRecruitment(MyGameInfo.Instance.Rank, MyGameInfo.Instance.Exp, MyGameInfo.Instance.Power);
 
-			//ランクの同期
+			//ランクとパワーの同期
 			OperatingNetPlayerSetting.CmdRank(MyGameInfo.Instance.Rank);
+			OperatingNetPlayerSetting.CmdPower(MyGameInfo.Instance.Power);
 		}
 
 		//ゲームが開始できるか

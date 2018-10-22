@@ -90,6 +90,11 @@ public class MyPlayers : MonoBehaviour
 	MyNetPlayerSetting[] m_netPlayerSettings;
 
 	/// <summary>
+	/// パワー達
+	/// </summary>
+	List<int> m_powers = new List<int>();
+
+	/// <summary>
 	/// 最高高度
 	/// </summary>
 	float m_maximumAltitude;
@@ -125,15 +130,21 @@ public class MyPlayers : MonoBehaviour
 	public MyNetPlayerSetting[] DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
 	{
 		m_netPlayerSettings = netPlayerSettings;
-		m_heightRanks = new int[m_netPlayerSettings.Length];
+		m_powers.Clear();
+		if (m_heightRanks == null)
+			m_heightRanks = new int[m_netPlayerSettings.Length];
+
+		//パワーの順位を決める
+		DetermineOrderOfPower();
 
 		var team1Order = 0;
 		var team2Order = 0;
 
+		//全プレイヤー
 		for (var i = 0; i < m_netPlayerSettings.Length; i++)
 		{
-			//交互にチーム分け
-			if (i % 2 == 0)
+			//パワーランクが偶数だとチーム１
+			if (m_heightRanks[i] % 2 == 0)
 			{
 				//親とチームとチーム番号とスキンの変更
 				m_netPlayerSettings[i].transform.parent = Team1.transform;
@@ -152,6 +163,41 @@ public class MyPlayers : MonoBehaviour
 		}
 
 		return m_netPlayerSettings;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// パワーの順位を決める
+	/// </summary>
+	void DetermineOrderOfPower()
+	{
+		//初期化
+		for (m_targetNum = 0; m_targetNum < m_heightRanks.Length; m_targetNum++)
+		{
+			//順位
+			m_heightRanks[m_targetNum] = 0;
+		}
+
+		//全プレイヤー
+		for (var i = 0; i < m_netPlayerSettings.Length; i++)
+		{
+			//パワーの取得
+			m_powers.Add(m_netPlayerSettings[i].Power);
+		}
+
+		//全プレイヤーにアクセス
+		for (m_numToBeChanged = 0; m_numToBeChanged < m_netPlayerSettings.Length; m_numToBeChanged++)
+		{
+			//変更される番号以外のプレイヤーにアクセス
+			for (m_targetNum = m_netPlayerSettings.Length - 1; m_targetNum > m_numToBeChanged; m_targetNum--)
+			{
+				//パワーが小さければ順位を下げる
+				if (m_powers[m_numToBeChanged] < m_powers[m_targetNum])
+					m_heightRanks[m_numToBeChanged]++;
+				else
+					m_heightRanks[m_targetNum]++;
+			}
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -134,6 +134,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	int m_playerType;
 
 	/// <summary>
+	/// パワー
+	/// </summary>
+	[SyncVar(hook = "SyncPower")]
+	int m_power;
+	public int Power
+	{
+		get { return m_power; }
+	}
+
+	/// <summary>
 	/// ランク
 	/// </summary>
 	[SyncVar(hook = "SyncRank")]
@@ -557,6 +567,28 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public void SyncRank(int rank)
 	{
 		m_rank = rank;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// パワーの通知
+	/// </summary>
+	/// <param name="power">パワー</param>
+	[Command]
+	public void CmdPower(int power)
+	{
+		m_power = power;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// パワーの同期
+	/// </summary>
+	/// <param name="power">パワー</param>
+	[Client]
+	public void SyncPower(int power)
+	{
+		m_power = power;
 	}
 
 	//----------------------------------------------------------------------------------------------------

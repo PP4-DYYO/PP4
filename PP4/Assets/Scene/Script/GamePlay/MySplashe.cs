@@ -54,6 +54,11 @@ public class MySplashe : MonoBehaviour
 	[SerializeField]
 	GameObject spreadSplashe;
 
+	/// <summary>
+	/// 水しぶきが地面に落ちたかどうか
+	/// </summary>
+	bool isfallen;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの動き
@@ -69,24 +74,40 @@ public class MySplashe : MonoBehaviour
 		m_posPrev = m_pos;
 		m_pos = transform.position;
 
-		if (transform.localScale.z > 0)
+		if (isfallen)
 		{
 			//サイズが０以下になるときには消す
-			if (transform.localScale.x - m_splasheXYSizeChange < 0)
+			if (transform.localScale.z - m_splasheSizeChange < 0)
 			{
 				Destroy(gameObject);
+				MakeSpreadSplashe();
 			}
-			else
+
+			//着地後はサイズを小さくするだけ
+			transform.localScale = new Vector3(transform.localScale.x,
+						 transform.localScale.y, transform.localScale.z - m_splasheSizeChange);
+		}
+		else
+		{
+			if (transform.localScale.z > 0)
 			{
-				//オブジェクトの大きさ変化
-				transform.localScale = new Vector3(transform.localScale.x-m_splasheXYSizeChange,
-					 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+				//サイズが０以下になるときには消す
+				if (transform.localScale.x - m_splasheXYSizeChange < 0)
+				{
+					Destroy(gameObject);
+				}
+				else
+				{
+					//オブジェクトの大きさ変化
+					transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
+						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+				}
 			}
 		}
 
 		//水しぶきオブジェクトの向きを調整
 		if (m_posPrev != Vector3.zero)
-			transform.LookAt(transform.position + (m_pos - m_posPrev));
+			transform.LookAt(transform.position + (m_posPrev-m_pos));
 
 		m_splasheLivingTime += Time.deltaTime;
 	}
@@ -100,8 +121,7 @@ public class MySplashe : MonoBehaviour
 		//ステージに衝突時消える
 		if (other.tag == StageInfo.GROUND_TAG)
 		{
-			Destroy(gameObject);
-			MakeSpreadSplashe();
+			isfallen = true;
 		}
 	}
 

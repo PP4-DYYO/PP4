@@ -93,6 +93,11 @@ public struct CustomCamera
 	/// Zの回転値
 	/// </summary>
 	public float rotationValueOfZ;
+
+	/// <summary>
+	/// 壁のチェックフラグ
+	/// </summary>
+	public bool isWallCheck;
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -501,7 +506,8 @@ public class MyCamera : MonoBehaviour
 		transform.Rotate(Vector3.forward, m_customCamera[m_numOfCustomCamera].rotationValueOfZ);
 
 		//壁のチェック
-		CheckWall();
+		if (m_customCamera[m_numOfCustomCamera].isWallCheck)
+			CheckWall();
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -171,8 +171,8 @@ public class MyTitleManager : MonoBehaviour
 	{
 		MessageColorChange();
 		FrontCharacterMove();
-		SurfingCharacterMove();
-		frontSufingCharacterMove();
+		RightSurfingCharacterMove();
+		LeftSufingCharacterMove();
 
 		//右からのサーファーの移動終了後
 		if (RightSurfingCharacter.transform.position.x < END_POINT_X)
@@ -252,7 +252,7 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 右からのサーファーの動き
 	/// </summary>
-	void SurfingCharacterMove()
+	void RightSurfingCharacterMove()
 	{
 		if (m_isSurfing)
 		{
@@ -275,7 +275,7 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 左からのサーファーの動き
 	/// </summary>
-	void frontSufingCharacterMove()
+	void LeftSufingCharacterMove()
 	{
 		if (m_frontSufingStart)
 		{
@@ -284,7 +284,7 @@ public class MyTitleManager : MonoBehaviour
 			if (LeftSurfingCharacter.transform.position.x > m_surfingStartPos.x)
 			{
 				LeftSurfingCharacter.transform.position = new Vector3(-RightSurfingCharacter.transform.position.x,
-				RightSurfingCharacter.transform.position.y, RightSurfingCharacter.transform.position.z);
+				LeftSurfingCharacter.transform.position.y, LeftSurfingCharacter.transform.position.z);
 				m_frontSufingStart = false;
 				Start();
 			}

@@ -82,10 +82,17 @@ public class MySplashe : MonoBehaviour
 
 		if (isfallen)
 		{
-
-			//着地後はサイズを小さくするだけ
-			transform.localScale = new Vector3(transform.localScale.x,
-						 transform.localScale.y, transform.localScale.z - m_splasheSizeChange);
+			//サイズが０以下になるときには消す
+			if (transform.localScale.z - m_splasheSizeChange < 0)
+			{
+				Destroy(gameObject);
+				MakeSpreadSplashe();
+			}
+			else
+			{
+				transform.localScale = new Vector3(transform.localScale.x,
+							 transform.localScale.y, transform.localScale.z - m_splasheSizeChange);
+			}
 		}
 		else
 		{
@@ -102,16 +109,6 @@ public class MySplashe : MonoBehaviour
 					transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
 						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
 				}
-			}
-		}
-
-		//サイズが０以下になるときには消す
-		if (transform.localScale.z - m_splasheSizeChange < 0)
-		{
-			Destroy(gameObject);
-			if (isfallen)
-			{
-				MakeSpreadSplashe();
 			}
 		}
 

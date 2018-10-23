@@ -37,7 +37,7 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyJetWater JetWater;
-	
+
 	/// <summary>
 	/// チームカラーの為のレンダラー達
 	/// </summary>
@@ -49,6 +49,49 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Color m_defaultColor;
+
+	#region 落下
+	[Header("落下")]
+	/// <summary>
+	/// 落下用の当たり判定
+	/// </summary>
+	[SerializeField]
+	Collider FallCollider;
+
+	/// <summary>
+	/// 落下エフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem[] FallEffects;
+
+	/// <summary>
+	/// 落下エフェクト時間
+	/// </summary>
+	[SerializeField]
+	float m_fallEffectTime;
+
+	/// <summary>
+	/// 落下エフェクト時間を数える
+	/// </summary>
+	float m_countFallEffectTime = float.MaxValue;
+	#endregion
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 固定フレーム
+	/// </summary>
+	void FixedUpdate()
+	{
+		//落下エフェクト時間
+		if (m_countFallEffectTime < m_fallEffectTime)
+		{
+			m_countFallEffectTime += Time.deltaTime;
+
+			//終了
+			if (m_countFallEffectTime >= m_fallEffectTime)
+				FallCollider.enabled = false;
+		}
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -91,10 +134,25 @@ public class MySkin : MonoBehaviour
 	public void SetTeamColor(Color teamColor)
 	{
 		//チームカラー用のメッシュレンダラー
-		foreach(var r in RendererForTeamColor)
+		foreach (var r in RendererForTeamColor)
 		{
 			//色の変更
 			r.material.color = teamColor;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下エフェクトの開始
+	/// </summary>
+	public void StartFallEffect()
+	{
+		foreach(var effect in FallEffects)
+		{
+			effect.Emit(1);
+		}
+		FallCollider.enabled = true;
+
+		m_countFallEffectTime = 0;
 	}
 }

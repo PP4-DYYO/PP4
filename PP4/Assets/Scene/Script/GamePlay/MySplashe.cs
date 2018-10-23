@@ -59,6 +59,12 @@ public class MySplashe : MonoBehaviour
 	/// </summary>
 	bool isfallen;
 
+	/// <summary>
+	/// Destroy待機時間
+	/// </summary>
+	[SerializeField]
+	float m_waitingDestroyTime;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの動き
@@ -76,12 +82,6 @@ public class MySplashe : MonoBehaviour
 
 		if (isfallen)
 		{
-			//サイズが０以下になるときには消す
-			if (transform.localScale.z - m_splasheSizeChange < 0)
-			{
-				Destroy(gameObject);
-				MakeSpreadSplashe();
-			}
 
 			//着地後はサイズを小さくするだけ
 			transform.localScale = new Vector3(transform.localScale.x,
@@ -105,9 +105,15 @@ public class MySplashe : MonoBehaviour
 			}
 		}
 
-		//水しぶきオブジェクトの向きを調整
-		if (m_posPrev != Vector3.zero)
-			transform.LookAt(transform.position + (m_posPrev-m_pos));
+		//サイズが０以下になるときには消す
+		if (transform.localScale.z - m_splasheSizeChange < 0)
+		{
+			Destroy(gameObject);
+			if (isfallen)
+			{
+				MakeSpreadSplashe();
+			}
+		}
 
 		m_splasheLivingTime += Time.deltaTime;
 	}

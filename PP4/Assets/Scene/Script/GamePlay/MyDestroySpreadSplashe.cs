@@ -26,27 +26,9 @@ public class MyDestroySpreadSplashe : MonoBehaviour
 	[SerializeField]
 	float m_limitTime;
 
-	/// <summary>
-	/// 水しぶきの泡のパーティクル
-	/// </summary>
-	[SerializeField]
-	GameObject particle1;
-
-	/// <summary>
-	/// 水しぶきの泡のパーティクル
-	/// </summary>
-	[SerializeField]
-	GameObject particle2;
-
-	/// <summary>
-	/// 水しぶきの泡を小さくする変数
-	/// </summary>
-	[SerializeField]
-	float m_smallerNum;
-
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 一定時間経過後またはサイズが０で消滅する
+	/// 一定時間経過後消滅する
 	/// </summary>
 	void Update()
 	{
@@ -54,25 +36,6 @@ public class MyDestroySpreadSplashe : MonoBehaviour
 		if (m_time > m_limitTime)
 		{
 			Destroy(gameObject);
-		}
-
-		if(particle1!=null&& particle2 != null)
-		{
-			if (particle1.transform.localScale.x - m_smallerNum <= 0)
-			{
-				Destroy(gameObject);
-			}
-			else
-			{
-				//大きさの変更
-				particle1.transform.localScale = new Vector3(particle1.transform.localScale.x - m_smallerNum,
-					particle1.transform.localScale.y - m_smallerNum,
-					particle1.transform.localScale.z - m_smallerNum);
-
-				particle2.transform.localScale = new Vector3(particle2.transform.localScale.x - m_smallerNum,
-					particle2.transform.localScale.y - m_smallerNum,
-					particle2.transform.localScale.z - m_smallerNum);
-			}
 		}
 	}
 }

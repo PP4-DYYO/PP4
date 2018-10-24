@@ -76,6 +76,31 @@ public class MySkin : MonoBehaviour
 	float m_countFallEffectTime = float.MaxValue;
 	#endregion
 
+	#region 着地
+	[Header("着地")]
+	/// <summary>
+	/// 着地成功エフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem LandingSuccessEffect;
+
+	/// <summary>
+	/// 着地失敗エフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem LandingFailedEffect;
+
+	/// <summary>
+	/// 着地成功エフェクトフラグ
+	/// </summary>
+	bool m_isLandingSuccessEffect = true;
+
+	/// <summary>
+	/// 着地失敗エフェクト
+	/// </summary>
+	bool m_isLandingFailedEffect = true;
+	#endregion
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 固定フレーム
@@ -147,12 +172,64 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	public void StartFallEffect()
 	{
-		foreach(var effect in FallEffects)
+		foreach (var effect in FallEffects)
 		{
 			effect.Emit(1);
 		}
 		FallCollider.enabled = true;
 
 		m_countFallEffectTime = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 着地エフェクトフラグをTrueにすることを試みる
+	/// </summary>
+	public void AttemptToSetLandingEffectFlagToTrue()
+	{
+		if (!m_isLandingSuccessEffect)
+			m_isLandingSuccessEffect = true;
+		if (!m_isLandingFailedEffect)
+			m_isLandingFailedEffect = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 着地エフェクトフラグをFalseにすることを試みる
+	/// </summary>
+	public void AttemptToSetLandingEffectFlagToFalse()
+	{
+		if (m_isLandingSuccessEffect)
+			m_isLandingSuccessEffect = false;
+		if (m_isLandingFailedEffect)
+			m_isLandingFailedEffect = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 着地成功エフェクトを試みる
+	/// </summary>
+	public void TryLandingSuccessEffect()
+	{
+		if(!m_isLandingSuccessEffect)
+		{
+			//着地成功エフェクト
+			m_isLandingSuccessEffect = true;
+			LandingSuccessEffect.Play();
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 着地失敗エフェクトを試みる
+	/// </summary>
+	public void TryLandingFailedEffect()
+	{
+		if(!m_isLandingFailedEffect)
+		{
+			//着地失敗エフェクト
+			m_isLandingFailedEffect = true;
+			LandingFailedEffect.Play();
+		}
 	}
 }

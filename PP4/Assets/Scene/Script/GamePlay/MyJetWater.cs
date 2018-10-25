@@ -95,6 +95,16 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	List<Transform> m_leftSplasheTrans = new List<Transform>();
 
+	/// <summary>
+	/// 水しぶきの大きさ
+	/// </summary>
+	Vector3 m_splasheScale;
+
+	/// <summary>
+	/// 水しぶきの間の距離
+	/// </summary>
+	Vector3 m_splasheDistance;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの発生
@@ -126,6 +136,8 @@ public class MyJetWater : MonoBehaviour
 
 		//水しぶきの向き変更
 		ChangeSplasheDirection();
+		//水しぶきのサイズ変更
+		ChangeSplasheScale();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -165,8 +177,8 @@ public class MyJetWater : MonoBehaviour
 			//右の水しぶきの向きの変更
 			for (var i = 1; i < m_rightSplasheTrans.Count; i++)
 			{
-				m_rightSplasheTrans[i].LookAt(m_rightSplasheTrans[i].position + 
-					(m_rightSplasheTrans[i].position - m_rightSplasheTrans[i - 1].position));			
+					m_rightSplasheTrans[i].LookAt(m_rightSplasheTrans[i].position +
+						(m_rightSplasheTrans[i].position - m_rightSplasheTrans[i - 1].position));			
 			}
 		}
 
@@ -192,6 +204,29 @@ public class MyJetWater : MonoBehaviour
 				m_leftSplasheTrans[i].LookAt(m_leftSplasheTrans[i].position +
 					(m_leftSplasheTrans[i].position - m_leftSplasheTrans[i - 1].position));
 			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきのサイズ変更
+	/// </summary>
+	void ChangeSplasheScale()
+	{
+		//右の水しぶき
+		for (var i = 1; i < m_rightSplasheTrans.Count; i++)
+		{
+			m_splasheScale = m_rightSplasheTrans[i].localScale;
+			m_splasheScale.z = Vector3.Distance(m_rightSplasheTrans[i].position, m_rightSplasheTrans[i - 1].position);
+			m_rightSplasheTrans[i].localScale = m_splasheScale;
+		}
+
+		//左の水しぶき
+		for (var i = 1; i < m_leftSplasheTrans.Count; i++)
+		{
+			m_splasheScale = m_leftSplasheTrans[i].localScale;
+			m_splasheScale.z = Vector3.Distance(m_leftSplasheTrans[i].position, m_leftSplasheTrans[i - 1].position);
+			m_leftSplasheTrans[i].localScale = m_splasheScale;
 		}
 	}
 }

@@ -57,7 +57,7 @@ public class MySplashe : MonoBehaviour
 	/// <summary>
 	/// 水しぶきが地面に落ちたかどうか
 	/// </summary>
-	bool isfallen;
+	public bool isfallen;
 
 	/// <summary>
 	/// Destroy待機時間
@@ -80,37 +80,32 @@ public class MySplashe : MonoBehaviour
 		m_posPrev = m_pos;
 		m_pos = transform.position;
 
-		if (isfallen)
-		{
-			//サイズが０以下になるときには消す
-			if (transform.localScale.z - m_splasheSizeChange < 0)
-			{
-				Destroy(gameObject);
-				MakeSpreadSplashe();
-			}
-			else
-			{
-				transform.localScale = new Vector3(transform.localScale.x,
-							 transform.localScale.y, transform.localScale.z - m_splasheSizeChange);
-			}
-		}
-		else
-		{
 			if (transform.localScale.z > 0)
 			{
 				//サイズが０以下になるときには消す
-				if (transform.localScale.x - m_splasheXYSizeChange < 0)
+				if (transform.localScale.x - (50*m_splasheXYSizeChange) < 0)
 				{
 					Destroy(gameObject);
+					if (isfallen)
+					{
+						MakeSpreadSplashe();
+					}
 				}
 				else
 				{
-					//オブジェクトの大きさ変化
+				//オブジェクトの大きさ変化
+				if (isfallen)
+				{
+					transform.localScale = new Vector3(transform.localScale.x -(50* m_splasheXYSizeChange),
+						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+				}
+				else
+				{
 					transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
 						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
 				}
+				}
 			}
-		}
 
 		m_splasheLivingTime += Time.deltaTime;
 	}

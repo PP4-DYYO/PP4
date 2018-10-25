@@ -359,6 +359,48 @@ public class MyPlayer : MonoBehaviour
 	}
 	#endregion
 
+	#region 風
+	[Header("風")]
+	/// <summary>
+	/// 風
+	/// </summary>
+	[SerializeField]
+	ParticleSystem Wind;
+
+	/// <summary>
+	/// 風が吹く間隔
+	/// </summary>
+	[SerializeField]
+	float m_windBlowingInterval;
+
+	/// <summary>
+	/// 風が発生する距離
+	/// </summary>
+	[SerializeField]
+	float m_distanceAtWhichWindOccurs;
+
+	/// <summary>
+	/// 1回の風量
+	/// </summary>
+	[SerializeField]
+	int m_oneWindVolume;
+
+	/// <summary>
+	/// 風が吹く間隔を数える
+	/// </summary>
+	float m_countWindBlowingInterval;
+
+	/// <summary>
+	/// 風が吹く前の位置
+	/// </summary>
+	Vector3 m_posBeforeWindBlows;
+
+	/// <summary>
+	/// 風の向き
+	/// </summary>
+	Vector3 m_windDirection;
+	#endregion
+
 	#region キーボード関係
 	[Header("キーボード関係")]
 	/// <summary>
@@ -444,6 +486,9 @@ public class MyPlayer : MonoBehaviour
 
 		//アニメーション処理
 		AnimProcess();
+
+		//風の発生
+		GenerateWind();
 
 		//入力のリセット
 		ResetInput();
@@ -754,6 +799,35 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 風の発生
+	/// </summary>
+	void GenerateWind()
+	{
+		m_countWindBlowingInterval += Time.deltaTime;
+
+		//プレイヤーの向きを無視
+		Wind.transform.eulerAngles = m_windDirection;
+
+		//風が吹くタイミング
+		if (m_countWindBlowingInterval >= m_windBlowingInterval)
+		{
+			//移動距離が風を起こす距離
+			if ((transform.position - m_posBeforeWindBlows).sqrMagnitude >= (m_distanceAtWhichWindOccurs * m_distanceAtWhichWindOccurs))
+			{
+				//風向きと風量
+				Wind.transform.LookAt(transform.position + (m_posBeforeWindBlows - transform.position));
+				m_windDirection = Wind.transform.eulerAngles;
+				Wind.Emit(m_oneWindVolume);
+			}
+
+			//位置と時間の初期化
+			m_posBeforeWindBlows = transform.position;
+			m_countWindBlowingInterval = 0;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 入力のリセット
 	/// </summary>
 	void ResetInput()
@@ -893,6 +967,9 @@ public class MyPlayer : MonoBehaviour
 
 		//コインの初期化
 		m_numOfCoins = 0;
+
+		//風が吹く前の位置
+		m_posBeforeWindBlows = transform.position;
 	}
 
 	//----------------------------------------------------------------------------------------------------

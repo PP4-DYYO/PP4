@@ -151,7 +151,7 @@ public class MyCamera : MonoBehaviour
 	/// 現在の相対的位置
 	/// </summary>
 	Vector3 m_currentRelativePos;
-	
+
 	/// <summary>
 	/// 目標の相対的位置
 	/// </summary>
@@ -327,7 +327,7 @@ public class MyCamera : MonoBehaviour
 			m_target = FindObjectOfType<MyPlayer>();
 
 			//モード毎に初期化
-			switch(m_mode)
+			switch (m_mode)
 			{
 				case CameraMode.Pursuit:
 					BecomePursuitCamera();
@@ -568,7 +568,7 @@ public class MyCamera : MonoBehaviour
 			(m_targetRelativePos - m_currentRelativePos) * (m_countModeSwithingTime / m_modeSwitchingTime) + m_target.transform.position;
 
 		//回転
-		transform.eulerAngles =	m_currentRotation +
+		transform.eulerAngles = m_currentRotation +
 			(m_targetRotation - m_currentRotation) * (m_countModeSwithingTime / m_modeSwitchingTime);
 
 		//終了
@@ -590,7 +590,7 @@ public class MyCamera : MonoBehaviour
 	public void BecomeFixedCamera(Vector3 pos, Vector3 direction, bool isMoveModeSwitch = false)
 	{
 		//モード切替の移動フラグ
-		if(isMoveModeSwitch)
+		if (isMoveModeSwitch)
 		{
 			m_isMoveModeSwitch = true;
 			m_currentRelativePos = transform.position - m_target.transform.position;
@@ -667,7 +667,7 @@ public class MyCamera : MonoBehaviour
 	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
 	/// <param name="relativePos">相対的位置</param>
 	/// <param name="target">ターゲット</param>
-	public void BecomePursuitCamera(bool isMoveModeSwitch = false, Vector3 ? relativePos = null, MonoBehaviour target = null)
+	public void BecomePursuitCamera(bool isMoveModeSwitch = false, Vector3? relativePos = null, MonoBehaviour target = null)
 	{
 		//モード切替の移動フラグ
 		if (isMoveModeSwitch)

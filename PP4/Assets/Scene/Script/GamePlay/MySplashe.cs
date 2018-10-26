@@ -16,16 +16,6 @@ using UnityEngine;
 public class MySplashe : MonoBehaviour
 {
 	/// <summary>
-	/// 現在の位置
-	/// </summary>
-	Vector3 m_pos;
-
-	/// <summary>
-	/// 前のフレームの位置
-	/// </summary>
-	Vector3 m_posPrev;
-
-	/// <summary>
 	/// 水しぶきの残る時間
 	/// </summary>
 	[SerializeField]
@@ -77,26 +67,23 @@ public class MySplashe : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-		m_posPrev = m_pos;
-		m_pos = transform.position;
-
-			if (transform.localScale.z > 0)
+		if (transform.localScale.z > 0)
+		{
+			//サイズが０以下になるときには消す
+			if (transform.localScale.x - (50 * m_splasheXYSizeChange) < 0)
 			{
-				//サイズが０以下になるときには消す
-				if (transform.localScale.x - (50*m_splasheXYSizeChange) < 0)
+				Destroy(gameObject);
+				if (isfallen)
 				{
-					Destroy(gameObject);
-					if (isfallen)
-					{
-						MakeSpreadSplashe();
-					}
+					MakeSpreadSplashe();
 				}
-				else
-				{
+			}
+			else
+			{
 				//オブジェクトの大きさ変化
 				if (isfallen)
 				{
-					transform.localScale = new Vector3(transform.localScale.x -(50* m_splasheXYSizeChange),
+					transform.localScale = new Vector3(transform.localScale.x - (50 * m_splasheXYSizeChange),
 						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
 				}
 				else
@@ -104,8 +91,8 @@ public class MySplashe : MonoBehaviour
 					transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
 						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
 				}
-				}
 			}
+		}
 
 		m_splasheLivingTime += Time.deltaTime;
 	}

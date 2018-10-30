@@ -60,7 +60,7 @@ public class MySplashe : MonoBehaviour
 	float m_splasheScaleZ;
 
 	/// <summary>
-	/// 着地から消えるまでの時間(60で)
+	/// 着地から消えるまでの時間
 	/// </summary>
 	[SerializeField]
 	float m_splasheSmallerTime;
@@ -105,8 +105,8 @@ public class MySplashe : MonoBehaviour
 			}
 			else
 			{
-				transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
-					 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+				transform.localScale = new Vector3(transform.localScale.x - (transform.localScale.x / m_splasheLifeTime),
+					 transform.localScale.y - (transform.localScale.y / m_splasheLifeTime), transform.localScale.z + m_splasheSizeChange);
 				m_splasheScaleZ = this.transform.localScale.z;
 			}
 		}

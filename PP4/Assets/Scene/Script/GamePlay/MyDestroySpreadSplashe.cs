@@ -21,7 +21,7 @@ public class MyDestroySpreadSplashe : MonoBehaviour
 	float m_time;
 
 	/// <summary>
-	/// 自動消滅までの時間(0.5f)
+	/// 自動消滅までの時間
 	/// </summary>
 	[SerializeField]
 	float m_limitTime;

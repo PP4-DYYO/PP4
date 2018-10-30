@@ -71,8 +71,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>	
 	void Start()
 	{
-		m_splasheScaleZ = this.transform.localScale.z;
-	
+		m_splasheScaleZ = this.transform.localScale.z;	
 	}
 
 	//----------------------------------------------------------------------------------------------------

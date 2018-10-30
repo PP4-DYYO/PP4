@@ -47,13 +47,33 @@ public class MySplashe : MonoBehaviour
 	/// <summary>
 	/// 水しぶきが地面に落ちたかどうか
 	/// </summary>
-	public bool isfallen;
+	[SerializeField]
+	bool isfallen;
+	public bool Fallen
+	{
+		get { return isfallen; }
+	}
 
 	/// <summary>
-	/// Destroy待機時間
+	/// 自身のZの大きさ
+	/// </summary>
+	float m_splasheScaleZ;
+
+	/// <summary>
+	/// 着地から消えるまでの時間(60で)
 	/// </summary>
 	[SerializeField]
-	float m_waitingDestroyTime;
+	float m_splasheSmallerTime;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきの動き
+	/// </summary>	
+	void Start()
+	{
+		m_splasheScaleZ = this.transform.localScale.z;
+	
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -67,30 +87,28 @@ public class MySplashe : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-		if (transform.localScale.z > 0)
+		//サイズが０以下になるときには消す
+		if (transform.localScale.z - m_splasheScaleZ / m_splasheSmallerTime < 0)
 		{
-			//サイズが０以下になるときには消す
-			if (transform.localScale.x - (50 * m_splasheXYSizeChange) < 0)
+			Destroy(gameObject);
+			if (isfallen)
 			{
-				Destroy(gameObject);
-				if (isfallen)
-				{
-					MakeSpreadSplashe();
-				}
+				MakeSpreadSplashe();
+			}
+		}
+		else
+		{
+			//オブジェクトの大きさ変化
+			if (isfallen)
+			{
+				transform.localScale = new Vector3(transform.localScale.x,
+					 transform.localScale.y, transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime));
 			}
 			else
 			{
-				//オブジェクトの大きさ変化
-				if (isfallen)
-				{
-					transform.localScale = new Vector3(transform.localScale.x - (50 * m_splasheXYSizeChange),
-						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
-				}
-				else
-				{
-					transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
-						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
-				}
+				transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
+					 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+				m_splasheScaleZ = this.transform.localScale.z;
 			}
 		}
 

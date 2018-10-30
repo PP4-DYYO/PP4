@@ -162,7 +162,7 @@ public class MyJetWater : MonoBehaviour
 		if (m_rightSplasheTrans.Count != 0)
 		{
 			//存在しない右の水しぶきの削除
-			for (var i=0;i<m_rightSplasheTrans.Count;)
+			for (var i = 0; i < m_rightSplasheTrans.Count;)
 			{
 				if (m_rightSplasheTrans[i] == null)
 				{
@@ -177,8 +177,8 @@ public class MyJetWater : MonoBehaviour
 			//右の水しぶきの向きの変更
 			for (var i = 1; i < m_rightSplasheTrans.Count; i++)
 			{
-					m_rightSplasheTrans[i].LookAt(m_rightSplasheTrans[i].position +
-						(m_rightSplasheTrans[i].position - m_rightSplasheTrans[i - 1].position));			
+				m_rightSplasheTrans[i].LookAt(m_rightSplasheTrans[i].position +
+					(m_rightSplasheTrans[i].position - m_rightSplasheTrans[i - 1].position));
 			}
 		}
 
@@ -216,17 +216,23 @@ public class MyJetWater : MonoBehaviour
 		//右の水しぶき
 		for (var i = 1; i < m_rightSplasheTrans.Count; i++)
 		{
-			m_splasheScale = m_rightSplasheTrans[i].localScale;
-			m_splasheScale.z = Vector3.Distance(m_rightSplasheTrans[i].position, m_rightSplasheTrans[i - 1].position);
-			m_rightSplasheTrans[i].localScale = m_splasheScale;
+			if (!m_rightSplasheTrans[i].GetComponent<MySplashe>().Fallen)
+			{
+				m_splasheScale = m_rightSplasheTrans[i].localScale;
+				m_splasheScale.z = Vector3.Distance(m_rightSplasheTrans[i].position, m_rightSplasheTrans[i - 1].position);
+				m_rightSplasheTrans[i].localScale = m_splasheScale;
+			}
 		}
 
 		//左の水しぶき
 		for (var i = 1; i < m_leftSplasheTrans.Count; i++)
 		{
-			m_splasheScale = m_leftSplasheTrans[i].localScale;
-			m_splasheScale.z = Vector3.Distance(m_leftSplasheTrans[i].position, m_leftSplasheTrans[i - 1].position);
-			m_leftSplasheTrans[i].localScale = m_splasheScale;
+			if (!m_leftSplasheTrans[i].GetComponent<MySplashe>().Fallen)
+			{
+				m_splasheScale = m_leftSplasheTrans[i].localScale;
+				m_splasheScale.z = Vector3.Distance(m_leftSplasheTrans[i].position, m_leftSplasheTrans[i - 1].position);
+				m_leftSplasheTrans[i].localScale = m_splasheScale;
+			}
 		}
 	}
 }

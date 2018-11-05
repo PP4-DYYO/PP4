@@ -11,20 +11,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //----------------------------------------------------------------------------------------------------
-//Enum・Struct
-//----------------------------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------------------------
-/// <summary>
-/// チーム
-/// </summary>
-public enum Team
-{
-	Team1,
-	Team2,
-}
-
-//----------------------------------------------------------------------------------------------------
 //クラス
 //----------------------------------------------------------------------------------------------------
 
@@ -45,19 +31,7 @@ public class MyPlayers : MonoBehaviour
 	{
 		get { return Game; }
 	}
-
-	/// <summary>
-	/// チーム１
-	/// </summary>
-	[SerializeField]
-	GameObject Team1;
-
-	/// <summary>
-	/// チーム２
-	/// </summary>
-	[SerializeField]
-	GameObject Team2;
-
+	
 	/// <summary>
 	/// 水しぶき
 	/// </summary>
@@ -69,19 +43,13 @@ public class MyPlayers : MonoBehaviour
 	}
 	#endregion
 
-	#region チームカラー
-	[Header("チームカラー")]
+	#region プレイヤーカラー
+	[Header("プレイヤーカラー")]
 	/// <summary>
-	/// チーム１のカラー
+	/// プレイヤーのカラー達
 	/// </summary>
 	[SerializeField]
-	Color Team1Color;
-
-	/// <summary>
-	/// チーム２のカラー
-	/// </summary>
-	[SerializeField]
-	Color Team2Color;
+	Color[] m_playerColor;
 	#endregion
 
 	/// <summary>
@@ -124,9 +92,9 @@ public class MyPlayers : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// チームカラーのリセット
+	/// プレイヤーカラーのリセット
 	/// </summary>
-	public void ResetTeamColor()
+	public void ResetPlayerColor()
 	{
 		//ネットプレイヤー設定がない
 		if (m_netPlayerSettings == null)
@@ -142,11 +110,12 @@ public class MyPlayers : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// チームを決める
+	/// プレイヤー番号を決める
 	/// </summary>
 	/// <param name="netPlayerSettings">ネットワークプレイヤー設定たち</param>
-	public MyNetPlayerSetting[] DecideOnTeam(MyNetPlayerSetting[] netPlayerSettings)
+	public MyNetPlayerSetting[] DecidePlayerNum(MyNetPlayerSetting[] netPlayerSettings)
 	{
+		//配列の初期化
 		m_netPlayerSettings = netPlayerSettings;
 		m_powers.Clear();
 		if (m_heightRanks == null)
@@ -155,29 +124,12 @@ public class MyPlayers : MonoBehaviour
 		//パワーの順位を決める
 		DetermineOrderOfPower();
 
-		var team1Order = 0;
-		var team2Order = 0;
-
 		//全プレイヤー
 		for (var i = 0; i < m_netPlayerSettings.Length; i++)
 		{
-			//パワーランクが偶数だとチーム１
-			if (m_heightRanks[i] % 2 == 0)
-			{
-				//親とチームとチーム番号とスキンの変更
-				m_netPlayerSettings[i].transform.parent = Team1.transform;
-				m_netPlayerSettings[i].TeamNum = Team.Team1;
-				m_netPlayerSettings[i].TeamOrder = team1Order++;
-				m_netPlayerSettings[i].SelectSkin.SetTeamColor(Team1Color);
-			}
-			else
-			{
-				//親とチームとチーム番号とスキンの変更
-				m_netPlayerSettings[i].transform.parent = Team2.transform;
-				m_netPlayerSettings[i].TeamNum = Team.Team2;
-				m_netPlayerSettings[i].TeamOrder = team2Order++;
-				m_netPlayerSettings[i].SelectSkin.SetTeamColor(Team2Color);
-			}
+			//プレイヤー番号とスキンの変更
+			m_netPlayerSettings[i].PlayerNum = m_heightRanks[i];
+			m_netPlayerSettings[i].SelectSkin.SetTeamColor(m_playerColor[m_heightRanks[i]]);
 		}
 
 		return m_netPlayerSettings;
@@ -253,53 +205,5 @@ public class MyPlayers : MonoBehaviour
 			m_maximumAltitude = (m_maximumAltitude < m_netPlayerSettings[m_numToBeChanged].transform.position.y) ?
 				m_netPlayerSettings[m_numToBeChanged].transform.position.y : m_maximumAltitude;
 		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// チーム１の高さ合計を取得
-	/// </summary>
-	/// <param name="scoreArray">得点配列</param>
-	/// <returns>高さ合計</returns>
-	public float GetTeam1HeightTotal(ref float[] scoreArray)
-	{
-		//配列要素数が違う
-		if (!scoreArray.Length.Equals(Team1.transform.childCount))
-			scoreArray = new float[Team1.transform.childCount];
-
-		var totalHeight = 0f;
-
-		//全子供
-		for (var i = 0; i < Team1.transform.childCount; i++)
-		{
-			totalHeight += Team1.transform.GetChild(i).position.y;
-			scoreArray[i] = Team1.transform.GetChild(i).position.y;
-		}
-
-		return totalHeight;
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// チーム２の高さ合計を取得
-	/// </summary>
-	/// <param name="scoreArray">得点配列</param>
-	/// <returns>高さ合計</returns>
-	public float GetTeam2HeightTotal(ref float[] scoreArray)
-	{
-		//配列要素数が違う
-		if (!scoreArray.Length.Equals(Team2.transform.childCount))
-			scoreArray = new float[Team2.transform.childCount];
-
-		var totalHeight = 0f;
-
-		//全子供
-		for (var i = 0; i < Team2.transform.childCount; i++)
-		{
-			totalHeight += Team2.transform.GetChild(i).position.y;
-			scoreArray[i] = Team2.transform.GetChild(i).position.y;
-		}
-
-		return totalHeight;
 	}
 }

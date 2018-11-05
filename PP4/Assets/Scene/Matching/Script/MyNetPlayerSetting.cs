@@ -46,13 +46,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	TextMesh Nameplate;
-
-	/// <summary>
-	/// 注意
-	/// </summary>
-	[SerializeField]
-	GameObject Caution;
-
+	
 	/// <summary>
 	/// アニメーター
 	/// </summary>
@@ -98,25 +92,25 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	PlayerBehaviorStatus m_statePrev;
 
 	/// <summary>
-	/// チーム番号
+	/// プレイヤー番号
 	/// </summary>
-	Team m_teamNum;
-	public Team TeamNum
+	int m_playerNum;
+	public int PlayerNum
 	{
-		get { return m_teamNum; }
-		set { m_teamNum = value; }
+		get { return m_playerNum; }
+		set { m_playerNum = value; }
 	}
 
 	/// <summary>
-	/// チームの順番
+	/// 順位
 	/// </summary>
-	int m_teamOrder;
-	public int TeamOrder
+	int m_rank;
+	public int Rank
 	{
-		get { return m_teamOrder; }
-		set { m_teamOrder = value; }
+		get { return m_rank; }
+		set { m_rank = value; }
 	}
-	
+
 	/// <summary>
 	/// プレイヤー名
 	/// </summary>
@@ -144,14 +138,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
-	/// ランク
+	/// レベル
 	/// </summary>
-	[SyncVar(hook = "SyncRank")]
-	int m_rank;
-	public int Rank
+	[SyncVar(hook = "SyncLevel")]
+	int m_level;
+	public int Level
 	{
-		get { return m_rank; }
-		set { m_rank = value; }
+		get { return m_level; }
+		set { m_level = value; }
 	}
 
 	/// <summary>
@@ -187,7 +181,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		set { m_score = value; }
 	}
 	#endregion
-	
+
 	/// <summary>
 	/// 準備完了フラグ
 	/// </summary>
@@ -197,7 +191,24 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_isReady; }
 	}
-	
+
+	#region 作業用
+	/// <summary>
+	/// 変更される番号
+	/// </summary>
+	static int m_numToBeChanged;
+
+	/// <summary>
+	/// 対象の番号
+	/// </summary>
+	static int m_targetNum;
+
+	/// <summary>
+	/// 作業用Int
+	/// </summary>
+	int m_workInt;
+	#endregion
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// クライアントの初期
@@ -224,17 +235,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		base.OnStartLocalPlayer();
 
-		//インスタンスの取得
-		if (!Game)
-			Game = GameObject.Find("Game").GetComponent<MyGame>();
-
 		//ゲームに必要な設定
 		Game.OperatingPlayerScript = Player;
 		transform.parent = Game.PlayersScript.transform;
 
 		//名前の登録
 		CmdRegisterPlayerName(MyGameInfo.Instance.PlayerName);
-		
+
 		//タイプの登録
 		CmdRegisterPlayerType(MyGameInfo.Instance.TypeNum);
 
@@ -367,10 +374,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//インスタンスの取得
 		if (!Game)
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
-		
-		//名札と注意マークの方向
+
+		//名札の方向
 		Nameplate.transform.LookAt(Nameplate.transform.position + (Nameplate.transform.position - Camera.main.transform.position));
-		Caution.transform.LookAt(Caution.transform.position + (Caution.transform.position - Camera.main.transform.position));
 
 		//アニメーション処理
 		AnimProcess();
@@ -378,7 +384,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//ジェットウォータ処理
 		JetWaterProcess();
 	}
-	
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// アニメーション処理
@@ -416,9 +422,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//遷移変更
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)m_state);
-
-		//状態変化による処理
-		ProcessByStateChange();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -442,17 +445,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		m_state = state;
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 状態変化による処理
-	/// </summary>
-	void ProcessByStateChange()
-	{
-		//落下状態で注意表記
-		Caution.SetActive(m_state == PlayerBehaviorStatus.Falling);
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// ジェットウォータ処理
@@ -472,10 +465,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				|| m_state == PlayerBehaviorStatus.HoldBoardInHand || m_state == PlayerBehaviorStatus.HoldBoardInHand2
 				|| m_state == PlayerBehaviorStatus.Result
 				|| m_state == PlayerBehaviorStatus.SuccessfulLanding || m_state == PlayerBehaviorStatus.LandingFailed
+				|| m_state == PlayerBehaviorStatus.ResultsRanked1st || m_state == PlayerBehaviorStatus.ResultsRanked2nd
+				|| m_state == PlayerBehaviorStatus.ResultsRanked3rd || m_state == PlayerBehaviorStatus.ResultsRanked4th
 				|| m_state == PlayerBehaviorStatus.Win || m_state == PlayerBehaviorStatus.Defeat));
 
 			m_statePrev = m_state;
-		}	
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -500,10 +495,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// プレイヤー番号を取得
+	/// ネットプレイヤー番号を取得
 	/// </summary>
-	/// <returns>更新されたプレイヤー番号</returns>
-	public int GetPlayerNum()
+	/// <returns>ネットプレイヤー番号</returns>
+	public int GetNetPlayerNum()
 	{
 		return m_netPlayerSettings.IndexOf(this);
 	}
@@ -519,10 +514,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		ConfirmationOfPlayersWhoAreDisconnected();
 
 		//全てのプレイヤーにアクセス
-		for (var i = 0; i < m_netPlayerSettings.Count; i++)
+		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count; m_workInt++)
 		{
 			//準備完了でない
-			if (!m_netPlayerSettings[i].m_isReady)
+			if (!m_netPlayerSettings[m_workInt].m_isReady)
 				return false;
 		}
 
@@ -532,24 +527,24 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ランクの通知
+	/// レベルの通知
 	/// </summary>
-	/// <param name="rank">ランク</param>
+	/// <param name="level">レベル</param>
 	[Command]
-	public void CmdRank(int rank)
+	public void CmdLevel(int level)
 	{
-		m_rank = rank;
+		m_level = level;
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ランクの同期
+	/// レベルの同期
 	/// </summary>
-	/// <param name="rank">ランク</param>
+	/// <param name="level">レベル</param>
 	[Client]
-	public void SyncRank(int rank)
+	public void SyncLevel(int level)
 	{
-		m_rank = rank;
+		m_level = level;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -585,8 +580,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		for (var i = 0; i < battleRecords.Length; i++)
 		{
 			//プレイヤー情報の代入
-			battleRecords[i].team = m_netPlayerSettings[i].TeamNum;
+			m_netPlayerSettings[i].Rank = 0;
 			battleRecords[i].rank = m_netPlayerSettings[i].Rank;
+			battleRecords[i].level = m_netPlayerSettings[i].Level;
 			battleRecords[i].playerName = m_netPlayerSettings[i].m_playerName;
 			battleRecords[i].height = 0;
 			battleRecords[i].numOfCoins = 0;
@@ -667,13 +663,31 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <param name="battleRecords">戦績たち</param>
 	public static void PutPlayerAchievementsInBattleRecord(ref PublishRecord[] battleRecords)
 	{
-		//全ての戦績
-		for (var i = 0; i < battleRecords.Length; i++)
+		//評価されるネットプレイヤー
+		for (m_numToBeChanged = 0; m_numToBeChanged < m_netPlayerSettings.Count - 1; m_numToBeChanged++)
 		{
+			//評価するネットプレイヤー
+			for (m_targetNum = m_numToBeChanged + 1; m_targetNum < m_netPlayerSettings.Count; m_targetNum++)
+			{
+				//低いスコアのプレイヤーが順位が下がる
+				if (m_netPlayerSettings[m_numToBeChanged].Score > m_netPlayerSettings[m_targetNum].Score)
+					m_netPlayerSettings[m_targetNum].Rank++;
+				else
+					m_netPlayerSettings[m_numToBeChanged].Rank++;
+			}
+		}
+
+		//全ての戦績
+		for (m_targetNum = 0; m_targetNum < battleRecords.Length; m_targetNum++)
+		{
+			//ネットワーク切れのプレイヤー
+			if (!m_netPlayerSettings[m_targetNum])
+				continue;
+
 			//プレイヤー成果の代入
-			battleRecords[i].height = (int)m_netPlayerSettings[i].FinalAltitude;
-			battleRecords[i].numOfCoins = m_netPlayerSettings[i].NumOfCoins;
-			battleRecords[i].score = m_netPlayerSettings[i].Score;
+			battleRecords[m_targetNum].height = (int)m_netPlayerSettings[m_targetNum].FinalAltitude;
+			battleRecords[m_targetNum].numOfCoins = m_netPlayerSettings[m_targetNum].NumOfCoins;
+			battleRecords[m_targetNum].score = m_netPlayerSettings[m_targetNum].Score;
 		}
 	}
 
@@ -683,13 +697,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void ConfirmationOfPlayersWhoAreDisconnected()
 	{
-		for (var i = 0; i < m_netPlayerSettings.Count;)
+		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count;)
 		{
 			//存在していない
-			if (!m_netPlayerSettings[i])
-				m_netPlayerSettings.RemoveAt(i);
+			if (!m_netPlayerSettings[m_workInt])
+				m_netPlayerSettings.RemoveAt(m_workInt);
 			else
-				i++;
+				m_workInt++;
 		}
 	}
 

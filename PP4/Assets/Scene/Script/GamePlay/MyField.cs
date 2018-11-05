@@ -14,35 +14,13 @@ using UnityEngine;
 /// </summary>
 public class MyField : MonoBehaviour
 {
+	#region 外部のインスタンス
+	[Header("外部のインスタンス")]
 	/// <summary>
-	/// チーム１の開始位置たち
+	/// 表彰台
 	/// </summary>
 	[SerializeField]
-	Vector3[] m_team1StartPositions;
-	public Vector3[] Team1StartPositions
-	{
-		get { return m_team1StartPositions; }
-	}
-
-	/// <summary>
-	/// チーム２の開始位置たち
-	/// </summary>
-	[SerializeField]
-	Vector3[] m_team2StartPositions;
-	public Vector3[] Team2StartPositions
-	{
-		get { return m_team2StartPositions; }
-	}
-
-	/// <summary>
-	/// ステージの半径
-	/// </summary>
-	[SerializeField]
-	float m_fieldRudius;
-	public float FieldRudius
-	{
-		get { return m_fieldRudius; }
-	}
+	GameObject Podium;
 
 	/// <summary>
 	/// コイン
@@ -55,6 +33,58 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyItem[] FieldCoins;
+	#endregion
+
+	#region 表彰台
+	[Header("表彰台")]
+	/// <summary>
+	/// 表彰台を隠す位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_posToHidePodium;
+
+	/// <summary>
+	/// 表彰台の初期位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_initPosOfPodium;
+
+	/// <summary>
+	/// 表彰台の目標位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_targetPosOfPodium;
+	#endregion
+
+	/// <summary>
+	/// 開始位置たち
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_startPositions;
+	public Vector3[] StartPositions
+	{
+		get { return m_startPositions; }
+	}
+
+	/// <summary>
+	/// 順位の位置
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_positionsOfRanks;
+	public Vector3[] PositionsOfRank
+	{
+		get { return m_positionsOfRanks; }
+	}
+
+	/// <summary>
+	/// ステージの半径
+	/// </summary>
+	[SerializeField]
+	float m_fieldRudius;
+	public float FieldRudius
+	{
+		get { return m_fieldRudius; }
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -62,11 +92,24 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	public void ResetField()
 	{
+		//表彰台を隠す
+		Podium.transform.position = m_posToHidePodium;
+
 		//全コイン
-		foreach(var coin in FieldCoins)
+		foreach (var coin in FieldCoins)
 		{
 			//リセット
 			coin.ResetItem();
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 表彰台の移動
+	/// </summary>
+	/// <param name="movementRatio">移動率</param>
+	public void MovePodium(float movementRatio)
+	{
+		Podium.transform.position = m_initPosOfPodium + ((m_targetPosOfPodium - m_initPosOfPodium) * movementRatio);
 	}
 }

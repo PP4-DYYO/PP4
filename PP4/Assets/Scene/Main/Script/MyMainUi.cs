@@ -21,14 +21,14 @@ using UnityEngine.UI;
 public struct PublishRecord
 {
 	/// <summary>
-	/// チーム
-	/// </summary>
-	public Team team;
-
-	/// <summary>
-	/// ランク
+	/// 順位
 	/// </summary>
 	public int rank;
+
+	/// <summary>
+	/// レベル
+	/// </summary>
+	public int level;
 
 	/// <summary>
 	/// プレイヤー名
@@ -95,7 +95,7 @@ public class MyMainUi : MonoBehaviour
 	/// 自分情報のランク
 	/// </summary>
 	[SerializeField]
-	Text RankOfYourOwnInfo;
+	Text LevelOfYourOwnInfo;
 
 	/// <summary>
 	/// 自分情報の経験値
@@ -108,6 +108,12 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Text PowerOfYourOwnInfo;
+
+	/// <summary>
+	/// 人を待つメッセージ
+	/// </summary>
+	[SerializeField]
+	GameObject MessageToRecruitPeople;
 
 	/// <summary>
 	/// ゲームを開始するメッセージ
@@ -146,10 +152,10 @@ public class MyMainUi : MonoBehaviour
 	Image RemainingAmountOfWater;
 
 	/// <summary>
-	/// 順位
+	/// マップ上の順位
 	/// </summary>
 	[SerializeField]
-	GameObject Rank;
+	GameObject RankOnMap;
 
 	/// <summary>
 	/// 順位の親たち
@@ -170,10 +176,10 @@ public class MyMainUi : MonoBehaviour
 	Text[] PlayerNamesOnTheMap;
 
 	/// <summary>
-	/// マップ上のプレイヤーのチームカラー
+	/// マップ上のプレイヤーの前景たち
 	/// </summary>
 	[SerializeField]
-	Image[] TeamColorOfPlayerOnMap;
+	Image[] ForegroundOfPlayerOnMap;
 
 	/// <summary>
 	/// 被水
@@ -212,35 +218,23 @@ public class MyMainUi : MonoBehaviour
 	GameObject WinningOrLosing;
 
 	/// <summary>
-	/// 勝ち
+	/// 結果の順位
 	/// </summary>
 	[SerializeField]
-	Image Win;
-
+	Image[] ResultRanks;
+	
 	/// <summary>
-	/// 負け
+	/// 自分自身のパワー
 	/// </summary>
 	[SerializeField]
-	Image Defeat;
+	Text YourOnwPower;
 
 	/// <summary>
 	/// 結果画面
 	/// </summary>
 	[SerializeField]
 	GameObject ResultScreen;
-
-	/// <summary>
-	/// チーム１のスコア
-	/// </summary>
-	[SerializeField]
-	Text ScoreOfTeam1;
-
-	/// <summary>
-	/// チーム２のスコア
-	/// </summary>
-	[SerializeField]
-	Text ScoreOfTeam2;
-
+	
 	/// <summary>
 	/// 戦績
 	/// </summary>
@@ -248,10 +242,10 @@ public class MyMainUi : MonoBehaviour
 	GameObject BattleRecords;
 
 	/// <summary>
-	/// 戦績のランク達
+	/// 戦績のレベル達
 	/// </summary>
 	[SerializeField]
-	Text[] RanksOfBattleRecord;
+	Text[] LevelsOfBattleRecord;
 
 	/// <summary>
 	/// 戦績のプレイヤー名たち
@@ -351,18 +345,6 @@ public class MyMainUi : MonoBehaviour
 
 	#region バトル画面
 	[Header("バトル画面")]
-	/// <summary>
-	/// マップ上のチーム１の画像
-	/// </summary>
-	[SerializeField]
-	Sprite Team1ImageOnMap;
-
-	/// <summary>
-	/// マップ上のチーム２の画像
-	/// </summary>
-	[SerializeField]
-	Sprite Team2ImageOnMap;
-
 	/// <summary>
 	/// 順位入れ替え時間
 	/// </summary>
@@ -697,6 +679,7 @@ public class MyMainUi : MonoBehaviour
 	{
 		//全体の表示
 		RecruitPeopleScreen.SetActive(true);
+		MessageToRecruitPeople.SetActive(true);
 
 		//不要オブジェクトの非表示
 		MessageToStartGame.SetActive(false);
@@ -706,11 +689,13 @@ public class MyMainUi : MonoBehaviour
 		Falling.SetActive(false);
 		BattleEnd.SetActive(false);
 		ResultScreen.SetActive(false);
-		Win.enabled = false;
-		Defeat.enabled = false;
+		foreach(var r in ResultRanks)
+		{
+			r.enabled = false;
+		}
 
 		//設定
-		RankOfYourOwnInfo.text = rank.ToString();
+		LevelOfYourOwnInfo.text = rank.ToString();
 		ExpOfYourOwnInfo.text = exp.ToString();
 		PowerOfYourOwnInfo.text = power.ToString();
 	}
@@ -731,6 +716,9 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	public void PeopleGathered()
 	{
+		//不要オブジェクトの非表示
+		MessageToRecruitPeople.SetActive(false);
+
 		//ゲーム開始のメッセージ
 		MessageToStartGame.SetActive(true);
 	}
@@ -782,7 +770,7 @@ public class MyMainUi : MonoBehaviour
 		SetTimer(battleTime);
 		SetRemainingAmountOfWater();
 		WritePlayerNamesOnTheMap();
-		DisplayRank();
+		ShowRankOnMap();
 		m_isRemainingTimeNotification = false;
 		m_isCountdownOfBattleFinish = false;
 	}
@@ -845,8 +833,7 @@ public class MyMainUi : MonoBehaviour
 
 			//プレイヤー名とチーム画像
 			PlayerNamesOnTheMap[i].text = MyNetPlayerSetting.NetPlayerSettings[i].PlayerName;
-			TeamColorOfPlayerOnMap[i].color = Color.white;
-			TeamColorOfPlayerOnMap[i].sprite = MyNetPlayerSetting.NetPlayerSettings[i].TeamNum == Team.Team1 ? Team1ImageOnMap : Team2ImageOnMap;
+			ForegroundOfPlayerOnMap[i].color = Color.clear;
 		}
 	}
 
@@ -917,12 +904,12 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 順位を表示する
+	/// マップ上の順位を表示する
 	/// </summary>
 	/// <param name="isDisplay">表示するか</param>
-	public void DisplayRank(bool isDisplay = true)
+	public void ShowRankOnMap(bool isDisplay = true)
 	{
-		Rank.SetActive(isDisplay);
+		RankOnMap.SetActive(isDisplay);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -967,18 +954,20 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// マップ上のチームカラーを隠す
+	/// マップ上のプレイヤーを隠す
 	/// </summary>
-	public void HideTeamColorOnMap()
+	/// <param name="operatingPlayerNum">操作プレイヤー番号</param>
+	public void HidePlayerOnMap(int operatingPlayerNum)
 	{
-		for (var i = 0; i < TeamColorOfPlayerOnMap.Length; i++)
+		for (var i = 0; i < ForegroundOfPlayerOnMap.Length; i++)
 		{
 			//ネットプレイヤー設定がない
 			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
 				return;
 
-			//チーム画像
-			TeamColorOfPlayerOnMap[i].color = Color.clear;
+			//操作プレイヤーじゃない前景画像
+			if (i != operatingPlayerNum)
+				ForegroundOfPlayerOnMap[i].color = Color.black;
 		}
 	}
 
@@ -993,18 +982,6 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// スコアの代入
-	/// </summary>
-	/// <param name="score1">スコア１</param>
-	/// <param name="score2">スコア２</param>
-	public void ScoreAssignment(int score1, int score2)
-	{
-		ScoreOfTeam1.text = score1.ToString();
-		ScoreOfTeam2.text = score2.ToString();
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	/// 結果状態にする
 	/// </summary>
 	public void MakeItResultState()
@@ -1015,18 +992,21 @@ public class MyMainUi : MonoBehaviour
 
 		StartFadeIn();
 	}
-	
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 勝敗の表示
+	/// 順位の表示
 	/// </summary>
-	/// <param name="isWin">勝った</param>
-	public void IndicationOfVictoryOrDefeat(bool isWin)
+	/// <param name="rank">順位</param>
+	/// <param name="yourOwnPower">自分自身のパワー</param>
+	public void DisplayRanking(int rank, int yourOwnPower)
 	{
 		//表示
 		WinningOrLosing.SetActive(true);
-		Win.enabled = isWin;
-		Defeat.enabled = !isWin;
+
+		//順位とパワー
+		ResultRanks[rank - 1].enabled = true;
+		YourOnwPower.text = yourOwnPower.ToString();
 
 		//初期位置
 		WinningOrLosing.transform.localPosition = m_initPosOfWinOrLose;
@@ -1046,25 +1026,23 @@ public class MyMainUi : MonoBehaviour
 		Rematch.SetActive(false);
 
 		var recordNum = 0;
-		var team1Num = 0;
-		var team2Num = MyGame.NUM_OF_TEAM_MEMBERS;
 
 		//全ての戦績
 		for (var i = 0; i < publishRecords.Length; i++)
 		{
-			//戦績番号の割り出し
-			recordNum = (publishRecords[i].team == Team.Team1) ? team1Num++ : team2Num++;
+			//戦績順位の取り出し
+			recordNum = publishRecords[i].rank;
 
 			//戦績の代入
-			RanksOfBattleRecord[recordNum].text = publishRecords[i].rank.ToString();
+			LevelsOfBattleRecord[recordNum].text = publishRecords[i].level.ToString();
 			PlayerNamesOfBattleRecord[recordNum].text = publishRecords[i].playerName;
 			HeightsOfBattleRecord[recordNum].text = publishRecords[i].height.ToString("N0");
 			NumOfCoinsOfBattleRecord[recordNum].text = publishRecords[i].numOfCoins.ToString();
 			ScoresOfBattleRecord[recordNum].text = publishRecords[i].score.ToString("N0");
-
-			//自分のレコード矢印
-			ArrowOfYourOwnAchievement[recordNum].enabled = (i == myRecordNum);
 		}
+
+		//自分のレコード矢印
+		ArrowOfYourOwnAchievement[publishRecords[myRecordNum].rank].enabled = true;
 
 		m_isWinningOrLosingMoves = true;
 		m_countTravelTimeOfWinOrLose = 0;
@@ -1104,6 +1082,7 @@ public class MyMainUi : MonoBehaviour
 		}
 		Exp.SetActive(false);
 		
+		//表示オブジェクト
 		Rematch.SetActive(true);
 	}
 

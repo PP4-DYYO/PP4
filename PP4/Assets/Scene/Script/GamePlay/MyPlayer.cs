@@ -68,14 +68,6 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	LandingFailed,
 	/// <summary>
-	/// 勝ち
-	/// </summary>
-	Win,
-	/// <summary>
-	/// 負け
-	/// </summary>
-	Defeat,
-	/// <summary>
 	/// 怯える
 	/// </summary>
 	BeFrightened,
@@ -83,6 +75,30 @@ public enum PlayerBehaviorStatus
 	/// 選択
 	/// </summary>
 	Select,
+	/// <summary>
+	/// 結果が１位
+	/// </summary>
+	ResultsRanked1st,
+	/// <summary>
+	/// 結果が２位
+	/// </summary>
+	ResultsRanked2nd,
+	/// <summary>
+	/// 結果が３位
+	/// </summary>
+	ResultsRanked3rd,
+	/// <summary>
+	/// 結果が４位
+	/// </summary>
+	ResultsRanked4th,
+	/// <summary>
+	/// 勝ち
+	/// </summary>
+	Win,
+	/// <summary>
+	/// 負け
+	/// </summary>
+	Defeat,
 	/// <summary>
 	/// 変化なし
 	/// </summary>
@@ -1034,5 +1050,42 @@ public class MyPlayer : MonoBehaviour
 
 		//アニメーション
 		SetAnimation(PlayerBehaviorStatus.Result);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 順位によるアニメーション開始
+	/// </summary>
+	/// <param name="rank">順位</param>
+	public void StartAnimByRank(int rank)
+	{
+		//順位
+		switch(rank)
+		{
+			case 1:
+				SetAnimation(PlayerBehaviorStatus.ResultsRanked1st);
+				break;
+			case 2:
+				SetAnimation(PlayerBehaviorStatus.ResultsRanked2nd);
+				break;
+			case 3:
+				SetAnimation(PlayerBehaviorStatus.ResultsRanked3rd);
+				break;
+			case 4:
+				SetAnimation(PlayerBehaviorStatus.ResultsRanked4th);
+				break;
+			default:
+				SetAnimation(PlayerBehaviorStatus.Defeat);
+				break;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// リジッドボディの速度を０にする
+	/// </summary>
+	public void SetVelocityOfRbToZero()
+	{
+		Rb.velocity = Vector3.zero;
 	}
 }

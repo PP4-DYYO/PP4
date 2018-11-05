@@ -194,11 +194,6 @@ public class MyGame : MonoBehaviour
 	{
 		get { return m_numOfPlayers; }
 	}
-
-	/// <summary>
-	/// チームの人数
-	/// </summary>
-	public const int NUM_OF_TEAM_MEMBERS = 4;
 	#endregion
 
 	#region 人が集まった状態
@@ -304,10 +299,10 @@ public class MyGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// マップ上にチームカラーを表示する時間
+	/// マップ上にプレイヤー名を表示する時間
 	/// </summary>
 	[SerializeField]
-	float m_timeToDisplayTeamColorOnMap;
+	float m_timeToDisplayPlayerNameOnMap;
 
 	/// <summary>
 	/// １ｍ毎のサポート率
@@ -326,9 +321,9 @@ public class MyGame : MonoBehaviour
 	bool m_isOperatingPlayerFall;
 
 	/// <summary>
-	/// マップ上にチームカラーを表示する時間が過ぎたフラグ
+	/// マップ上にプレイヤー名を表示する時間が過ぎたフラグ
 	/// </summary>
-	bool m_isTimeToDisplayTeamColorOnMapHasPassed;
+	bool m_isTimeToDisplayPlayerNameOnMapHasPassed;
 	#endregion
 
 	#region バトル後状態
@@ -354,6 +349,18 @@ public class MyGame : MonoBehaviour
 	#region 結果状態
 	[Header("結果状態")]
 	/// <summary>
+	/// 表彰台が表示される時間
+	/// </summary>
+	[SerializeField]
+	float m_timePodiumIsDisplayed;
+
+	/// <summary>
+	/// 表彰台が表示された時間
+	/// </summary>
+	[SerializeField]
+	float m_timePodiumWasDisplayed;
+
+	/// <summary>
 	/// 結果表示し始める時間
 	/// </summary>
 	[SerializeField]
@@ -378,6 +385,12 @@ public class MyGame : MonoBehaviour
 	float m_playerInitialHeightOfResultState;
 
 	/// <summary>
+	/// 結果状態のプレイヤーへの相対的カメラ位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_relativeCameraPosToPlayerInResultState;
+	
+	/// <summary>
 	/// 結果表示中のプレイヤーから見たカメラ相対的位置たち
 	/// </summary>
 	[SerializeField]
@@ -394,6 +407,12 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_coinMagnificationAgainstHeight;
+
+	/// <summary>
+	/// 表彰される数
+	/// </summary>
+	[SerializeField]
+	int m_numToBeAwarded;
 
 	/// <summary>
 	/// 目標経験値
@@ -420,16 +439,6 @@ public class MyGame : MonoBehaviour
 	int m_powerCollectionCount;
 
 	/// <summary>
-	/// チーム１のスコア
-	/// </summary>
-	int m_scoreOfTeam1;
-
-	/// <summary>
-	/// チーム２のスコア
-	/// </summary>
-	int m_scoreOfTeam2;
-	
-	/// <summary>
 	/// 勝ちフラグ
 	/// </summary>
 	bool m_isWin;
@@ -438,6 +447,11 @@ public class MyGame : MonoBehaviour
 	/// 着水フラグ
 	/// </summary>
 	bool m_isLanding;
+
+	/// <summary>
+	/// 表彰台の表示フラグ
+	/// </summary>
+	bool m_isDisplayPodium;
 
 	/// <summary>
 	/// 結果表示フラグ
@@ -671,14 +685,14 @@ public class MyGame : MonoBehaviour
 
 			//プレイヤーとカメラとUI
 			OperatingNetPlayerSetting.NameplateDisplay();
-			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetPlayerNum());
-			Players.ResetTeamColor();
+			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
+			Players.ResetPlayerColor();
 			GhostPlayers.SetActive(true);
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
-			MainUi.WantedRecruitment(MyGameInfo.Instance.Rank, MyGameInfo.Instance.Exp, MyGameInfo.Instance.Power);
+			MainUi.WantedRecruitment(MyGameInfo.Instance.Level, MyGameInfo.Instance.Exp, MyGameInfo.Instance.Power);
 
-			//ランクとパワーの同期
-			OperatingNetPlayerSetting.CmdRank(MyGameInfo.Instance.Rank);
+			//レベルとパワーの同期
+			OperatingNetPlayerSetting.CmdLevel(MyGameInfo.Instance.Level);
 			OperatingNetPlayerSetting.CmdPower(MyGameInfo.Instance.Power);
 		}
 
@@ -777,24 +791,14 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void PlayerBattleSettings()
 	{
-		//チーム分け
-		MyNetPlayerSetting.NetPlayerSettings.CopyTo(Players.DecideOnTeam(MyNetPlayerSetting.NetPlayerSettings.ToArray()));
+		//プレイヤー番号を決める
+		MyNetPlayerSetting.NetPlayerSettings.CopyTo(Players.DecidePlayerNum(MyNetPlayerSetting.NetPlayerSettings.ToArray()));
 
-		//チームによる位置
-		switch (OperatingNetPlayerSetting.TeamNum)
-		{
-			case Team.Team1:
-				OperatingPlayer.transform.position =
-					Stage.CurrentFieldScript.Team1StartPositions[OperatingNetPlayerSetting.TeamOrder];
-				break;
-			case Team.Team2:
-				OperatingPlayer.transform.position =
-					Stage.CurrentFieldScript.Team2StartPositions[OperatingNetPlayerSetting.TeamOrder];
-				break;
-		}
+		//プレイヤー番号よる位置
+		OperatingPlayer.transform.position = Stage.CurrentFieldScript.StartPositions[OperatingNetPlayerSetting.GetNetPlayerNum()];
 
-		//Z軸を中心とした反対側を見る
-		OperatingPlayer.transform.LookAt(Vector3.Scale(OperatingPlayer.transform.position, Vector3.one - (Vector3.right * 2)));
+		//中心を見る
+		OperatingPlayer.transform.LookAt(Vector3.zero);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -815,6 +819,17 @@ public class MyGame : MonoBehaviour
 			MainUi.BattleStart(m_battleTime);
 		}
 
+		//バトル直前のタイミング
+		if (!m_isItJustBeforeBattle && m_countTheTimeOfTheState >= m_timeBeforeBattle - m_timeJustBeforeBattle)
+		{
+			//バトル直前フラグ（一度だけTrue）
+			m_isItJustBeforeBattle = true;
+
+			//プレイヤーとReadyメッセージ設定
+			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
+			MainUi.StartReadyAnimation();
+		}
+
 		//カウントダウン時間が過ぎた
 		if (m_countTheTimeOfTheState >= m_timeBeforeBattle)
 		{
@@ -823,15 +838,6 @@ public class MyGame : MonoBehaviour
 
 			//Goメッセージ
 			MainUi.StartGoAnimation();
-		}
-		else if (!m_isItJustBeforeBattle && m_countTheTimeOfTheState >= m_timeBeforeBattle - m_timeJustBeforeBattle)
-		{
-			//バトル直前フラグ（一度だけTrue）
-			m_isItJustBeforeBattle = true;
-
-			//プレイヤーとReadyメッセージ設定
-			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
-			MainUi.StartReadyAnimation();
 		}
 	}
 
@@ -891,15 +897,15 @@ public class MyGame : MonoBehaviour
 			OperatingPlayer.MakeItBattleState();
 			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomeOperablePursuitCamera();
-			m_isTimeToDisplayTeamColorOnMapHasPassed = false;
+			m_isTimeToDisplayPlayerNameOnMapHasPassed = false;
 		}
 
-		//時間が過ぎていないフラグandマップ上にチームカラーを表示する時間が過ぎた
-		if (!m_isTimeToDisplayTeamColorOnMapHasPassed && m_countTheTimeOfTheState >= m_timeToDisplayTeamColorOnMap)
+		//時間が過ぎていないフラグandマップ上にプレイヤー名を表示する時間が過ぎた
+		if (!m_isTimeToDisplayPlayerNameOnMapHasPassed && m_countTheTimeOfTheState >= m_timeToDisplayPlayerNameOnMap)
 		{
-			m_isTimeToDisplayTeamColorOnMapHasPassed = true;
+			m_isTimeToDisplayPlayerNameOnMapHasPassed = true;
 
-			MainUi.HideTeamColorOnMap();
+			MainUi.HidePlayerOnMap(OperatingNetPlayerSetting.GetNetPlayerNum());
 		}
 
 		//バトル時間が過ぎた
@@ -962,7 +968,7 @@ public class MyGame : MonoBehaviour
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
 
 		//順位の反映
-		MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetPlayerNum());
+		MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetNetPlayerNum());
 
 		//Yボタンを押した
 		if (m_isYButtonDown)
@@ -970,7 +976,7 @@ public class MyGame : MonoBehaviour
 			m_isDisplayRank = !m_isDisplayRank;
 
 			//順位の表示
-			MainUi.DisplayRank(m_isDisplayRank);
+			MainUi.ShowRankOnMap(m_isDisplayRank);
 		}
 
 		//被水している
@@ -1078,7 +1084,7 @@ public class MyGame : MonoBehaviour
 			if (MyGameInfo.Instance.Exp < m_targetExp[i])
 			{
 				//ランクの代入
-				MyGameInfo.Instance.Rank = i + 1;
+				MyGameInfo.Instance.Level = i + 1;
 				break;
 			}
 		}
@@ -1115,16 +1121,17 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
-			//勝敗を決める
-			DecideOnWinningOrLosing();
+			//戦績の代入
+			MyNetPlayerSetting.PutPlayerAchievementsInBattleRecord(ref m_battleRecords);
 
 			//プレイヤーとカメラとUI
 			MakePlayerIntoResultState();
-			OperatingCamera.BecomePursuitCamera(false, Vector3.Scale(OperatingPlayer.transform.position, Vector3.right));
+			OperatingCamera.BecomePursuitCamera(false, m_relativeCameraPosToPlayerInResultState);
 			MainUi.MakeItResultState();
 
 			//フラグの初期化
 			m_isLanding = false;
+			m_isDisplayPodium = false;
 			m_isResultDisplay = false;
 			m_isDisplayOfExp = false;
 			m_isRematchDisplay = false;
@@ -1139,6 +1146,26 @@ public class MyGame : MonoBehaviour
 
 			//バトル結果
 			BattleResult();
+		}
+
+		//表彰台が表示される時間
+		if(!m_isDisplayPodium && m_countTheTimeOfTheState >= m_timePodiumIsDisplayed)
+		{
+			//時間経過による表彰台の位置
+			Stage.CurrentFieldScript.MovePodium(
+				(m_countTheTimeOfTheState - m_timePodiumIsDisplayed) / (m_timePodiumWasDisplayed - m_timePodiumIsDisplayed));
+
+			//プレイヤー
+			ControlPlayerWhenPodiumIsDisplayed();
+		}
+
+		//表彰台が表示された時間
+		if (!m_isDisplayPodium && m_countTheTimeOfTheState >= m_timePodiumWasDisplayed)
+		{
+			m_isDisplayPodium = true;
+
+			//表彰台の完全表示
+			Stage.CurrentFieldScript.MovePodium(1);
 		}
 
 		//結果表示していないand結果表示する時間
@@ -1180,39 +1207,7 @@ public class MyGame : MonoBehaviour
 		m_workVector3.y = OperatingPlayer.transform.position.y;
 		OperatingPlayer.transform.LookAt(m_workVector3);
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 勝敗を決める
-	/// </summary>
-	void DecideOnWinningOrLosing()
-	{
-		//戦績の取得
-		MyNetPlayerSetting.PutPlayerAchievementsInBattleRecord(ref m_battleRecords);
-
-		//チームスコアの初期化
-		m_scoreOfTeam1 = 0;
-		m_scoreOfTeam2 = 0;
-
-		//全ての戦績
-		foreach(var battleRecord in m_battleRecords)
-		{
-			//チーム毎のスコア
-			switch(battleRecord.team)
-			{
-				case Team.Team1:
-					m_scoreOfTeam1 += battleRecord.score;
-					break;
-				case Team.Team2:
-					m_scoreOfTeam2 += battleRecord.score;
-					break;
-			}
-		}
-
-		//チームスコアの代入
-		MainUi.ScoreAssignment(m_scoreOfTeam1, m_scoreOfTeam2);
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// プレイヤーを結果状態にする
@@ -1230,16 +1225,8 @@ public class MyGame : MonoBehaviour
 			OperatingPlayer.transform.position = m_workVector3;
 		}
 
-		//チームによる指定位置
-		switch (OperatingNetPlayerSetting.TeamNum)
-		{
-			case Team.Team1:
-				m_workVector3 = Stage.CurrentFieldScript.Team1StartPositions[OperatingNetPlayerSetting.TeamOrder];
-				break;
-			case Team.Team2:
-				m_workVector3 = Stage.CurrentFieldScript.Team2StartPositions[OperatingNetPlayerSetting.TeamOrder];
-				break;
-		}
+		//プレイヤー番号による指定位置
+		m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[OperatingNetPlayerSetting.Rank];
 
 		//高さを除いた位置を代入
 		m_workVector3.y = OperatingPlayer.transform.position.y;
@@ -1255,27 +1242,14 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	void BattleResult()
 	{
-		//チーム
-		switch (OperatingNetPlayerSetting.TeamNum)
-		{
-			case Team.Team1:
-				//得点により勝ち負け
-				if (m_scoreOfTeam1 < m_scoreOfTeam2)
-					LoseBattle();
-				else
-					WinBattle();
-				break;
-			case Team.Team2:
-				//得点により勝ち負け
-				if (m_scoreOfTeam1 < m_scoreOfTeam2)
-					WinBattle();
-				else
-					LoseBattle();
-				break;
-		}
+		//順位が上位or順位が表彰対象
+		if (OperatingNetPlayerSetting.Rank < MyNetPlayerSetting.NetPlayerSettings.Count / 2 || OperatingNetPlayerSetting.Rank < m_numToBeAwarded)
+			WinBattle();
+		else
+			LoseBattle();
 
-		//UIに勝敗の表示
-		MainUi.IndicationOfVictoryOrDefeat(m_isWin);
+		//UIに順位の表示
+		MainUi.DisplayRanking(OperatingNetPlayerSetting.Rank + 1, OperatingNetPlayerSetting.Score);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1300,6 +1274,19 @@ public class MyGame : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 表彰台が表示される時にプレイヤーを制御
+	/// </summary>
+	void ControlPlayerWhenPodiumIsDisplayed()
+	{
+		//プレイヤーのリジッドボディの速度を０
+		OperatingPlayer.SetVelocityOfRbToZero();
+
+		//順位のアニメーション
+		OperatingPlayer.StartAnimByRank(OperatingNetPlayerSetting.Rank + 1);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// バトル結果表示
 	/// </summary>
 	void BattleResultDisplay()
@@ -1311,7 +1298,7 @@ public class MyGame : MonoBehaviour
 		CameraSettingOfBattleResultDisplay();
 
 		//UI表示
-		MainUi.DisplayResults(m_battleRecords, OperatingNetPlayerSetting.GetPlayerNum());
+		MainUi.DisplayResults(m_battleRecords, OperatingNetPlayerSetting.GetNetPlayerNum());
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1390,7 +1377,8 @@ public class MyGame : MonoBehaviour
 	/// </summary>
 	public void LeaveBattle()
 	{
-		Debug.Log("終了");
+		FindObjectOfType<MyNetworkManager>().StopConnection();
+		MySceneManager.Instance.ChangeScene(MyScene.Armed);
 	}
 
 	//----------------------------------------------------------------------------------------------------

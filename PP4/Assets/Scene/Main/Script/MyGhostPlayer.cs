@@ -15,10 +15,10 @@ using UnityEngine;
 public class MyGhostPlayer : MonoBehaviour
 {
 	/// <summary>
-	/// 体
+	/// 消失する部位
 	/// </summary>
 	[SerializeField]
-	GameObject Body;
+	GameObject[] DisappearingParts;
 
 	/// <summary>
 	/// 姿を消すフラグ
@@ -32,7 +32,10 @@ public class MyGhostPlayer : MonoBehaviour
 	void FixedUpdate()
 	{
 		//姿を消す
-		Body.SetActive(!m_isDisappear);
+		foreach(var part in DisappearingParts)
+		{
+			part.SetActive(!m_isDisappear);
+		}
 
 		m_isDisappear = false;
 	}
@@ -61,7 +64,11 @@ public class MyGhostPlayer : MonoBehaviour
 		//プレイヤーと重なった
 		if (other.tag.Equals(PlayerInfo.TAG))
 		{
-			Body.SetActive(true);
+			//消失する部位の復元
+			foreach (var part in DisappearingParts)
+			{
+				part.SetActive(true);
+			}
 		}
 	}
 }

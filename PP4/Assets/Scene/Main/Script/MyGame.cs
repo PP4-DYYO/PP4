@@ -69,7 +69,7 @@ public class MyGame : MonoBehaviour
 	/// プレイヤーの収集物
 	/// </summary>
 	[SerializeField]
-	MyPlayers Players;
+	protected MyPlayers Players;
 	public MyPlayers PlayersScript
 	{
 		get { return Players; }
@@ -95,7 +95,7 @@ public class MyGame : MonoBehaviour
 	/// 操作しているカメラ
 	/// </summary>
 	[SerializeField]
-	MyCamera OperatingCamera;
+	protected MyCamera OperatingCamera;
 	public MyCamera OperatingCameraScript
 	{
 		get { return OperatingCamera; }
@@ -114,7 +114,8 @@ public class MyGame : MonoBehaviour
 	/// <summary>
 	/// 操作しているプレイヤー
 	/// </summary>
-	MyPlayer OperatingPlayer;
+	[SerializeField]
+	protected MyPlayer OperatingPlayer;
 	public MyPlayer OperatingPlayerScript
 	{
 		get { return OperatingPlayer; }

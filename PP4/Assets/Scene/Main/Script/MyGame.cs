@@ -684,6 +684,9 @@ public class MyGame : MonoBehaviour
 		{
 			m_statePrev = m_state;
 
+			//船の出現
+			Stage.CurrentFieldScript.DisplayShip();
+
 			//プレイヤーとカメラとUI
 			OperatingNetPlayerSetting.NameplateDisplay();
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());

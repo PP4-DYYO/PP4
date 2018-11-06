@@ -17,10 +17,10 @@ public class MyField : MonoBehaviour
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
-	/// 表彰台
+	/// 船
 	/// </summary>
 	[SerializeField]
-	GameObject Podium;
+	GameObject Ship;
 
 	/// <summary>
 	/// コイン
@@ -33,10 +33,42 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyItem[] FieldCoins;
+
+	/// <summary>
+	/// 表彰台
+	/// </summary>
+	[SerializeField]
+	GameObject Podium;
 	#endregion
 
-	#region 表彰台
-	[Header("表彰台")]
+	#region 情報
+	[Header("情報")]
+	/// <summary>
+	/// フィールドの半径
+	/// </summary>
+	[SerializeField]
+	float m_fieldRudius;
+	public float FieldRudius
+	{
+		get { return m_fieldRudius; }
+	}
+	#endregion
+
+	#region 開始位置
+	[Header("開始位置")]
+	/// <summary>
+	/// 開始位置たち
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_startPositions;
+	public Vector3[] StartPositions
+	{
+		get { return m_startPositions; }
+	}
+	#endregion
+
+	#region 表彰
+	[Header("表彰")]
 	/// <summary>
 	/// 表彰台を隠す位置
 	/// </summary>
@@ -54,17 +86,6 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Vector3 m_targetPosOfPodium;
-	#endregion
-
-	/// <summary>
-	/// 開始位置たち
-	/// </summary>
-	[SerializeField]
-	Vector3[] m_startPositions;
-	public Vector3[] StartPositions
-	{
-		get { return m_startPositions; }
-	}
 
 	/// <summary>
 	/// 順位の位置
@@ -75,15 +96,16 @@ public class MyField : MonoBehaviour
 	{
 		get { return m_positionsOfRanks; }
 	}
+	#endregion
 
+	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ステージの半径
+	/// 船の表示
 	/// </summary>
-	[SerializeField]
-	float m_fieldRudius;
-	public float FieldRudius
+	/// <param name="isDisplay">表示</param>
+	public void DisplayShip(bool isDisplay = true)
 	{
-		get { return m_fieldRudius; }
+		Ship.SetActive(isDisplay);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -92,6 +114,9 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	public void ResetField()
 	{
+		//船を隠す
+		DisplayShip(false);
+
 		//表彰台を隠す
 		Podium.transform.position = m_posToHidePodium;
 

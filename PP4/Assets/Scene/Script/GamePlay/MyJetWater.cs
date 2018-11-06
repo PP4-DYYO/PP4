@@ -106,6 +106,30 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	Vector3 m_splasheDistance;
 
+	/// <summary>
+	/// 水しぶきのオブジェクトの配列(100個用意する)
+	/// </summary>
+	GameObject[] Splashes = new GameObject[100];
+
+	/// <summary>
+	/// 水しぶきの番号
+	/// </summary>
+	int m_splasheNum;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 起動
+	/// </summary>	
+	void Start()
+	{
+		//水しぶきの配列に代入
+		for (int i = 0; i < Splashes.Length; i++)
+		{
+			Splashes[i] = Instantiate(Water);
+			Splashes[i].SetActive(false);
+		}
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの発生
@@ -119,12 +143,23 @@ public class MyJetWater : MonoBehaviour
 			//一定時間毎に水しぶき発射
 			if (m_countFiringIntervalTime >= m_firingIntervalTime)
 			{
-				GameObject water = Instantiate(Water, Player.PlayersScript.SplashesTrans);
-				water.transform.position = JetCenter.transform.position;
-				water.transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
-				water.GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
-				m_centerSplasheTrans.Add(water.transform);
-
+				//配列の水しぶきの設定
+				Splashes[m_splasheNum].SetActive(true);
+				Splashes[m_splasheNum].transform.localScale = Vector3.one;
+				if (!Splashes[m_splasheNum].transform.parent && Player)
+				{
+					Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
+				}
+				Splashes[m_splasheNum].transform.position = JetCenter.transform.position;
+				Splashes[m_splasheNum].transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
+				Splashes[m_splasheNum].GetComponent<Rigidbody>().velocity = Vector3.zero;
+				Splashes[m_splasheNum].GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
+				m_centerSplasheTrans.Add(Splashes[m_splasheNum].transform);
+				m_splasheNum ++;
+				if (m_splasheNum >= Splashes.Length)
+				{
+					m_splasheNum = 0;
+				}
 				m_countFiringIntervalTime = 0;
 			}
 		}
@@ -153,10 +188,10 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	void ChangeSplasheDirection()
 	{
-		//右の水しぶきがあるときに実行
+		//水しぶきがあるときに実行
 		if (m_centerSplasheTrans.Count != 0)
 		{
-			//存在しない右の水しぶきの削除
+			//存在しない水しぶきの削除
 			for (var i = 0; i < m_centerSplasheTrans.Count;)
 			{
 				if (m_centerSplasheTrans[i] == null)
@@ -169,7 +204,7 @@ public class MyJetWater : MonoBehaviour
 				}
 			}
 
-			//右の水しぶきの向きの変更
+			//水しぶきの向きの変更
 			for (var i = 1; i < m_centerSplasheTrans.Count; i++)
 			{
 				m_centerSplasheTrans[i].LookAt(m_centerSplasheTrans[i].position +

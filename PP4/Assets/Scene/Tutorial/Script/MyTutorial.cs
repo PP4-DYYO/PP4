@@ -1,45 +1,25 @@
 ﻿////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//2018/9/30～
+//2018/11/6～
 //作成者　京都コンピュータ学院京都駅前校　ゲーム学科　4回生　吉田純基
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
-/// 水しぶきの広がりの自動消滅
+/// チュートリアルステージ
 /// </summary>
-public class MyDestroySpreadSplashe : MonoBehaviour
+public class MyTutorial : MyGame
 {
-	/// <summary>
-	/// 時間計測用
-	/// </summary>
-	float m_time;
 
-	/// <summary>
-	/// 自動消滅までの時間
-	/// </summary>
-	[SerializeField]
-	float m_limitTime;
-	public float LimitTime
-	{
-		get { return m_limitTime; }
-	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 一定時間経過後消滅する
+	///定期 
 	/// </summary>
-	void Update()
+	void FixedUpdate()
 	{
-		m_time += Time.deltaTime;
-		if (m_time > m_limitTime)
-		{
-			Destroy(gameObject);
-		}
+
 	}
 }

@@ -25,6 +25,10 @@ public class MyDestroySpreadSplashe : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_limitTime;
+	public float LimitTime
+	{
+		get { return m_limitTime; }
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>

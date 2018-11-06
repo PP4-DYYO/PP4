@@ -83,17 +83,17 @@ public class MySplashe : MonoBehaviour
 		//時間経過で消滅する
 		if (m_splasheLivingTime >= m_splasheLifeTime)
 		{
-			Destroy(gameObject);
+			gameObject.SetActive(false);
+			isfallen = false;
+			m_splasheLivingTime = 0;
 		}
 
 		//サイズが０以下になるときには消す
-		if (transform.localScale.z - m_splasheScaleZ / m_splasheSmallerTime < 0)
+		if (transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
 		{
-			Destroy(gameObject);
-			if (isfallen)
-			{
-				MakeSpreadSplashe();
-			}
+			gameObject.SetActive(false);
+			isfallen = false;
+			m_splasheLivingTime = 0;
 		}
 		else
 		{
@@ -105,12 +105,20 @@ public class MySplashe : MonoBehaviour
 			}
 			else
 			{
-				transform.localScale = new Vector3(transform.localScale.x - (transform.localScale.x / m_splasheLifeTime),
-					 transform.localScale.y - (transform.localScale.y / m_splasheLifeTime), transform.localScale.z + m_splasheSizeChange);
-				m_splasheScaleZ = this.transform.localScale.z;
+				if (transform.localScale.x - m_splasheXYSizeChange > 0)
+				{
+					transform.localScale = new Vector3(transform.localScale.x -m_splasheXYSizeChange,
+						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+				}
+				else
+				{
+					transform.localScale = new Vector3(transform.localScale.x ,
+						 transform.localScale.y, transform.localScale.z + m_splasheSizeChange);
+				}
+				m_splasheScaleZ = transform.localScale.z;
+
 			}
 		}
-
 		m_splasheLivingTime += Time.deltaTime;
 	}
 
@@ -124,6 +132,7 @@ public class MySplashe : MonoBehaviour
 		if (other.tag == StageInfo.GROUND_TAG)
 		{
 			isfallen = true;
+			MakeSpreadSplashe();
 		}
 	}
 

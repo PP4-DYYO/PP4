@@ -979,6 +979,9 @@ public class MyGame : MonoBehaviour
 			MainUi.ShowRankOnMap(m_isDisplayRank);
 		}
 
+		//コイン枚数の反映
+		MainUi.SetNumOfCoins(OperatingPlayer.NumOfCoins);
+
 		//被水している
 		if (OperatingPlayer.GetIsWearWater())
 			MainUi.WearWater();

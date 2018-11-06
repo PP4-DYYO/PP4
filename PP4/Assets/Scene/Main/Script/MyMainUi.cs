@@ -182,6 +182,12 @@ public class MyMainUi : MonoBehaviour
 	Image[] ForegroundOfPlayerOnMap;
 
 	/// <summary>
+	/// コイン枚数
+	/// </summary>
+	[SerializeField]
+	Text NumOfCoins;
+
+	/// <summary>
 	/// 被水
 	/// </summary>
 	[SerializeField]
@@ -771,6 +777,7 @@ public class MyMainUi : MonoBehaviour
 		SetRemainingAmountOfWater();
 		WritePlayerNamesOnTheMap();
 		ShowRankOnMap();
+		SetNumOfCoins();
 		m_isRemainingTimeNotification = false;
 		m_isCountdownOfBattleFinish = false;
 	}
@@ -910,6 +917,16 @@ public class MyMainUi : MonoBehaviour
 	public void ShowRankOnMap(bool isDisplay = true)
 	{
 		RankOnMap.SetActive(isDisplay);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// コイン枚数
+	/// </summary>
+	/// <param name="numOfCoins">コイン枚数</param>
+	public void SetNumOfCoins(int numOfCoins = 0)
+	{
+		NumOfCoins.text = numOfCoins.ToString();
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -42,10 +42,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	MyPlayer Player;
 
 	/// <summary>
-	/// 名札
+	/// 名札たち
 	/// </summary>
 	[SerializeField]
-	TextMesh Nameplate;
+	TextMesh[] Nameplates;
 	
 	/// <summary>
 	/// アニメーター
@@ -276,7 +276,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			//既存プレイヤーの名前登録
 			foreach (var player in m_netPlayerSettings)
 			{
-				player.Nameplate.text = player.m_playerName;
+				foreach(var nameplate in player.Nameplates)
+				{
+					nameplate.text = player.m_playerName;
+				}
 			}
 
 			//自分の名を切り替える
@@ -285,7 +288,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		else
 		{
 			//プレイヤー名の登録
-			Nameplate.text = playerName;
+			foreach(var nameplate in Nameplates)
+			{
+				nameplate.text = playerName;
+			}
 		}
 	}
 
@@ -376,7 +382,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			Game = GameObject.Find("Game").GetComponent<MyGame>();
 
 		//名札の方向
-		Nameplate.transform.LookAt(Nameplate.transform.position + (Nameplate.transform.position - Camera.main.transform.position));
+		foreach(var nameplate in Nameplates)
+		{
+			nameplate.transform.LookAt(nameplate.transform.position + (nameplate.transform.position - Camera.main.transform.position));
+		}
 
 		//アニメーション処理
 		AnimProcess();
@@ -490,7 +499,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <param name="isDisplay">表示するか</param>
 	public void NameplateDisplay(bool isDisplay = true)
 	{
-		Nameplate.gameObject.SetActive(isDisplay);
+		foreach (var nameplate in Nameplates)
+		{
+			nameplate.gameObject.SetActive(isDisplay);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -713,6 +725,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	public void ChangeDisplayNameOfNameplate()
 	{
-		Nameplate.text = (Nameplate.text == m_playerName) ? m_yourOwnDisplayName : m_playerName;
+		foreach (var nameplate in Nameplates)
+		{
+			nameplate.text = (nameplate.text == m_playerName) ? m_yourOwnDisplayName : m_playerName;
+		}
 	}
 }

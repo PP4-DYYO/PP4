@@ -105,7 +105,7 @@ public class MyGame : MonoBehaviour
 	/// メインのUI
 	/// </summary>
 	[SerializeField]
-	MyMainUi MainUi;
+	protected MyMainUi MainUi;
 	public MyMainUi MainUiScript
 	{
 		get { return MainUi; }

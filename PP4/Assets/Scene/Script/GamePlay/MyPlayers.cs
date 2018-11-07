@@ -41,6 +41,12 @@ public class MyPlayers : MonoBehaviour
 	{
 		get { return Splashes; }
 	}
+
+	/// <summary>
+	/// 操作プレイヤー
+	/// </summary>
+	[SerializeField]
+	MyPlayer OperatingPlayer;
 	#endregion
 
 	#region プレイヤーカラー
@@ -89,6 +95,16 @@ public class MyPlayers : MonoBehaviour
 	/// 対象の番号
 	/// </summary>
 	int m_targetNum;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 起動
+	/// </summary>
+	void Awake()
+	{
+		if (OperatingPlayer)
+			Game.OperatingPlayerScript = OperatingPlayer;
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>

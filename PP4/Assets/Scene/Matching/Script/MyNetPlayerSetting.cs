@@ -30,7 +30,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// ゲーム
 	/// </summary>
-	MyGame Game;
+	MyMainGame Game;
 	#endregion
 
 	#region コンポーネント
@@ -219,7 +219,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//インスタンスの取得
 		if (!Game)
-			Game = GameObject.Find("Game").GetComponent<MyGame>();
+			Game = GameObject.Find("Game").GetComponent<MyMainGame>();
 
 		//権限のないプレイヤーになる
 		Player.BecomeUnauthorizedPlayer();
@@ -379,7 +379,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		//インスタンスの取得
 		if (!Game)
-			Game = GameObject.Find("Game").GetComponent<MyGame>();
+			Game = GameObject.Find("Game").GetComponent<MyMainGame>();
 
 		//名札の方向
 		foreach(var nameplate in Nameplates)

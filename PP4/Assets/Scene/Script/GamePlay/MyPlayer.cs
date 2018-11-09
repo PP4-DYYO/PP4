@@ -100,6 +100,10 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	Defeat,
 	/// <summary>
+	/// 走る
+	/// </summary>
+	Run,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,

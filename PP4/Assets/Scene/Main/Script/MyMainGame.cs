@@ -154,6 +154,36 @@ public class MyMainGame : MyGame
 	float m_timeWhenPeopleGather;
 
 	/// <summary>
+	/// プレイヤーが船の端に行く時間
+	/// </summary>
+	[SerializeField]
+	float m_timeWhenPlayerGoesToEdgeOfShip;
+
+	/// <summary>
+	/// プレイヤーが船から飛び降りる時間
+	/// </summary>
+	[SerializeField]
+	float m_timePlayerJumpsOffShip;
+
+	/// <summary>
+	/// 船の端の位置
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_posOfEndOfShip;
+
+	/// <summary>
+	/// 船から飛び降りる位置
+	/// </summary>
+	[SerializeField]
+	Vector3[] m_posToJumpOffShip;
+
+	/// <summary>
+	/// プレイヤー回転スピード
+	/// </summary>
+	[SerializeField]
+	float m_playerrotationSpeed;
+
+	/// <summary>
 	/// 人が集まった時のカメラ位置
 	/// </summary>
 	[SerializeField]
@@ -506,6 +536,11 @@ public class MyMainGame : MyGame
 	/// 作業用のInt
 	/// </summary>
 	int m_workInt;
+
+	/// <summary>
+	/// 作業用のFloat
+	/// </summary>
+	float m_workFloat;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -688,20 +723,73 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとカメラとUI
-			OperatingPlayer.SetAnimation(
-				(OperatingPlayer.transform.position.x < 0) ? PlayerBehaviorStatus.HoldBoardInHand : PlayerBehaviorStatus.HoldBoardInHand2);
+			//カメラとUI
 			GhostPlayers.SetActive(false);
 			OperatingCamera.BecomeFollowSpecifiedPosCamera(
 				m_cameraPosWhenPeopleGather, m_cameraDirectionWhenPeopleGather, m_cameraMovingTimeWhenPeopleGather);
 			MainUi.PeopleGathered();
 		}
 
+		//人が集まった状態のプレイヤー
+		PlayersWithPeopleGathered();
+
 		//設定時間が過ぎた
 		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGather)
 		{
 			//状態遷移
 			m_state = GameStatus.BattleSetting;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人が集まった状態のプレイヤー
+	/// </summary>
+	void PlayersWithPeopleGathered()
+	{
+		//走るアニメーション
+		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Run);
+
+		//プレイヤーネット番号
+		m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
+
+		//プレイヤーが船の端に行く時間
+		if (m_countTheTimeOfTheState <= m_timeWhenPlayerGoesToEdgeOfShip)
+		{
+			//プレイヤーの初期位置
+			m_workVector3 = m_playerPosWhenWaitingForPeople[OperatingNetPlayerSetting.GetNetPlayerNum()];
+
+			//時間によるプレイヤーの位置
+			OperatingPlayer.transform.position = m_workVector3 +
+				((m_posOfEndOfShip[m_workInt] - m_workVector3) * (m_countTheTimeOfTheState / m_timeWhenPlayerGoesToEdgeOfShip));
+
+			//向きたい角度
+			m_workFloat = Vector3.Cross(OperatingPlayer.transform.forward, m_posToJumpOffShip[m_workInt] - m_workVector3).y;
+			m_workFloat = Vector3.Angle(OperatingPlayer.transform.forward,
+				Vector3.Scale((m_posToJumpOffShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
+
+			//向ける角度が向きたい角度より大きい
+			if (m_playerrotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
+				OperatingPlayer.transform.Rotate(Vector3.up, m_workFloat);
+			else if(m_workFloat > 0)
+				OperatingPlayer.transform.Rotate(Vector3.up, m_playerrotationSpeed * Time.deltaTime);
+			else
+				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerrotationSpeed * Time.deltaTime);
+
+			return;
+		}
+
+		//プレイヤーが飛び降りる時間
+		if (m_countTheTimeOfTheState <= m_timeWhenPlayerGoesToEdgeOfShip + m_timePlayerJumpsOffShip)
+		{
+			//プレイヤーの初期位置
+			m_workVector3 = m_posOfEndOfShip[m_workInt];
+
+			//時間によるプレイヤーの位置
+			OperatingPlayer.transform.position = m_workVector3 + ((m_posToJumpOffShip[m_workInt] - m_workVector3)
+				* ((m_countTheTimeOfTheState - m_timeWhenPlayerGoesToEdgeOfShip) / m_timePlayerJumpsOffShip));
+
+			return;
 		}
 	}
 
@@ -751,6 +839,9 @@ public class MyMainGame : MyGame
 
 		//中心を見る
 		OperatingPlayer.transform.LookAt(Vector3.zero);
+
+		//アニメーション
+		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Select);
 	}
 
 	//----------------------------------------------------------------------------------------------------

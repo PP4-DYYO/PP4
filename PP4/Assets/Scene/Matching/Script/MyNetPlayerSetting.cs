@@ -476,7 +476,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				|| m_state == PlayerBehaviorStatus.SuccessfulLanding || m_state == PlayerBehaviorStatus.LandingFailed
 				|| m_state == PlayerBehaviorStatus.ResultsRanked1st || m_state == PlayerBehaviorStatus.ResultsRanked2nd
 				|| m_state == PlayerBehaviorStatus.ResultsRanked3rd || m_state == PlayerBehaviorStatus.ResultsRanked4th
-				|| m_state == PlayerBehaviorStatus.Win || m_state == PlayerBehaviorStatus.Defeat));
+				|| m_state == PlayerBehaviorStatus.Win || m_state == PlayerBehaviorStatus.Defeat
+				|| m_state == PlayerBehaviorStatus.Run));
 
 			m_statePrev = m_state;
 		}

@@ -132,6 +132,30 @@ public struct PlayerInfo
 }
 
 //----------------------------------------------------------------------------------------------------
+/// <summary>
+/// 落下理由
+/// </summary>
+public enum ReasonForFalling
+{
+	/// <summary>
+	/// 水がなくなった
+	/// </summary>
+	WaterRunsOut,
+	/// <summary>
+	/// プレイヤーとの衝突
+	/// </summary>
+	CollisionWithPlayers,
+	/// <summary>
+	/// 鳥との衝突
+	/// </summary>
+	CollisionWithBirds,
+	/// <summary>
+	/// 落雷
+	/// </summary>
+	Thunderbolt,
+}
+
+//----------------------------------------------------------------------------------------------------
 //クラス
 //----------------------------------------------------------------------------------------------------
 
@@ -292,6 +316,15 @@ public class MyPlayer : MonoBehaviour
 	public bool IsFalling
 	{
 		get { return m_isFalling; }
+	}
+
+	/// <summary>
+	/// 落下理由
+	/// </summary>
+	ReasonForFalling m_reasonForFalling;
+	public ReasonForFalling ReasonForFallingEnum
+	{
+		get { return m_reasonForFalling; }
 	}
 	#endregion
 
@@ -575,6 +608,7 @@ public class MyPlayer : MonoBehaviour
 		if (m_countJetUseTime > m_jetUseTime)
 		{
 			m_isFalling = true;
+			m_reasonForFalling = ReasonForFalling.WaterRunsOut;
 			m_countJetUseTime = m_jetUseTime;
 		}
 
@@ -901,8 +935,21 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="other">当たったもの</param>
 	void OnCollisionEnter(Collision other)
 	{
-		//地面以外の衝突
-		m_isFalling = !other.transform.tag.Equals(StageInfo.GROUND_TAG);
+		//当たったもののタグ
+		switch(other.transform.tag)
+		{
+			case StageInfo.GROUND_TAG:
+				m_isFalling = false;
+				break;
+			case PlayerInfo.TAG:
+				m_isFalling = true;
+				m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+				break;
+			case "Bird":
+				break;
+			case "Thunder":
+				break;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

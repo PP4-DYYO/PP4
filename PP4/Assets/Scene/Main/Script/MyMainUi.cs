@@ -200,6 +200,12 @@ public class MyMainUi : MonoBehaviour
 	GameObject Falling;
 
 	/// <summary>
+	/// 落下理由の文
+	/// </summary>
+	[SerializeField]
+	Text StatementOfFallReason;
+
+	/// <summary>
 	/// 残り時間
 	/// </summary>
 	[SerializeField]
@@ -380,6 +386,12 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_alphaValueWhenWearingWater;
+
+	/// <summary>
+	/// 落下理由の文たち
+	/// </summary>
+	[SerializeField]
+	string[] m_statementsOfFallReason;
 
 	/// <summary>
 	/// 時間を通知するための残り時間
@@ -955,8 +967,26 @@ public class MyMainUi : MonoBehaviour
 	/// <summary>
 	/// 落下の開始
 	/// </summary>
-	public void StartOfFall()
+	/// <param name="reason">理由</param>
+	public void StartOfFall(ReasonForFalling reason)
 	{
+		//理由
+		switch(reason)
+		{
+			case ReasonForFalling.WaterRunsOut:
+				StatementOfFallReason.text = m_statementsOfFallReason[0];
+				break;
+			case ReasonForFalling.CollisionWithPlayers:
+				StatementOfFallReason.text = m_statementsOfFallReason[1];
+				break;
+			case ReasonForFalling.CollisionWithBirds:
+				StatementOfFallReason.text = m_statementsOfFallReason[2];
+				break;
+			case ReasonForFalling.Thunderbolt:
+				StatementOfFallReason.text = m_statementsOfFallReason[3];
+				break;
+		}
+
 		Falling.SetActive(true);
 	}
 

@@ -1036,7 +1036,7 @@ public class MyMainGame : MyGame
 
 			//落下フラグ
 			if (m_isOperatingPlayerFall)
-				MainUi.StartOfFall();
+				MainUi.StartOfFall(OperatingPlayer.ReasonForFallingEnum);
 			else
 				MainUi.StopOfFall();
 		}

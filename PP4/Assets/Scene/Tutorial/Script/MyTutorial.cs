@@ -46,7 +46,7 @@ public class MyTutorial : MyGame
 		//残量０で落下開始
 		if (OperatingPlayer.GetPercentageOfRemainingWater() == 0)
 		{
-			MainUi.StartOfFall();
+			MainUi.StartOfFall(OperatingPlayer.ReasonForFallingEnum);
 		}
 		//残量１で落下終了
 		if (OperatingPlayer.GetPercentageOfRemainingWater() == 1)

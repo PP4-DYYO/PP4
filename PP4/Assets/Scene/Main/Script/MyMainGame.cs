@@ -804,9 +804,6 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//ステージの初期化
-			Stage.CurrentFieldScript.ResetField();
-
 			//プレイヤーとUI
 			PlayerBattleSettings();
 			MainUi.BattleStartSetting();
@@ -822,6 +819,9 @@ public class MyMainGame : MyGame
 		{
 			//状態遷移
 			m_state = GameStatus.BattleStart;
+
+			//ステージの初期化
+			Stage.CurrentFieldScript.ResetField();
 		}
 	}
 
@@ -960,6 +960,11 @@ public class MyMainGame : MyGame
 		}
 		else
 		{
+			//ステージの嵐位置
+			m_workVector3 = Vector3.zero;
+			m_workVector3.y = OperatingPlayer.transform.position.y;
+			Stage.CurrentFieldScript.SetStormPos(m_workVector3);
+
 			//プレイヤーとカメラとUI
 			BattleStatePlayer();
 			BattleStateCamera();
@@ -1076,6 +1081,9 @@ public class MyMainGame : MyGame
 		if (m_countTheTimeOfTheState >= m_timeAfterCombatEnd)
 		{
 			m_state = GameStatus.Result;
+
+			//嵐の停止
+			Stage.CurrentFieldScript.ShowStorm(false);
 		}
 	}
 

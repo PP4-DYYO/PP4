@@ -35,6 +35,12 @@ public class MyField : MonoBehaviour
 	MyItem[] FieldCoins;
 
 	/// <summary>
+	/// 嵐
+	/// </summary>
+	[SerializeField]
+	GameObject Storm;
+
+	/// <summary>
 	/// 表彰台
 	/// </summary>
 	[SerializeField]
@@ -126,6 +132,30 @@ public class MyField : MonoBehaviour
 			//リセット
 			coin.ResetItem();
 		}
+
+		//嵐を表示と位置のリセット
+		ShowStorm();
+		SetStormPos(Vector3.zero);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 嵐を表示
+	/// </summary>
+	/// <param name="isShow">表示するか</param>
+	public void ShowStorm(bool isShow = true)
+	{
+		Storm.SetActive(isShow);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 嵐の位置を設定
+	/// </summary>
+	/// <param name="pos">位置</param>
+	public void SetStormPos(Vector3 pos)
+	{
+		Storm.transform.position = pos;
 	}
 
 	//----------------------------------------------------------------------------------------------------

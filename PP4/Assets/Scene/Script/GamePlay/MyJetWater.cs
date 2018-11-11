@@ -116,6 +116,11 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	int m_splasheNum;
 
+	/// <summary>
+	/// 索引
+	/// </summary>
+	int m_index;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -123,10 +128,10 @@ public class MyJetWater : MonoBehaviour
 	void Start()
 	{
 		//水しぶきの配列に代入
-		for (int i = 0; i < Splashes.Length; i++)
+		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			Splashes[i] = Instantiate(Water);
-			Splashes[i].SetActive(false);
+			Splashes[m_index] = Instantiate(Water);
+			Splashes[m_index].SetActive(false);
 		}
 	}
 
@@ -192,23 +197,23 @@ public class MyJetWater : MonoBehaviour
 		if (m_centerSplasheTrans.Count != 0)
 		{
 			//存在しない水しぶきの削除
-			for (var i = 0; i < m_centerSplasheTrans.Count;)
+			for (m_index = 0; m_index < m_centerSplasheTrans.Count;)
 			{
-				if (m_centerSplasheTrans[i] == null)
+				if (m_centerSplasheTrans[m_index] == null)
 				{
-					m_centerSplasheTrans.Remove(m_centerSplasheTrans[i]);
+					m_centerSplasheTrans.Remove(m_centerSplasheTrans[m_index]);
 				}
 				else
 				{
-					i++;
+					m_index++;
 				}
 			}
 
 			//水しぶきの向きの変更
-			for (var i = 1; i < m_centerSplasheTrans.Count; i++)
+			for (m_index = 1; m_index < m_centerSplasheTrans.Count; m_index++)
 			{
-				m_centerSplasheTrans[i].LookAt(m_centerSplasheTrans[i].position +
-					(m_centerSplasheTrans[i].position - m_centerSplasheTrans[i - 1].position));
+				m_centerSplasheTrans[m_index].LookAt(m_centerSplasheTrans[m_index].position +
+					(m_centerSplasheTrans[m_index].position - m_centerSplasheTrans[m_index - 1].position));
 			}
 		}
 	}
@@ -220,13 +225,13 @@ public class MyJetWater : MonoBehaviour
 	void ChangeSplasheScale()
 	{
 		//水しぶき
-		for (var i = 1; i < m_centerSplasheTrans.Count; i++)
+		for (m_index = 1; m_index < m_centerSplasheTrans.Count; m_index++)
 		{
-			if (!m_centerSplasheTrans[i].GetComponent<MySplashe>().Fallen)
+			if (!m_centerSplasheTrans[m_index].GetComponent<MySplashe>().Fallen)
 			{
-				m_splasheScale = m_centerSplasheTrans[i].localScale;
-				m_splasheScale.z = Vector3.Distance(m_centerSplasheTrans[i].position, m_centerSplasheTrans[i - 1].position);
-				m_centerSplasheTrans[i].localScale = m_splasheScale;
+				m_splasheScale = m_centerSplasheTrans[m_index].localScale;
+				m_splasheScale.z = Vector3.Distance(m_centerSplasheTrans[m_index].position, m_centerSplasheTrans[m_index - 1].position);
+				m_centerSplasheTrans[m_index].localScale = m_splasheScale;
 			}
 		}
 	}

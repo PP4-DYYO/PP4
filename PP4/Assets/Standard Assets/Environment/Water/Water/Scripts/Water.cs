@@ -71,8 +71,22 @@ namespace UnityStandardAssets.Water
             Vector3 pos = transform.position;
             Vector3 normal = transform.up;
 
-            // Optionally disable pixel lights for reflection/refraction
-            int oldPixelLightCount = QualitySettings.pixelLightCount;
+			////avoid frustum error ugh
+			//bool FrustumError = false;
+			//int zeroVectors = 0;
+			//if (cam.transform.rotation.x == 0)
+			//	zeroVectors++;
+			//if (cam.transform.rotation.y == 0)
+			//	zeroVectors++;
+			//if (cam.transform.rotation.z == 0)
+			//	zeroVectors++;
+			//if (zeroVectors > 1)
+			//{
+			//	FrustumError = true;
+			//}
+
+			// Optionally disable pixel lights for reflection/refraction
+			int oldPixelLightCount = QualitySettings.pixelLightCount;
             if (disablePixelLights)
             {
                 QualitySettings.pixelLightCount = 0;
@@ -82,7 +96,7 @@ namespace UnityStandardAssets.Water
             UpdateCameraModes(cam, refractionCamera);
 
             // Render reflection if needed
-            if (mode >= WaterMode.Reflective)
+            if (mode >= WaterMode.Reflective/* && !FrustumError*/)
             {
                 // Reflect camera around reflection plane
                 float d = -Vector3.Dot(normal, pos) - clipPlaneOffset;

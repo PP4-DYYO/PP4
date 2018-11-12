@@ -5,6 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,7 +47,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	TextMesh[] Nameplates;
-	
+
 	/// <summary>
 	/// アニメーター
 	/// </summary>
@@ -61,6 +62,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		get { return m_selectSkin; }
 	}
+	#endregion
+
+	#region 乱数
+	[Header("乱数")]
+	/// <summary>
+	/// シード値
+	/// </summary>
+	[SyncVar(hook = "SyncSeed")]
+	int m_seed;
 	#endregion
 
 	#region プレイヤーのタイプ
@@ -79,6 +89,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	string m_yourOwnDisplayName;
+
+	/// <summary>
+	/// 準備完了フラグ
+	/// </summary>
+	[SyncVar(hook = "SyncIsReady")]
+	bool m_isReady;
+	public bool IsReady
+	{
+		get { return m_isReady; }
+	}
 
 	/// <summary>
 	/// 状態
@@ -182,16 +202,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 	#endregion
 
-	/// <summary>
-	/// 準備完了フラグ
-	/// </summary>
-	[SyncVar(hook = "SyncIsReady")]
-	bool m_isReady;
-	public bool IsReady
-	{
-		get { return m_isReady; }
-	}
-
 	#region 作業用
 	/// <summary>
 	/// 変更される番号
@@ -208,6 +218,41 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	int m_workInt;
 	#endregion
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// サーバーの初期
+	/// </summary>
+	public override void OnStartServer()
+	{
+		base.OnStartServer();
+
+		//シードの通知
+		CmdSeed(DateTime.Now.Millisecond);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シードの通知
+	/// </summary>
+	/// <param name="seed">シード</param>
+	[Command]
+	void CmdSeed(int seed)
+	{
+		m_seed = seed;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シードの同期
+	/// </summary>
+	/// <param name="seed">シード</param>
+	[Client]
+	void SyncSeed(int seed)
+	{
+		m_seed = seed;
+		UnityEngine.Random.InitState(m_seed);
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -276,7 +321,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			//既存プレイヤーの名前登録
 			foreach (var player in m_netPlayerSettings)
 			{
-				foreach(var nameplate in player.Nameplates)
+				foreach (var nameplate in player.Nameplates)
 				{
 					nameplate.text = player.m_playerName;
 				}
@@ -288,7 +333,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		else
 		{
 			//プレイヤー名の登録
-			foreach(var nameplate in Nameplates)
+			foreach (var nameplate in Nameplates)
 			{
 				nameplate.text = playerName;
 			}
@@ -382,7 +427,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			Game = GameObject.Find("Game").GetComponent<MyMainGame>();
 
 		//名札の方向
-		foreach(var nameplate in Nameplates)
+		foreach (var nameplate in Nameplates)
 		{
 			nameplate.transform.LookAt(nameplate.transform.position + (nameplate.transform.position - Camera.main.transform.position));
 		}
@@ -454,7 +499,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		m_state = state;
 	}
-	
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// ジェットウォータ処理

@@ -41,6 +41,30 @@ public class MyField : MonoBehaviour
 	GameObject Storm;
 
 	/// <summary>
+	/// 雷
+	/// </summary>
+	[SerializeField]
+	GameObject Thunder;
+
+	/// <summary>
+	/// 雷雲
+	/// </summary>
+	[SerializeField]
+	ParticleSystem Thundercloud;
+
+	/// <summary>
+	/// 雷の通知
+	/// </summary>
+	[SerializeField]
+	GameObject ThunderNotice;
+
+	/// <summary>
+	/// 雷の光
+	/// </summary>
+	[SerializeField]
+	GameObject LightningOfThunder;
+
+	/// <summary>
 	/// 表彰台
 	/// </summary>
 	[SerializeField]
@@ -73,6 +97,26 @@ public class MyField : MonoBehaviour
 	}
 	#endregion
 
+	#region 雷
+	[Header("雷")]
+	/// <summary>
+	/// 落雷の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeOfLightning;
+
+	/// <summary>
+	/// 雷表示時間
+	/// </summary>
+	[SerializeField]
+	float m_lightningDisplayTime;
+
+	/// <summary>
+	/// 雷の時間を数える
+	/// </summary>
+	float m_countThunderDuration = -1;
+	#endregion
+
 	#region 表彰
 	[Header("表彰")]
 	/// <summary>
@@ -103,6 +147,58 @@ public class MyField : MonoBehaviour
 		get { return m_positionsOfRanks; }
 	}
 	#endregion
+
+	#region 作業用
+	/// <summary>
+	/// 作業用Vector3
+	/// </summary>
+	Vector3 m_workVector3;
+	#endregion
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 固定フレーム
+	/// </summary>
+	void FixedUpdate()
+	{
+		//雷時間を使用している
+		if (m_countThunderDuration != -1)
+			ThunderFalls();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 雷が落ちる
+	/// </summary>
+	void ThunderFalls()
+	{
+		m_countThunderDuration += Time.deltaTime;
+
+		//雷の光の向き
+		m_workVector3 = Camera.main.transform.position;
+		m_workVector3.y = LightningOfThunder.transform.position.y;
+		LightningOfThunder.transform.LookAt(m_workVector3);
+
+		//雷が非表示になる時間
+		if (m_countThunderDuration >= m_timeOfLightning + m_lightningDisplayTime)
+		{
+			LightningOfThunder.SetActive(false);
+			m_countThunderDuration = -1;
+			return;
+		}
+
+		//落雷の時間
+		if (m_countThunderDuration >= m_timeOfLightning)
+		{
+			//通知がアクティブ
+			if (ThunderNotice.activeInHierarchy)
+			{
+				ThunderNotice.SetActive(false);
+				LightningOfThunder.SetActive(true);
+			}
+			return;
+		}
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -156,6 +252,27 @@ public class MyField : MonoBehaviour
 	public void SetStormPos(Vector3 pos)
 	{
 		Storm.transform.position = pos;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落雷の開始
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <param name="playerHeight">プレイヤー高度</param>
+	public void StartThunderbolt(Vector3 pos, float playerHeight)
+	{
+		//雷の時間がカウントされている
+		if (m_countThunderDuration != -1)
+			return;
+
+		//プレイヤーに適した位置
+		pos.y = playerHeight;
+
+		Thunder.transform.position = pos;
+		Thundercloud.Play();
+		ThunderNotice.SetActive(true);
+		m_countThunderDuration = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

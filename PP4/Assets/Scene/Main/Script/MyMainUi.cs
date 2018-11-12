@@ -206,6 +206,12 @@ public class MyMainUi : MonoBehaviour
 	Text StatementOfFallReason;
 
 	/// <summary>
+	/// 被雷
+	/// </summary>
+	[SerializeField]
+	Image Thunder;
+
+	/// <summary>
 	/// 残り時間
 	/// </summary>
 	[SerializeField]
@@ -394,6 +400,12 @@ public class MyMainUi : MonoBehaviour
 	string[] m_statementsOfFallReason;
 
 	/// <summary>
+	/// 雷の点滅開始時間
+	/// </summary>
+	[SerializeField]
+	float[] m_blinkingStartTimeOfLightning;
+
+	/// <summary>
 	/// 時間を通知するための残り時間
 	/// </summary>
 	[SerializeField]
@@ -449,6 +461,11 @@ public class MyMainUi : MonoBehaviour
 	/// 被水するフラグ
 	/// </summary>
 	bool m_isWearWater;
+
+	/// <summary>
+	/// 雷の点滅時間を数える
+	/// </summary>
+	float m_countBlinkingTimeOfLightning = -1;
 
 	/// <summary>
 	/// 残り時間の通知フラグ
@@ -553,6 +570,10 @@ public class MyMainUi : MonoBehaviour
 		//被水する
 		if (m_isWearWater)
 			WearWaterProcess();
+
+		//被雷する
+		if (m_countBlinkingTimeOfLightning != -1)
+			ThunderProcess();
 
 		//勝敗の移動
 		if (m_isWinningOrLosingMoves)
@@ -663,6 +684,35 @@ public class MyMainUi : MonoBehaviour
 				wearWater.StopAnimation();
 			}
 			m_isWearWater = false;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 被雷処理
+	/// </summary>
+	void ThunderProcess()
+	{
+		m_countBlinkingTimeOfLightning += Time.deltaTime;
+
+		//点滅開始時間を逆順
+		for(m_workInt = m_blinkingStartTimeOfLightning.Length - 1; m_workInt >= 0; m_workInt--)
+		{
+			//時間に対応した配列番号の検索
+			if(m_countBlinkingTimeOfLightning >= m_blinkingStartTimeOfLightning[m_workInt])
+			{
+				//配列番号が偶数だと表示
+				Thunder.enabled = (m_workInt % 2 == 0);
+
+				//終了
+				if(m_workInt == m_blinkingStartTimeOfLightning.Length - 1)
+				{
+					Thunder.enabled = false;
+					m_countBlinkingTimeOfLightning = -1;
+				}
+
+				return;
+			}
 		}
 	}
 
@@ -984,10 +1034,22 @@ public class MyMainUi : MonoBehaviour
 				break;
 			case ReasonForFalling.Thunderbolt:
 				StatementOfFallReason.text = m_statementsOfFallReason[3];
+				StartThunder();
 				break;
 		}
 
 		Falling.SetActive(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 被雷の開始
+	/// </summary>
+	void StartThunder()
+	{
+		//被雷していない時
+		if (m_countBlinkingTimeOfLightning == -1)
+			m_countBlinkingTimeOfLightning = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

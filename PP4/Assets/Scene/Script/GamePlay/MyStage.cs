@@ -25,9 +25,14 @@ public struct StageInfo
 	public const string GROUND_TAG = "Ground";
 
 	/// <summary>
-	/// 単位の記号
+	/// 雷のタグ
 	/// </summary>
-	public const string UNIT_SYMBOL = "m";
+	public const string THUNDER_TAG = "Thunder";
+
+	/// <summary>
+	/// 雷の通知タグ
+	/// </summary>
+	public const string THUNDER_NOTICE_TAG = "ThunderNotice";
 }
 
 //----------------------------------------------------------------------------------------------------

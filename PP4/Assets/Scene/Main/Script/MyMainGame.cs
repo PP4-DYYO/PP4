@@ -290,6 +290,18 @@ public class MyMainGame : MyGame
 	float m_supportRatePerMeter;
 
 	/// <summary>
+	/// プレイヤーの帯電時間
+	/// </summary>
+	[SerializeField]
+	float m_chargingTimeOfPlayer;
+
+	/// <summary>
+	/// 順位による帯電率
+	/// </summary>
+	[SerializeField]
+	float[] m_chargeRateByRank;
+
+	/// <summary>
 	/// 順位の表示
 	/// </summary>
 	bool m_isDisplayRank;
@@ -303,6 +315,16 @@ public class MyMainGame : MyGame
 	/// マップ上にプレイヤー名を表示する時間が過ぎたフラグ
 	/// </summary>
 	bool m_isTimeToDisplayPlayerNameOnMapHasPassed;
+
+	/// <summary>
+	/// プレイヤーの帯電時間を数える
+	/// </summary>
+	float m_countChargingTimeOfPlayer;
+
+	/// <summary>
+	/// プレイヤーの帯電率を数える
+	/// </summary>
+	float[] m_countPlayerChargeRate;
 	#endregion
 
 	#region バトル後状態
@@ -597,9 +619,7 @@ public class MyMainGame : MyGame
 	{
 		//全体の状態初期設定
 		if (m_state != m_statePrev)
-		{
 			m_countTheTimeOfTheState = 0;
-		}
 
 		//状態
 		switch (m_state)
@@ -943,6 +963,12 @@ public class MyMainGame : MyGame
 			m_isTimeToDisplayPlayerNameOnMapHasPassed = false;
 		}
 
+		//ステージとプレイヤーとカメラとUI
+		BattleStateStage();
+		BattleStatePlayer();
+		BattleStateCamera();
+		BattleStateUi();
+
 		//時間が過ぎていないフラグandマップ上にプレイヤー名を表示する時間が過ぎた
 		if (!m_isTimeToDisplayPlayerNameOnMapHasPassed && m_countTheTimeOfTheState >= m_timeToDisplayPlayerNameOnMap)
 		{
@@ -958,17 +984,43 @@ public class MyMainGame : MyGame
 			m_state = GameStatus.BattleEnd;
 			MainUi.SetTimer();
 		}
-		else
-		{
-			//ステージの嵐位置
-			m_workVector3 = Vector3.zero;
-			m_workVector3.y = OperatingPlayer.transform.position.y;
-			Stage.CurrentFieldScript.SetStormPos(m_workVector3);
+	}
 
-			//プレイヤーとカメラとUI
-			BattleStatePlayer();
-			BattleStateCamera();
-			BattleStateUi();
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル状態のステージ
+	/// </summary>
+	void BattleStateStage()
+	{
+		//初期設定
+		if (m_countPlayerChargeRate == null)
+			m_countPlayerChargeRate = new float[MyNetPlayerSetting.NetPlayerSettings.Count];
+
+		//嵐位置
+		m_workVector3 = Vector3.zero;
+		m_workVector3.y = OperatingPlayer.transform.position.y;
+		Stage.CurrentFieldScript.SetStormPos(m_workVector3);
+
+		//雷
+		m_countChargingTimeOfPlayer += Time.deltaTime;
+
+		//プレイヤーに帯電するタイミング
+		if(m_countChargingTimeOfPlayer >= m_chargingTimeOfPlayer)
+		{
+			m_countChargingTimeOfPlayer -= m_chargingTimeOfPlayer;
+
+			//帯電するプレイヤー
+			m_workInt = Random.Range(0, MyNetPlayerSetting.NetPlayerSettings.Count);
+			m_countPlayerChargeRate[m_workInt] += m_chargeRateByRank[Players.HeightRanks[m_workInt]];
+
+			//帯電率が上限を超えた
+			if(m_countPlayerChargeRate[m_workInt] >= 1f)
+			{
+				//落雷
+				m_countPlayerChargeRate[m_workInt] -= 1f;
+				Stage.CurrentFieldScript.StartThunderbolt(
+					MyNetPlayerSetting.NetPlayerSettings[m_workInt].transform.position, OperatingPlayer.transform.position.y);
+			}
 		}
 	}
 

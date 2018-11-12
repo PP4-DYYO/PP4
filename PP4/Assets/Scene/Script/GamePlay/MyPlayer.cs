@@ -412,8 +412,8 @@ public class MyPlayer : MonoBehaviour
 	}
 	#endregion
 
-	#region 風
-	[Header("風")]
+	#region 環境
+	[Header("環境")]
 	/// <summary>
 	/// 風
 	/// </summary>
@@ -437,6 +437,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	int m_oneWindVolume;
+
+	/// <summary>
+	/// 静電気
+	/// </summary>
+	[SerializeField]
+	ParticleSystem StaticElectricity;
 
 	/// <summary>
 	/// 風が吹く間隔を数える
@@ -896,11 +902,18 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="other">重なったもの</param>
 	void OnTriggerEnter(Collider other)
 	{
-		//コイン
-		if(other.tag.Equals(ItemInfo.TAG))
+		//重なったもののタグ
+		switch (other.transform.tag)
 		{
-			//枚数増加
-			m_numOfCoins++;
+			case ItemInfo.TAG:
+				//枚数増加
+				m_numOfCoins++;
+				break;
+			case StageInfo.THUNDER_TAG:
+				//被雷
+				m_isFalling = true;
+				m_reasonForFalling = ReasonForFalling.Thunderbolt;
+				break;
 		}
 	}
 
@@ -911,21 +924,36 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="other">重なったもの</param>
 	void OnTriggerStay(Collider other)
 	{
-		//ジェットウォーターに当たる
-		if (other.tag.Equals(JetWaterInfo.TAG))
+		//重なったもののタグ
+		switch (other.transform.tag)
 		{
-			//重なった位置が自分より下
-			if (other.ClosestPointOnBounds(transform.position).y < transform.position.y)
-				return;
-
-			//相手のジェットウォータ―で下降する
-			transform.position -= Vector3.up * m_transferAmountByWaterPressure * Time.deltaTime;
-
-			//ジェットウォータに当たる分だけ水分回復
-			m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
-
-			m_isWearWater = true;
+			case JetWaterInfo.TAG:
+				JetWaterTriggerStay(other);
+				break;
+			case StageInfo.THUNDER_NOTICE_TAG:
+				StaticElectricity.Emit(1);
+				break;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットウォータ―の重なり続ける判定
+	/// </summary>
+	/// <param name="other">重なったもの</param>
+	void JetWaterTriggerStay(Collider other)
+	{
+		//重なった位置が自分より下
+		if (other.ClosestPointOnBounds(transform.position).y < transform.position.y)
+			return;
+
+		//相手のジェットウォータ―で下降する
+		transform.position -= Vector3.up * m_transferAmountByWaterPressure * Time.deltaTime;
+
+		//ジェットウォータに当たる分だけ水分回復
+		m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
+
+		m_isWearWater = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -946,8 +974,6 @@ public class MyPlayer : MonoBehaviour
 				m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
 				break;
 			case "Bird":
-				break;
-			case "Thunder":
 				break;
 		}
 	}

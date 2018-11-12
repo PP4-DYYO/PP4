@@ -149,30 +149,33 @@ public class MyJetWater : MonoBehaviour
 			if (m_countFiringIntervalTime >= m_firingIntervalTime)
 			{
 				//配列の水しぶきの設定
-				Splashes[m_splasheNum].ActiveChange(true);
-
-				//サイズのリセット
-				Splashes[m_splasheNum].transform.localScale = Vector3.one;
-
-				//親の設定
-				if (!Splashes[m_splasheNum].transform.parent && Player)
+				if (!Splashes[m_splasheNum].Display)
 				{
-					Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
+					Splashes[m_splasheNum].ActiveChange(true);
+
+					//サイズのリセット
+					Splashes[m_splasheNum].transform.localScale = Vector3.one;
+
+					//親の設定
+					if (!Splashes[m_splasheNum].transform.parent && Player)
+					{
+						Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
+					}
+
+					//水しぶきの場所
+					Splashes[m_splasheNum].transform.position = JetCenter.transform.position;
+
+					//水しぶきの角度
+					Splashes[m_splasheNum].transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
+
+					//水しぶきに力を加える
+					Splashes[m_splasheNum].AddingForce(-transform.forward * m_waterPower);
+
+					//場所リストの更新
+					m_centerSplasheTrans.Add(Splashes[m_splasheNum].transform);
 				}
-
-				//水しぶきの場所
-				Splashes[m_splasheNum].transform.position = JetCenter.transform.position;
-
-				//水しぶきの角度
-				Splashes[m_splasheNum].transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
-
-				//水しぶきに力を加える
-				Splashes[m_splasheNum].AddingForce(-transform.forward * m_waterPower);
-
-				//場所リストの更新
-				m_centerSplasheTrans.Add(Splashes[m_splasheNum].transform);
-
-				m_splasheNum ++;
+					m_splasheNum++;
+				
 				if (m_splasheNum >= Splashes.Length)
 				{
 					m_splasheNum = 0;
@@ -246,6 +249,18 @@ public class MyJetWater : MonoBehaviour
 				m_splasheScale.z = Vector3.Distance(m_centerSplasheTrans[m_index].position, m_centerSplasheTrans[m_index - 1].position);
 				m_centerSplasheTrans[m_index].localScale = m_splasheScale;
 			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきを全て非表示にする
+	/// </summary>
+	public void SplasheHideAll()
+	{
+		for (m_index = 0; m_index < Splashes.Length; m_index++)
+		{
+			Splashes[m_index].ActiveChange(false);
 		}
 	}
 }

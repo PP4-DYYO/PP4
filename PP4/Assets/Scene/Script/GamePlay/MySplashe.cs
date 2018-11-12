@@ -68,6 +68,16 @@ public class MySplashe : MonoBehaviour
 	float m_splasheScaleZ;
 
 	/// <summary>
+	/// 自身が表示されているか
+	/// </summary>
+	 [SerializeField]
+	bool isDisplay;
+	public bool Display
+	{
+		get { return isDisplay; }
+	}
+
+	/// <summary>
 	/// 着地から消えるまでの時間
 	/// </summary>
 	[SerializeField]
@@ -79,6 +89,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>	
 	void Start()
 	{
+		isDisplay = false;
 		m_splasheScaleZ = this.transform.localScale.z;	
 	}
 
@@ -91,17 +102,13 @@ public class MySplashe : MonoBehaviour
 		//時間経過で消滅する
 		if (m_splasheLivingTime >= m_splasheLifeTime)
 		{
-			gameObject.SetActive(false);
-			isfallen = false;
-			m_splasheLivingTime = 0;
+			MySplasheDestroy();
 		}
 
 		//サイズが０以下になるときには消す
 		if (transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
 		{
-			gameObject.SetActive(false);
-			isfallen = false;
-			m_splasheLivingTime = 0;
+			MySplasheDestroy();
 		}
 		else
 		{
@@ -152,6 +159,18 @@ public class MySplashe : MonoBehaviour
 	{
 		GameObject ss = Instantiate(spreadSplashe, transform.parent);
 		ss.transform.position = transform.position;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 自身が消えるときの処理
+	/// </summary>
+	public void MySplasheDestroy()
+	{
+		gameObject.SetActive(false);
+		isfallen = false;
+		isDisplay = false;
+		m_splasheLivingTime = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ﻿////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//2018/8/18～
+//2018/11/12～
 //作成者　京都コンピュータ学院京都駅前校　ゲーム学科　4回生　奥田裕也
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,26 +13,39 @@ using UnityEngine;
 //Enum・Struct
 //----------------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------------------------
 /// <summary>
-/// ステージ情報
+/// 雲の種類
 /// </summary>
-public struct StageInfo
+enum CloudType
 {
 	/// <summary>
-	/// 地のタグ
+	/// 雨雲
 	/// </summary>
-	public const string GROUND_TAG = "Ground";
-
+	RainCloud,
 	/// <summary>
-	/// 雷のタグ
+	/// 雷雲
 	/// </summary>
-	public const string THUNDER_TAG = "Thunder";
-
+	Thundercloud,
 	/// <summary>
-	/// 雷の通知タグ
+	/// 風雨
 	/// </summary>
-	public const string THUNDER_NOTICE_TAG = "ThunderNotice";
+	WindCloud,
+	/// <summary>
+	/// 金雲
+	/// </summary>
+	GoldCloud,
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// 雲情報
+/// </summary>
+public struct CloudInfo
+{
+	/// <summary>
+	/// 雨雲のタグ
+	/// </summary>
+	public const string RAIN_TAG = "RainCloud";
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -41,31 +54,25 @@ public struct StageInfo
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
-/// ステージ
+/// 雲
 /// </summary>
-public class MyStage : MonoBehaviour
+public class MyCloud : MonoBehaviour
 {
 	/// <summary>
-	/// ゲーム
+	/// タイプ
 	/// </summary>
 	[SerializeField]
-	MyGame Game;
-	public MyGame GameScript
+	CloudType m_type;
+
+	// Use this for initialization
+	void Start()
 	{
-		get { return Game; }
+
 	}
 
-	/// <summary>
-	/// フィールド達
-	/// </summary>
-	[SerializeField]
-	MyField[] Fields;
-
-	/// <summary>
-	/// 稼働中のフィールド
-	/// </summary>
-	public MyField CurrentFieldScript
+	// Update is called once per frame
+	void Update()
 	{
-		get { return Fields[0]; }
+
 	}
 }

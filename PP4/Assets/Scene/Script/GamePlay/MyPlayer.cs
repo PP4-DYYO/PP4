@@ -217,6 +217,18 @@ public class MyPlayer : MonoBehaviour
 	{
 		get { return JetWater; }
 	}
+
+	/// <summary>
+	/// 風
+	/// </summary>
+	[SerializeField]
+	ParticleSystem Wind;
+
+	/// <summary>
+	/// 静電気
+	/// </summary>
+	[SerializeField]
+	ParticleSystem StaticElectricity;
 	#endregion
 
 	#region トランスフォーム
@@ -415,12 +427,6 @@ public class MyPlayer : MonoBehaviour
 	#region 環境
 	[Header("環境")]
 	/// <summary>
-	/// 風
-	/// </summary>
-	[SerializeField]
-	ParticleSystem Wind;
-
-	/// <summary>
 	/// 風が吹く間隔
 	/// </summary>
 	[SerializeField]
@@ -439,10 +445,10 @@ public class MyPlayer : MonoBehaviour
 	int m_oneWindVolume;
 
 	/// <summary>
-	/// 静電気
+	/// 雨雲回復率
 	/// </summary>
 	[SerializeField]
-	ParticleSystem StaticElectricity;
+	float m_RainCloudRecoveryRate;
 
 	/// <summary>
 	/// 風が吹く間隔を数える
@@ -933,6 +939,10 @@ public class MyPlayer : MonoBehaviour
 			case StageInfo.THUNDER_NOTICE_TAG:
 				StaticElectricity.Emit(1);
 				break;
+			case CloudInfo.RAIN_TAG:
+				m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_RainCloudRecoveryRate));
+				m_isWearWater = true;
+				break;
 		}
 	}
 
@@ -967,6 +977,7 @@ public class MyPlayer : MonoBehaviour
 		switch(other.transform.tag)
 		{
 			case StageInfo.GROUND_TAG:
+				m_countNumOfRecoveryOperations = 0;
 				m_isFalling = false;
 				break;
 			case PlayerInfo.TAG:

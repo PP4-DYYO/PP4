@@ -15,6 +15,14 @@ using UnityEngine;
 /// </summary>
 public class MySplashe : MonoBehaviour
 {
+
+	/// <summary>
+	/// 自身のRigitbode
+	/// </summary>
+	[SerializeField]
+	Rigidbody rigidbody;
+
+
 	/// <summary>
 	/// 水しぶきの残る時間
 	/// </summary>
@@ -144,5 +152,24 @@ public class MySplashe : MonoBehaviour
 	{
 		GameObject ss = Instantiate(spreadSplashe, transform.parent);
 		ss.transform.position = transform.position;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 自身の表示の切り替え
+	/// </summary>
+	public void ActiveChange(bool choosing)
+	{
+		gameObject.SetActive(choosing);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきに力を加える
+	/// </summary>
+	public void AddingForce(Vector3 v)
+	{
+		rigidbody.velocity = Vector3.zero;
+		rigidbody.AddForce(v);
 	}
 }

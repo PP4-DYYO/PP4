@@ -52,10 +52,10 @@ public class MyJetWater : MonoBehaviour
 	GameObject JetCenter;
 
 	/// <summary>
-	/// 水しぶきのオブジェクト
+	/// 水しぶきのクラス
 	/// </summary>
 	[SerializeField]
-	GameObject Water;
+	MySplashe Splashe;
 
 	/// <summary>
 	/// 右のジェットのオブジェクト
@@ -109,7 +109,7 @@ public class MyJetWater : MonoBehaviour
 	/// <summary>
 	/// 水しぶきのオブジェクトの配列(100個用意する)
 	/// </summary>
-	GameObject[] Splashes = new GameObject[100];
+	MySplashe[] Splashes = new MySplashe[100];
 
 	/// <summary>
 	/// 水しぶきの番号
@@ -130,8 +130,8 @@ public class MyJetWater : MonoBehaviour
 		//水しぶきの配列に代入
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			Splashes[m_index] = Instantiate(Water);
-			Splashes[m_index].SetActive(false);
+			Splashes[m_index] = Instantiate(Splashe);
+			Splashes[m_index].ActiveChange(false);
 		}
 	}
 
@@ -149,17 +149,29 @@ public class MyJetWater : MonoBehaviour
 			if (m_countFiringIntervalTime >= m_firingIntervalTime)
 			{
 				//配列の水しぶきの設定
-				Splashes[m_splasheNum].SetActive(true);
+				Splashes[m_splasheNum].ActiveChange(true);
+
+				//サイズのリセット
 				Splashes[m_splasheNum].transform.localScale = Vector3.one;
+
+				//親の設定
 				if (!Splashes[m_splasheNum].transform.parent && Player)
 				{
 					Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
 				}
+
+				//水しぶきの場所
 				Splashes[m_splasheNum].transform.position = JetCenter.transform.position;
+
+				//水しぶきの角度
 				Splashes[m_splasheNum].transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
-				Splashes[m_splasheNum].GetComponent<Rigidbody>().velocity = Vector3.zero;
-				Splashes[m_splasheNum].GetComponent<Rigidbody>().AddForce(-transform.forward * m_waterPower);
+
+				//水しぶきに力を加える
+				Splashes[m_splasheNum].AddingForce(-transform.forward * m_waterPower);
+
+				//場所リストの更新
 				m_centerSplasheTrans.Add(Splashes[m_splasheNum].transform);
+
 				m_splasheNum ++;
 				if (m_splasheNum >= Splashes.Length)
 				{
@@ -227,7 +239,8 @@ public class MyJetWater : MonoBehaviour
 		//水しぶき
 		for (m_index = 1; m_index < m_centerSplasheTrans.Count; m_index++)
 		{
-			if (!m_centerSplasheTrans[m_index].GetComponent<MySplashe>().Fallen)
+			//空中にあればサイズ変更
+			if (m_centerSplasheTrans[m_index].transform.position.y>0)
 			{
 				m_splasheScale = m_centerSplasheTrans[m_index].localScale;
 				m_splasheScale.z = Vector3.Distance(m_centerSplasheTrans[m_index].position, m_centerSplasheTrans[m_index - 1].position);

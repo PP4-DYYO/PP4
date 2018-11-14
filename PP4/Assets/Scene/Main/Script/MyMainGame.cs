@@ -181,7 +181,7 @@ public class MyMainGame : MyGame
 	/// プレイヤー回転スピード
 	/// </summary>
 	[SerializeField]
-	float m_playerrotationSpeed;
+	float m_playerRotationSpeed;
 
 	/// <summary>
 	/// 人が集まった時のカメラ位置
@@ -789,12 +789,12 @@ public class MyMainGame : MyGame
 				Vector3.Scale((m_posToJumpOffShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
 
 			//向ける角度が向きたい角度より大きい
-			if (m_playerrotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
+			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
 				OperatingPlayer.transform.Rotate(Vector3.up, m_workFloat);
 			else if(m_workFloat > 0)
-				OperatingPlayer.transform.Rotate(Vector3.up, m_playerrotationSpeed * Time.deltaTime);
+				OperatingPlayer.transform.Rotate(Vector3.up, m_playerRotationSpeed * Time.deltaTime);
 			else
-				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerrotationSpeed * Time.deltaTime);
+				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
 
 			return;
 		}

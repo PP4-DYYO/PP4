@@ -240,12 +240,6 @@ public class MyPlayer : MonoBehaviour
 	float m_rotationSpeed;
 
 	/// <summary>
-	/// 補正角度
-	/// </summary>
-	[SerializeField]
-	int m_correctionAngle;
-
-	/// <summary>
 	/// フレーム前の位置
 	/// </summary>
 	Vector3 m_posPrev;
@@ -259,16 +253,6 @@ public class MyPlayer : MonoBehaviour
 	/// 角度
 	/// </summary>
 	float m_angle;
-
-	/// <summary>
-	/// １周の角度
-	/// </summary>
-	const int ONE_TURNING_ANGLE = 360;
-
-	/// <summary>
-	/// 半周の角度
-	/// </summary>
-	const int HALF_CIRCUMFERENCE_ANGLE = 180;
 	#endregion
 
 	#region 状態
@@ -483,14 +467,7 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	bool m_isPushedRButton;
 	#endregion
-
-	#region 作業用
-	/// <summary>
-	/// 作業用のVector３
-	/// </summary>
-	Vector3 m_workVector3;
-	#endregion
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -739,57 +716,20 @@ public class MyPlayer : MonoBehaviour
 		if (m_direction == Vector3.zero)
 			return;
 
-		//移動量から向くべき角度を算出
-		m_angle = Mathf.Asin(m_direction.x) / Mathf.PI * HALF_CIRCUMFERENCE_ANGLE;
-		if (m_direction.z < 0)
-			m_angle = HALF_CIRCUMFERENCE_ANGLE - m_angle;
+		//向きたい角度
+		m_angle = Vector3.Cross(transform.forward, m_direction).y;
+		m_angle = Vector3.Angle(transform.forward, Vector3.Scale(m_direction, Vector3.right + Vector3.forward)) * (m_angle < 0 ? -1 : 1);
 
-		m_workVector3 = transform.eulerAngles;
-
-		//マイナス角度の修正
-		m_angle += (m_angle < 0) ? ONE_TURNING_ANGLE : 0;
-		m_workVector3.y += (m_workVector3.y < 0) ? ONE_TURNING_ANGLE : 0;
-
-		//回転したい角度
-		var m_workFloat = Mathf.Abs(m_workVector3.y - m_angle);
-
-		//回転角度が小さい
-		if (m_workFloat <= m_correctionAngle)
-		{
-			//向きたい方向に向く
-			m_workVector3.y = m_angle;
-
-			//回転値をアニメーションに渡す
-			Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, 0f);
-		}
-		else if (m_workFloat < HALF_CIRCUMFERENCE_ANGLE) //向きたい角度が想定範囲
-		{
-			//徐々に向きたい方向に向く
-			m_angle -= m_workVector3.y;
-			m_angle *= Time.deltaTime * m_rotationSpeed;
-			m_workVector3.y += m_angle;
-
-			//回転値をアニメーションに渡す
-			Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, m_angle);
-		}
+		//向ける角度が向きたい角度より大きい
+		if (m_rotationSpeed * Time.deltaTime >= Mathf.Abs(m_angle))
+			transform.Rotate(Vector3.up, m_angle);
+		else if (m_angle > 0)
+			transform.Rotate(Vector3.up, m_rotationSpeed * Time.deltaTime);
 		else
-		{
-			//大きい角度をマイナスにする
-			if (m_angle < m_workVector3.y)
-				m_workVector3.y -= ONE_TURNING_ANGLE;
-			else
-				m_angle -= ONE_TURNING_ANGLE;
+			transform.Rotate(Vector3.up, -m_rotationSpeed * Time.deltaTime);
 
-			//徐々に向きたい方向に向く
-			m_angle -= m_workVector3.y;
-			m_angle *= Time.deltaTime * m_rotationSpeed;
-			m_workVector3.y += m_angle;
-
-			//回転値をアニメーションに渡す
-			Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, m_angle);
-		}
-
-		transform.eulerAngles = m_workVector3;
+		//回転値をアニメーションに渡す
+		Anim.SetFloat(PlayerInfo.ANIM_ROTATION_NAME, m_angle);
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -15,13 +15,11 @@ using UnityEngine;
 /// </summary>
 public class MySplashe : MonoBehaviour
 {
-
 	/// <summary>
 	/// 自身のRigitbode
 	/// </summary>
 	[SerializeField]
-	Rigidbody rigidbody;
-
+	Rigidbody Rb;
 
 	/// <summary>
 	/// 水しぶきの残る時間
@@ -68,20 +66,12 @@ public class MySplashe : MonoBehaviour
 	float m_splasheScaleZ;
 
 	/// <summary>
-	/// 自身が表示されているか
-	/// </summary>
-	 [SerializeField]
-	bool isDisplay;
-	public bool Display
-	{
-		get { return isDisplay; }
-	}
-
-	/// <summary>
 	/// 着地から消えるまでの時間
 	/// </summary>
 	[SerializeField]
 	float m_splasheSmallerTime;
+
+	public int mynum;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -89,8 +79,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>	
 	void Start()
 	{
-		isDisplay = false;
-		m_splasheScaleZ = this.transform.localScale.z;	
+		m_splasheScaleZ = this.transform.localScale.z;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -105,34 +94,34 @@ public class MySplashe : MonoBehaviour
 			MySplasheDestroy();
 		}
 
-		//サイズが０以下になるときには消す
-		if (transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
+		//着地後
+		if (isfallen)
 		{
-			MySplasheDestroy();
-		}
-		else
-		{
-			//オブジェクトの大きさ変化
-			if (isfallen)
+			//サイズが０以下になるときには消す
+			if (transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
 			{
-				transform.localScale = new Vector3(transform.localScale.x,
-					 transform.localScale.y, transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime));
+				MySplasheDestroy();
 			}
 			else
 			{
-				if (transform.localScale.x - m_splasheXYSizeChange > 0)
-				{
-					transform.localScale = new Vector3(transform.localScale.x -m_splasheXYSizeChange,
-						 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
-				}
-				else
-				{
-					transform.localScale = new Vector3(transform.localScale.x ,
-						 transform.localScale.y, transform.localScale.z + m_splasheSizeChange);
-				}
-				m_splasheScaleZ = transform.localScale.z;
-
+				transform.localScale = new Vector3(transform.localScale.x,
+						 transform.localScale.y, transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime));
 			}
+		}
+		//空中
+		else
+		{
+			if (transform.localScale.x - m_splasheXYSizeChange > 0)
+			{
+				transform.localScale = new Vector3(transform.localScale.x - m_splasheXYSizeChange,
+					 transform.localScale.y - m_splasheXYSizeChange, transform.localScale.z + m_splasheSizeChange);
+			}
+			else
+			{
+				transform.localScale = new Vector3(transform.localScale.x,
+					 transform.localScale.y, transform.localScale.z + m_splasheSizeChange);
+			}
+			m_splasheScaleZ = transform.localScale.z;
 		}
 		m_splasheLivingTime += Time.deltaTime;
 	}
@@ -169,7 +158,6 @@ public class MySplashe : MonoBehaviour
 	{
 		gameObject.SetActive(false);
 		isfallen = false;
-		isDisplay = false;
 		m_splasheLivingTime = 0;
 	}
 
@@ -180,6 +168,7 @@ public class MySplashe : MonoBehaviour
 	public void ActiveChange(bool choosing)
 	{
 		gameObject.SetActive(choosing);
+		m_splasheLivingTime = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -188,7 +177,7 @@ public class MySplashe : MonoBehaviour
 	/// </summary>
 	public void AddingForce(Vector3 v)
 	{
-		rigidbody.velocity = Vector3.zero;
-		rigidbody.AddForce(v);
+		Rb.velocity = Vector3.zero;
+		Rb.AddForce(v);
 	}
 }

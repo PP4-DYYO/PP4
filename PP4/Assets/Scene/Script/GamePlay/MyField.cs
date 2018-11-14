@@ -65,6 +65,12 @@ public class MyField : MonoBehaviour
 	GameObject LightningOfThunder;
 
 	/// <summary>
+	/// 雲
+	/// </summary>
+	[SerializeField]
+	MyCloud[] Clouds;
+
+	/// <summary>
 	/// 表彰台
 	/// </summary>
 	[SerializeField]
@@ -115,6 +121,15 @@ public class MyField : MonoBehaviour
 	/// 雷の時間を数える
 	/// </summary>
 	float m_countThunderDuration = -1;
+	#endregion
+
+	#region 雲
+	[Header("雲")]
+	/// <summary>
+	/// 雲の高さ
+	/// </summary>
+	[SerializeField]
+	float[] m_cloudHeight;
 	#endregion
 
 	#region 表彰
@@ -232,6 +247,9 @@ public class MyField : MonoBehaviour
 		//嵐を表示と位置のリセット
 		ShowStorm();
 		SetStormPos(Vector3.zero);
+
+		//雲のリセット
+		ResetCloud();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -252,6 +270,25 @@ public class MyField : MonoBehaviour
 	public void SetStormPos(Vector3 pos)
 	{
 		Storm.transform.position = pos;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 雲のリセット
+	/// </summary>
+	void ResetCloud()
+	{
+		//全ての雲
+		foreach(var cloud in Clouds)
+		{
+			//高さの変更
+			m_workVector3 = cloud.transform.position;
+			m_workVector3.y = m_cloudHeight[Random.Range(0, m_cloudHeight.Length)];
+			cloud.transform.position = m_workVector3;
+
+			//リセット
+			cloud.ResetCloud();
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

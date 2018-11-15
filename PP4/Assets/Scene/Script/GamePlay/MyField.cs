@@ -246,7 +246,7 @@ public class MyField : MonoBehaviour
 
 		//嵐を表示と位置のリセット
 		ShowStorm();
-		SetStormPos(Vector3.zero);
+		SetStormPos(Vector3.forward);
 
 		//雲のリセット
 		ResetCloud();
@@ -269,7 +269,12 @@ public class MyField : MonoBehaviour
 	/// <param name="pos">位置</param>
 	public void SetStormPos(Vector3 pos)
 	{
-		Storm.transform.position = pos;
+		//位置
+		m_workVector3 = Vector3.Scale(pos, Vector3.up);
+		Storm.transform.position = m_workVector3;
+
+		//向き
+		Storm.transform.LookAt(pos);
 	}
 
 	//----------------------------------------------------------------------------------------------------

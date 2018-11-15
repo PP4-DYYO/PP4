@@ -997,9 +997,7 @@ public class MyMainGame : MyGame
 			m_countPlayerChargeRate = new float[MyNetPlayerSetting.NetPlayerSettings.Count];
 
 		//嵐位置
-		m_workVector3 = Vector3.zero;
-		m_workVector3.y = OperatingPlayer.transform.position.y;
-		Stage.CurrentFieldScript.SetStormPos(m_workVector3);
+		Stage.CurrentFieldScript.SetStormPos(OperatingPlayer.transform.position);
 
 		//雷
 		m_countChargingTimeOfPlayer += Time.deltaTime;

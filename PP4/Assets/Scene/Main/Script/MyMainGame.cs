@@ -791,7 +791,7 @@ public class MyMainGame : MyGame
 			//向ける角度が向きたい角度より大きい
 			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
 				OperatingPlayer.transform.Rotate(Vector3.up, m_workFloat);
-			else if(m_workFloat > 0)
+			else if (m_workFloat > 0)
 				OperatingPlayer.transform.Rotate(Vector3.up, m_playerRotationSpeed * Time.deltaTime);
 			else
 				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
@@ -862,6 +862,19 @@ public class MyMainGame : MyGame
 
 		//アニメーション
 		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Select);
+
+		//プレイヤーの帯電率のリセット
+		if (m_countPlayerChargeRate == null)
+		{
+			m_countPlayerChargeRate = new float[MyNetPlayerSetting.NetPlayerSettings.Count];
+		}
+		else
+		{
+			for(var i = 0; i < m_countPlayerChargeRate.Length; i++)
+			{
+				m_countPlayerChargeRate[i] = 0;
+			}
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -992,10 +1005,6 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void BattleStateStage()
 	{
-		//初期設定
-		if (m_countPlayerChargeRate == null)
-			m_countPlayerChargeRate = new float[MyNetPlayerSetting.NetPlayerSettings.Count];
-
 		//嵐位置
 		Stage.CurrentFieldScript.SetStormPos(OperatingPlayer.transform.position);
 
@@ -1003,7 +1012,7 @@ public class MyMainGame : MyGame
 		m_countChargingTimeOfPlayer += Time.deltaTime;
 
 		//プレイヤーに帯電するタイミング
-		if(m_countChargingTimeOfPlayer >= m_chargingTimeOfPlayer)
+		if (m_countChargingTimeOfPlayer >= m_chargingTimeOfPlayer)
 		{
 			m_countChargingTimeOfPlayer -= m_chargingTimeOfPlayer;
 
@@ -1012,7 +1021,7 @@ public class MyMainGame : MyGame
 			m_countPlayerChargeRate[m_workInt] += m_chargeRateByRank[Players.HeightRanks[m_workInt]];
 
 			//帯電率が上限を超えた
-			if(m_countPlayerChargeRate[m_workInt] >= 1f)
+			if (m_countPlayerChargeRate[m_workInt] >= 1f)
 			{
 				//落雷
 				m_countPlayerChargeRate[m_workInt] -= 1f;

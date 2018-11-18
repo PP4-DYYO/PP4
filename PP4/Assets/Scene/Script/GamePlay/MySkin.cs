@@ -14,6 +14,14 @@ using UnityEngine;
 /// </summary>
 public class MySkin : MonoBehaviour
 {
+	#region 外部のインスタンス
+	[Header("外部のインスタンス")]
+	/// <summary>
+	/// 落下用の当たり判定
+	/// </summary>
+	[SerializeField]
+	Collider FallCollider;
+	
 	/// <summary>
 	/// アニメータ
 	/// </summary>
@@ -45,18 +53,16 @@ public class MySkin : MonoBehaviour
 	Renderer[] RendererForTeamColor;
 
 	/// <summary>
-	/// デフォルトカラー
+	/// 垂直加速エフェクト
 	/// </summary>
 	[SerializeField]
-	Color m_defaultColor;
+	ParticleSystem VerticalAccelerationEffect;
 
-	#region 落下
-	[Header("落下")]
 	/// <summary>
-	/// 落下用の当たり判定
+	/// 水平加速エフェクト
 	/// </summary>
 	[SerializeField]
-	Collider FallCollider;
+	ParticleSystem HorizontalAccelerationEffect;
 
 	/// <summary>
 	/// 落下エフェクト
@@ -64,20 +70,6 @@ public class MySkin : MonoBehaviour
 	[SerializeField]
 	ParticleSystem[] FallEffects;
 
-	/// <summary>
-	/// 落下エフェクト時間
-	/// </summary>
-	[SerializeField]
-	float m_fallEffectTime;
-
-	/// <summary>
-	/// 落下エフェクト時間を数える
-	/// </summary>
-	float m_countFallEffectTime = float.MaxValue;
-	#endregion
-
-	#region 着地
-	[Header("着地")]
 	/// <summary>
 	/// 着地成功エフェクト
 	/// </summary>
@@ -91,6 +83,32 @@ public class MySkin : MonoBehaviour
 	ParticleSystem LandingFailedEffect;
 
 	/// <summary>
+	/// ターゲット
+	/// </summary>
+	[SerializeField]
+	MyPlayer Target;
+	#endregion
+
+	#region 状況
+	[Header("状況")]
+	/// <summary>
+	/// 行動状況
+	/// </summary>
+	PlayerBehaviorStatus m_state;
+	#endregion
+
+	#region 色
+	[Header("色")]
+	/// <summary>
+	/// デフォルトカラー
+	/// </summary>
+	[SerializeField]
+	Color m_defaultColor;
+	#endregion
+
+	#region 着地
+	[Header("着地")]
+	/// <summary>
 	/// 着地成功エフェクトフラグ
 	/// </summary>
 	bool m_isLandingSuccessEffect = true;
@@ -101,21 +119,98 @@ public class MySkin : MonoBehaviour
 	bool m_isLandingFailedEffect = true;
 	#endregion
 
+	#region 作業用
+	/// <summary>
+	/// 作業用のMainModule
+	/// </summary>
+	ParticleSystem.MainModule m_workMainModule;
+	#endregion
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 固定フレーム
 	/// </summary>
 	void FixedUpdate()
 	{
-		//落下エフェクト時間
-		if (m_countFallEffectTime < m_fallEffectTime)
-		{
-			m_countFallEffectTime += Time.deltaTime;
+		//アニメーション処理
+		AnimProcess();
+	}
 
-			//終了
-			if (m_countFallEffectTime >= m_fallEffectTime)
-				FallCollider.enabled = false;
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// アニメーション処理
+	/// </summary>
+	void AnimProcess()
+	{
+		//対象
+		if (!Target)
+			return;
+
+		//行動状況が変わってない
+		if (m_state == Target.State)
+			return;
+
+		//アニメーションが変わった時の共通処理
+		CommonProcessingWhenAnimChanges();
+
+		//行動状況
+		switch (Target.State)
+		{
+			case PlayerBehaviorStatus.JetAccelerationRise:
+				//再生
+				VerticalAccelerationEffect.Play();
+				//ループの有効化
+				m_workMainModule = VerticalAccelerationEffect.main;
+				m_workMainModule.loop = true;
+				break;
+			case PlayerBehaviorStatus.HorizontalAccelerationMovement:
+				//再生
+				HorizontalAccelerationEffect.Play();
+				//ループの有効化
+				m_workMainModule = HorizontalAccelerationEffect.main;
+				m_workMainModule.loop = true;
+				break;
+			case PlayerBehaviorStatus.Falling:
+				//全落下エフェクト
+				foreach (var effect in FallEffects)
+				{
+					//再生
+					effect.Play();
+					//ループの有効か
+					m_workMainModule = effect.main;
+					m_workMainModule.loop = true;
+				}
+				//当たり判定の有効化
+				FallCollider.enabled = true;
+				break;
 		}
+		
+		m_state = Target.State;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// アニメーションが変わった時の共通処理
+	/// </summary>
+	void CommonProcessingWhenAnimChanges()
+	{
+		//垂直加速エフェクトのループの無効化
+		m_workMainModule = VerticalAccelerationEffect.main;
+		m_workMainModule.loop = false;
+
+		//水平加速エフェクトのループの無効化
+		m_workMainModule = HorizontalAccelerationEffect.main;
+		m_workMainModule.loop = false;
+
+		//落下エフェクトのループの無効化
+		foreach (var effect in FallEffects)
+		{
+			m_workMainModule = effect.main;
+			m_workMainModule.loop = false;
+		}
+
+		//落下時の当たり判定の無効化
+		FallCollider.enabled = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -127,6 +222,7 @@ public class MySkin : MonoBehaviour
 	public void SetSkin(MyPlayer target, MyNetPlayerSetting netTarget = null)
 	{
 		//プレイヤー
+		Target = target;
 		target.SetSkin(Anim, WaterGauge, BoardDirection, JetWater);
 
 		//ネットプレイヤー設定
@@ -165,22 +261,7 @@ public class MySkin : MonoBehaviour
 			r.material.color = teamColor;
 		}
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 落下エフェクトの開始
-	/// </summary>
-	public void StartFallEffect()
-	{
-		foreach (var effect in FallEffects)
-		{
-			effect.Emit(1);
-		}
-		FallCollider.enabled = true;
-
-		m_countFallEffectTime = 0;
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 着地エフェクトフラグをTrueにすることを試みる
@@ -211,7 +292,7 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	public void TryLandingSuccessEffect()
 	{
-		if(!m_isLandingSuccessEffect)
+		if (!m_isLandingSuccessEffect)
 		{
 			//着地成功エフェクト
 			m_isLandingSuccessEffect = true;
@@ -225,7 +306,7 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	public void TryLandingFailedEffect()
 	{
-		if(!m_isLandingFailedEffect)
+		if (!m_isLandingFailedEffect)
 		{
 			//着地失敗エフェクト
 			m_isLandingFailedEffect = true;

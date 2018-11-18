@@ -104,6 +104,14 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	Run,
 	/// <summary>
+	/// ジェット加速上昇
+	/// </summary>
+	JetAccelerationRise,
+	/// <summary>
+	/// 水平加速移動
+	/// </summary>
+	HorizontalAccelerationMovement,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,
@@ -290,6 +298,12 @@ public class MyPlayer : MonoBehaviour
 	float m_transferAmountByWaterPressure;
 
 	/// <summary>
+	/// 加速による移動倍率
+	/// </summary>
+	[SerializeField]
+	float m_magnificationOfMovementByAcceleration;
+
+	/// <summary>
 	/// 滞在するための回転量
 	/// </summary>
 	[SerializeField]
@@ -453,6 +467,11 @@ public class MyPlayer : MonoBehaviour
 	#region キーボード関係
 	[Header("キーボード関係")]
 	/// <summary>
+	/// Aボタンを押しっぱなし
+	/// </summary>
+	bool m_isKeepPressingAButton;
+
+	/// <summary>
 	/// Lボタンを押しっぱなし
 	/// </summary>
 	bool m_isKeepPressingLButton;
@@ -467,7 +486,14 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	bool m_isPushedRButton;
 	#endregion
-	
+
+	#region 作業用
+	/// <summary>
+	/// 作業用Float
+	/// </summary>
+	float m_workFloat;
+	#endregion
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -502,6 +528,7 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		m_isKeepPressingAButton = Input.GetButton("AButton");
 		m_isKeepPressingLButton = Input.GetButton("LButton");
 		m_isKeepPressingRButton = Input.GetButton("RButton");
 		m_isPushedRButton = Input.GetButtonDown("RButton");
@@ -579,13 +606,15 @@ public class MyPlayer : MonoBehaviour
 		//飛んでいるand落下していない
 		if (m_isFly && !m_isFalling)
 		{
-			//ジェットの上昇・下降・滞在によってジェットの燃料が減る
+			//ジェットの上昇(加速含む)・下降・滞在(加速含む)によってジェットの燃料が減る
 			if (m_isKeepPressingRButton)
-				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetAcceleration;
+				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetAcceleration
+					* (m_isKeepPressingAButton ? m_magnificationOfMovementByAcceleration : 1);
 			else if (m_isKeepPressingLButton)
 				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetDeceleration;
 			else
-				m_countJetUseTime += Time.deltaTime;
+				m_countJetUseTime += Time.deltaTime
+					* (m_horizontalTravelDistance != Vector3.zero && m_isKeepPressingAButton ? m_magnificationOfMovementByAcceleration : 1);
 		}
 		else if (!m_isFalling)
 		{
@@ -618,14 +647,19 @@ public class MyPlayer : MonoBehaviour
 		//落ちていない
 		if (!m_isFalling)
 		{
-			//Lボタンでジェット下降(ボードの向きで加速)
+			//Lボタンでジェット下降(ボードの傾きで下降量の変化)
 			if (m_isKeepPressingLButton)
 				transform.position -= Vector3.Scale(BoardDirection.forward, Vector3.up) * (m_transferAmountByWaterPressure * Time.deltaTime);
 
-			//Rボタンでジェット上昇(ボードの向きで加速)
+			//Rボタンでジェット上昇(ボードの傾きで上昇量の変化）
+			//Aボタン同時押しで加速
 			if (m_isKeepPressingRButton)
-				transform.position +=
-					Vector3.Scale(BoardDirection.forward, Vector3.up) * (m_transferAmountByWaterPressure * m_supportRate * Time.deltaTime);
+				transform.position += Vector3.Scale(BoardDirection.forward, Vector3.up)
+					* (m_transferAmountByWaterPressure * m_supportRate * Time.deltaTime
+					* (m_isKeepPressingAButton ? m_magnificationOfMovementByAcceleration : 1));
+
+			//移動倍率
+			m_workFloat = m_magnificationOfMovementByAcceleration;
 
 			//ジェット上昇下降なし
 			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
@@ -635,12 +669,16 @@ public class MyPlayer : MonoBehaviour
 				{
 					//位置滞在による回転
 					transform.Rotate(Vector3.up, m_rotationAmountForStay * Time.deltaTime);
+
+					//移動倍率のリセット
+					m_workFloat = 1;
 				}
 			}
 
-			//水圧による自動移動
-			transform.position +=
-				Vector3.Scale(BoardDirection.forward, Vector3.right + Vector3.forward) * (m_transferAmountByWaterPressure * Time.deltaTime);
+			//水圧による自動移動(Aボタンで加速)
+			transform.position += Vector3.Scale(BoardDirection.forward, Vector3.right + Vector3.forward)
+				* (m_transferAmountByWaterPressure * Time.deltaTime
+				* (m_isKeepPressingAButton ? m_workFloat : 1));
 		}
 
 		//後処理
@@ -792,11 +830,12 @@ public class MyPlayer : MonoBehaviour
 
 		//上昇と下降と水平移動と空中状態と地上
 		if (m_isKeepPressingRButton)
-			m_state = PlayerBehaviorStatus.JetRise;
+			m_state = (!m_isKeepPressingAButton ? PlayerBehaviorStatus.JetRise : PlayerBehaviorStatus.JetAccelerationRise);
 		else if (m_isKeepPressingLButton)
 			m_state = PlayerBehaviorStatus.JetDescent;
 		else if (m_horizontalTravelDistance != Vector3.zero)
-			m_state = PlayerBehaviorStatus.HorizontalMovement;
+			m_state = (!m_isFly || !m_isKeepPressingAButton) ?
+				PlayerBehaviorStatus.HorizontalMovement : PlayerBehaviorStatus.HorizontalAccelerationMovement;
 		else if (m_isFly)
 			m_state = PlayerBehaviorStatus.IdleInTheAir;
 		else
@@ -914,17 +953,20 @@ public class MyPlayer : MonoBehaviour
 	void OnCollisionEnter(Collision other)
 	{
 		//当たったもののタグ
-		switch(other.transform.tag)
+		switch (other.transform.tag)
 		{
 			case StageInfo.GROUND_TAG:
 				m_countNumOfRecoveryOperations = 0;
 				m_isFalling = false;
 				break;
 			case PlayerInfo.TAG:
-				m_isFalling = true;
-				m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
-				break;
-			case "Bird":
+				//(Aボタンを押しているand水平移動)or(Aボタンを押しているand上昇中)
+				if ((m_isKeepPressingAButton && m_horizontalTravelDistance != Vector3.zero)
+					|| (m_isKeepPressingAButton && m_isKeepPressingRButton))
+				{
+					m_isFalling = true;
+					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+				}
 				break;
 		}
 	}
@@ -1088,7 +1130,7 @@ public class MyPlayer : MonoBehaviour
 	public void StartAnimByRank(int rank)
 	{
 		//順位
-		switch(rank)
+		switch (rank)
 		{
 			case 1:
 				SetAnimation(PlayerBehaviorStatus.ResultsRanked1st);

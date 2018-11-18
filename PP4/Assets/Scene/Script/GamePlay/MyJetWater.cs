@@ -117,16 +117,16 @@ public class MyJetWater : MonoBehaviour
 	int m_index;
 
 	/// <summary>
-	/// 水しぶきの最小さいサイズ(3)
+	/// 水しぶきの最小サイズ(3)
 	/// </summary>
 	[SerializeField]
-	float splasheAddSize;
+	float m_splasheMinimumSize;
 
 	/// <summary>
-	/// 水しぶきのサイズ変更割り算の定数(6)
+	/// 水しぶきのサイズ変更式内の定数(6)
 	/// </summary>
 	[SerializeField]
-	float splasheSmollerAmount;
+	float m_splasheSmollerAmount;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -139,7 +139,6 @@ public class MyJetWater : MonoBehaviour
 		{
 			Splashes[m_index] = Instantiate(Splashe);
 			Splashes[m_index].ActiveChange(false);
-			Splashes[m_index].mynum = m_index;
 		}
 	}
 
@@ -187,9 +186,8 @@ public class MyJetWater : MonoBehaviour
 				m_countFiringIntervalTime = 0;
 			}
 		}
-
-		//水しぶきの向き変更
-		ChangeSplasheDirection();
+		//水しぶきの操作
+		ChangeSplasheMovement();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -208,7 +206,7 @@ public class MyJetWater : MonoBehaviour
 	/// <summary>
 	/// 水しぶきの向きとサイズの変更
 	/// </summary>
-	void ChangeSplasheDirection()
+	void ChangeSplasheMovement()
 	{
 		//水しぶきの向きの変更
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
@@ -229,23 +227,21 @@ public class MyJetWater : MonoBehaviour
 				m_splasheScale = Splashes[m_index].transform.localScale;
 				if (m_index == 0)
 				{
-					//m_splasheScale.z = Vector3.Distance(Splashes[m_index].transform.position, Splashes[Splashes.Length - 1].transform.position);
-					var index=m_index-m_splasheNum;
-					if (index < 0)
-					{
-						index += Splashes.Length;
-					}
-					m_splasheScale.z = splasheAddSize + (Splashes.Length - index )/splasheSmollerAmount;
-				}
-				else
-				{
-					//m_splasheScale.z = Vector3.Distance(Splashes[m_index].transform.position, Splashes[m_index - 1].transform.position);
 					var index = m_index - m_splasheNum;
 					if (index < 0)
 					{
 						index += Splashes.Length;
 					}
-					m_splasheScale.z = splasheAddSize + (Splashes.Length - index) / splasheSmollerAmount;
+					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - index) / m_splasheSmollerAmount;
+				}
+				else
+				{
+					var index = m_index - m_splasheNum;
+					if (index < 0)
+					{
+						index += Splashes.Length;
+					}
+					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - index) / m_splasheSmollerAmount;
 				}
 				Splashes[m_index].transform.localScale = m_splasheScale;
 			}

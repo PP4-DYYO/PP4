@@ -117,6 +117,11 @@ public class MyJetWater : MonoBehaviour
 	int m_index;
 
 	/// <summary>
+	/// 索引
+	/// </summary>
+	int m_splasheIndex;
+
+	/// <summary>
 	/// 水しぶきの最小サイズ(3)
 	/// </summary>
 	[SerializeField]
@@ -227,21 +232,21 @@ public class MyJetWater : MonoBehaviour
 				m_splasheScale = Splashes[m_index].transform.localScale;
 				if (m_index == 0)
 				{
-					var index = m_index - m_splasheNum;
-					if (index < 0)
+					m_splasheIndex = m_index - m_splasheNum;
+					if (m_splasheIndex < 0)
 					{
-						index += Splashes.Length;
+						m_splasheIndex += Splashes.Length;
 					}
-					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - index) / m_splasheSmollerAmount;
+					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
 				}
 				else
 				{
-					var index = m_index - m_splasheNum;
-					if (index < 0)
+					m_splasheIndex = m_index - m_splasheNum;
+					if (m_splasheIndex < 0)
 					{
-						index += Splashes.Length;
+						m_splasheIndex += Splashes.Length;
 					}
-					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - index) / m_splasheSmollerAmount;
+					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
 				}
 				Splashes[m_index].transform.localScale = m_splasheScale;
 			}

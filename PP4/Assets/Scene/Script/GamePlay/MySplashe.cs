@@ -54,10 +54,10 @@ public class MySplashe : MonoBehaviour
 	/// 水しぶきが地面に落ちたかどうか
 	/// </summary>
 	[SerializeField]
-	bool isfallen;
+	bool m_isfallen;
 	public bool Fallen
 	{
-		get { return isfallen; }
+		get { return m_isfallen; }
 	}
 
 	/// <summary>
@@ -70,8 +70,6 @@ public class MySplashe : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_splasheSmallerTime;
-
-	public int mynum;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -95,7 +93,7 @@ public class MySplashe : MonoBehaviour
 		}
 
 		//着地後
-		if (isfallen)
+		if (m_isfallen)
 		{
 			//サイズが０以下になるときには消す
 			if (transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
@@ -135,7 +133,7 @@ public class MySplashe : MonoBehaviour
 		//ステージに衝突時消える
 		if (other.tag == StageInfo.GROUND_TAG)
 		{
-			isfallen = true;
+			m_isfallen = true;
 			MakeSpreadSplashe();
 		}
 	}
@@ -157,7 +155,7 @@ public class MySplashe : MonoBehaviour
 	public void MySplasheDestroy()
 	{
 		gameObject.SetActive(false);
-		isfallen = false;
+		m_isfallen = false;
 		m_splasheLivingTime = 0;
 	}
 

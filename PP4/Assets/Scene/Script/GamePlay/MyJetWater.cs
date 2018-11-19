@@ -122,6 +122,28 @@ public class MyJetWater : MonoBehaviour
 	int m_splasheIndex;
 
 	/// <summary>
+	/// 水しぶきの泡オブジェクトクラス
+	/// </summary>
+	[SerializeField]
+	MySpreadSplashe SpreadSplashe;
+
+	/// <summary>
+	/// ジェットが水面に当たっている時間
+	/// </summary>
+	float m_jetStayTime;
+
+	/// <summary>
+	/// ジェットが水しぶきを出す周期
+	/// </summary>
+	[SerializeField]
+	float m_jetMakeSpreadTime;
+
+	/// <summary>
+	/// 水しぶきの出現場所
+	/// </summary>
+	Vector3 m_splashePosition;
+
+	/// <summary>
 	/// 水しぶきの最小サイズ(3)
 	/// </summary>
 	[SerializeField]
@@ -142,7 +164,7 @@ public class MyJetWater : MonoBehaviour
 		//水しぶきの配列に代入
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			Splashes[m_index] = Instantiate(Splashe);
+			Splashes[m_index] = Instantiate(Splashe,gameObject.transform);
 			Splashes[m_index].ActiveChange(false);
 		}
 	}
@@ -168,7 +190,7 @@ public class MyJetWater : MonoBehaviour
 				Splashes[m_splasheNum].transform.localScale = Vector3.one;
 
 				//親の設定
-				if (!Splashes[m_splasheNum].transform.parent && Player)
+				if (Splashes[m_splasheNum].transform.parent != Player.PlayersScript.SplashesTrans && Player)
 				{
 					Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
 				}
@@ -249,6 +271,27 @@ public class MyJetWater : MonoBehaviour
 					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
 				}
 				Splashes[m_index].transform.localScale = m_splasheScale;
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットの当たり判定
+	/// </summary>
+	void OnTriggerStay(Collider other)
+	{
+		if (other.tag == StageInfo.GROUND_TAG)
+		{
+			m_jetStayTime += Time.deltaTime;
+			if (m_jetStayTime > m_jetMakeSpreadTime)
+			{
+				MySpreadSplashe ss = Instantiate(SpreadSplashe, transform.parent);
+				m_splashePosition.x = gameObject.transform.position.x;
+				m_splashePosition.y =0;
+				m_splashePosition.z = gameObject.transform.position.z;
+				ss.transform.position = m_splashePosition;
+				m_jetStayTime = 0;
 			}
 		}
 	}

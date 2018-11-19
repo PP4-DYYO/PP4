@@ -151,7 +151,7 @@ public class MyTitleManager : MonoBehaviour
 	/// 前のキャラクターのアニメーション
 	/// </summary>
 	[SerializeField]
-	Animator anim;
+	Animator Anim;
 
 	/// <summary>
 	/// 前のキャラクターを回転させる
@@ -185,7 +185,7 @@ public class MyTitleManager : MonoBehaviour
 		m_frontStartRotationY = FrontCharacter.transform.eulerAngles.y;
 		FrontNomalMask.SetActive(true);
 		FrontStarEyeMask.SetActive(false);
-		anim.SetBool("isWalking", true);
+		Anim.SetBool("isWalking", true);
 
 		//右のサーファーの状態
 		m_rightSurfingStartPos = RightSurfingCharacter.transform.position;
@@ -255,7 +255,7 @@ public class MyTitleManager : MonoBehaviour
 		yield return new WaitForSeconds(1.0f);
 		m_frontLeave = true;
 		m_frontRotation = true;
-		anim.SetBool("isWalking", true);
+		Anim.SetBool("isWalking", true);
 		yield return new WaitForSeconds(1.5f);
 		m_frontSufingStart = true;
 		yield break;
@@ -274,7 +274,7 @@ public class MyTitleManager : MonoBehaviour
 		}
 		if (FrontCharacter.transform.position.x >= FrontStopPosObj.transform.position.x)
 		{
-			anim.SetBool("isWalking", false);
+			Anim.SetBool("isWalking", false);
 		}
 		if (m_frontLeave)
 		{

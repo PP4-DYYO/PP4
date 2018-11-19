@@ -770,6 +770,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				continue;
 
 			//プレイヤー成果の代入
+			battleRecords[m_targetNum].rank = m_netPlayerSettings[m_targetNum].Rank;
 			battleRecords[m_targetNum].height = (int)m_netPlayerSettings[m_targetNum].FinalAltitude;
 			battleRecords[m_targetNum].numOfCoins = m_netPlayerSettings[m_targetNum].NumOfCoins;
 			battleRecords[m_targetNum].score = m_netPlayerSettings[m_targetNum].Score;

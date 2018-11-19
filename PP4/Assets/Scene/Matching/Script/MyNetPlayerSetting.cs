@@ -221,41 +221,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// サーバーの初期
-	/// </summary>
-	public override void OnStartServer()
-	{
-		base.OnStartServer();
-
-		//シードの通知
-		CmdSeed(DateTime.Now.Millisecond);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// シードの通知
-	/// </summary>
-	/// <param name="seed">シード</param>
-	[Command]
-	void CmdSeed(int seed)
-	{
-		m_seed = seed;
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// シードの同期
-	/// </summary>
-	/// <param name="seed">シード</param>
-	[Client]
-	void SyncSeed(int seed)
-	{
-		m_seed = seed;
-		UnityEngine.Random.InitState(m_seed);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	/// クライアントの初期
 	/// </summary>
 	public override void OnStartClient()
@@ -536,6 +501,43 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public void SetSkin(Animator anim)
 	{
 		Anim = anim;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル初期設定
+	/// </summary>
+	public void BattleInitSetting()
+	{
+		//サーバーがシードの通知
+		if(isServer)
+			CmdSeed(DateTime.Now.Millisecond);
+
+		//名札の表示
+		NameplateDisplay();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シードの通知
+	/// </summary>
+	/// <param name="seed">シード</param>
+	[Command]
+	void CmdSeed(int seed)
+	{
+		m_seed = seed;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シードの同期
+	/// </summary>
+	/// <param name="seed">シード</param>
+	[Client]
+	void SyncSeed(int seed)
+	{
+		m_seed = seed;
+		UnityEngine.Random.InitState(m_seed);
 	}
 
 	//----------------------------------------------------------------------------------------------------

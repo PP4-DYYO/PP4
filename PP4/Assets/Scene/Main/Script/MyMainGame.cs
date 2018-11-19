@@ -691,7 +691,7 @@ public class MyMainGame : MyGame
 			Stage.CurrentFieldScript.DisplayShip();
 
 			//プレイヤーとカメラとUI
-			OperatingNetPlayerSetting.NameplateDisplay();
+			OperatingNetPlayerSetting.BattleInitSetting();
 			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
 			Players.ResetPlayerColor();
 			GhostPlayers.SetActive(true);
@@ -842,6 +842,7 @@ public class MyMainGame : MyGame
 
 			//ステージの初期化
 			Stage.CurrentFieldScript.ResetField();
+			Stage.CurrentFieldScript.SetStormPos(OperatingPlayer.transform.position);
 		}
 	}
 

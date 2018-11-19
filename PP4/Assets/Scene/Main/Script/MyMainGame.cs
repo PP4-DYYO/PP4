@@ -1238,8 +1238,9 @@ public class MyMainGame : MyGame
 			//戦績の代入
 			MyNetPlayerSetting.PutPlayerAchievementsInBattleRecord(ref m_battleRecords);
 
-			//プレイヤーとカメラとUI
+			//プレイヤーとプレイヤーズとカメラとUI
 			MakePlayerIntoResultState();
+			Players.HideSplashes();
 			OperatingCamera.BecomePursuitCamera(false, m_relativeCameraPosToPlayerInResultState);
 			MainUi.MakeItResultState();
 

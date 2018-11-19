@@ -244,9 +244,8 @@ public class MyField : MonoBehaviour
 			coin.ResetItem();
 		}
 
-		//嵐を表示と位置のリセット
+		//嵐を表示
 		ShowStorm();
-		SetStormPos(Vector3.forward);
 
 		//雲のリセット
 		ResetCloud();

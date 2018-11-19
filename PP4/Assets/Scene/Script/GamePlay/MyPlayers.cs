@@ -222,4 +222,19 @@ public class MyPlayers : MonoBehaviour
 				m_netPlayerSettings[m_numToBeChanged].transform.position.y : m_maximumAltitude;
 		}
 	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきを隠す
+	/// </summary>
+	public void HideSplashes()
+	{
+		//全水しぶき
+		foreach(Transform splash in Splashes)
+		{
+			//非表示
+			if (splash.gameObject.activeInHierarchy)
+				splash.gameObject.SetActive(false);
+		}
+	}
 }

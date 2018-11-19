@@ -70,7 +70,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// シード値
 	/// </summary>
 	[SyncVar(hook = "SyncSeed")]
-	int m_seed;
+	int m_seed = -1;
 	#endregion
 
 	#region プレイヤーのタイプ
@@ -218,41 +218,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	int m_workInt;
 	#endregion
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// サーバーの初期
-	/// </summary>
-	public override void OnStartServer()
-	{
-		base.OnStartServer();
-
-		//シードの通知
-		CmdSeed(DateTime.Now.Millisecond);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// シードの通知
-	/// </summary>
-	/// <param name="seed">シード</param>
-	[Command]
-	void CmdSeed(int seed)
-	{
-		m_seed = seed;
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// シードの同期
-	/// </summary>
-	/// <param name="seed">シード</param>
-	[Client]
-	void SyncSeed(int seed)
-	{
-		m_seed = seed;
-		UnityEngine.Random.InitState(m_seed);
-	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -540,6 +505,68 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// バトル初期設定
+	/// </summary>
+	public void BattleInitSetting()
+	{
+		//サーバーがシードの通知
+		if (isServer)
+			CmdSeed(DateTime.Now.Millisecond);
+		else
+			SearchSeed();
+
+		//名札の表示
+		NameplateDisplay();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シードの通知
+	/// </summary>
+	/// <param name="seed">シード</param>
+	[Command]
+	void CmdSeed(int seed)
+	{
+		m_seed = seed;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シードの同期
+	/// </summary>
+	/// <param name="seed">シード</param>
+	[Client]
+	void SyncSeed(int seed)
+	{
+		m_seed = seed;
+		UnityEngine.Random.InitState(m_seed);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シード値を探す
+	/// </summary>
+	void SearchSeed()
+	{
+		//権限あるプレイヤーのみ
+		if (!isLocalPlayer)
+			return;
+
+		//全てのプレイヤーにアクセス
+		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count; m_workInt++)
+		{
+			//シード値が設定されている
+			if (m_netPlayerSettings[m_workInt].m_seed != -1)
+			{
+				//シード値の設定
+				m_seed = m_netPlayerSettings[m_workInt].m_seed;
+				UnityEngine.Random.InitState(m_seed);
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 名札の表示
 	/// </summary>
 	/// <param name="isDisplay">表示するか</param>
@@ -743,6 +770,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				continue;
 
 			//プレイヤー成果の代入
+			battleRecords[m_targetNum].rank = m_netPlayerSettings[m_targetNum].Rank;
 			battleRecords[m_targetNum].height = (int)m_netPlayerSettings[m_targetNum].FinalAltitude;
 			battleRecords[m_targetNum].numOfCoins = m_netPlayerSettings[m_targetNum].NumOfCoins;
 			battleRecords[m_targetNum].score = m_netPlayerSettings[m_targetNum].Score;

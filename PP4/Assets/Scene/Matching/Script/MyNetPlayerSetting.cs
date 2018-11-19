@@ -70,7 +70,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// シード値
 	/// </summary>
 	[SyncVar(hook = "SyncSeed")]
-	int m_seed;
+	int m_seed = -1;
 	#endregion
 
 	#region プレイヤーのタイプ
@@ -510,8 +510,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public void BattleInitSetting()
 	{
 		//サーバーがシードの通知
-		if(isServer)
+		if (isServer)
 			CmdSeed(DateTime.Now.Millisecond);
+		else
+			SearchSeed();
 
 		//名札の表示
 		NameplateDisplay();
@@ -538,6 +540,29 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		m_seed = seed;
 		UnityEngine.Random.InitState(m_seed);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// シード値を探す
+	/// </summary>
+	void SearchSeed()
+	{
+		//権限あるプレイヤーのみ
+		if (!isLocalPlayer)
+			return;
+
+		//全てのプレイヤーにアクセス
+		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count; m_workInt++)
+		{
+			//シード値が設定されている
+			if (m_netPlayerSettings[m_workInt].m_seed != -1)
+			{
+				//シード値の設定
+				m_seed = m_netPlayerSettings[m_workInt].m_seed;
+				UnityEngine.Random.InitState(m_seed);
+			}
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

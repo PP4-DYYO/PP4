@@ -164,15 +164,35 @@ public class MyTitleManager : MonoBehaviour
 	float m_frontStartRotationY;
 
 	/// <summary>
-	/// 回転の上限
+	/// 回転の上限回数
 	/// </summary>
-	const float ROTATION_LIMIT = 0.9f;
+	const float ROTATION_LIMIT = 45;
+
+	/// <summary>
+	/// 回転の回数
+	/// </summary>
+	float m_rotationNum;
 
 	/// <summary>
 	/// 前のキャラクターの回転速度
 	/// </summary>
 	[SerializeField]
 	float m_frontRotationSpeed;
+
+	/// <summary>
+	/// 前キャラクターのコルーチン１番目待ち時間
+	/// </summary>
+	const float LEAVE_CHARACTER_TIME_ONE = 1.0f;
+
+	/// <summary>
+	/// 前キャラクターのコルーチン2番目待ち時間
+	/// </summary>
+	const float LEAVE_CHARACTER_TIME_TWO = 0.1f;
+
+	/// <summary>
+	/// 前キャラクターのコルーチン3番目待ち時間
+	/// </summary>
+	const float LEAVE_CHARACTER_TIME_THREE = 1.5f;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -185,7 +205,7 @@ public class MyTitleManager : MonoBehaviour
 		m_frontStartRotationY = FrontCharacter.transform.eulerAngles.y;
 		FrontNomalMask.SetActive(true);
 		FrontStarEyeMask.SetActive(false);
-		Anim.SetBool("isWalking", true);
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
 
 		//右のサーファーの状態
 		m_rightSurfingStartPos = RightSurfingCharacter.transform.position;
@@ -250,15 +270,20 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 手前のキャラクターの動きの制御
 	/// </summary>
-	private IEnumerator LeaveCharacter()
+	IEnumerator LeaveCharacter()
 	{
-		yield return new WaitForSeconds(1.0f);
-		m_frontLeave = true;
+		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_ONE);
+		//回転させる
 		m_frontRotation = true;
-		Anim.SetBool("isWalking", true);
-		yield return new WaitForSeconds(1.5f);
+		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_TWO);
+		//歩き始める
+		m_frontLeave = true;
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
+		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_THREE);
+		//状態リセット
+		FrontCharacter.transform.eulerAngles = new Vector3(0, m_frontStartRotationY, 0);
+		m_rotationNum = 0;
 		m_frontSufingStart = true;
-		yield break;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -272,14 +297,15 @@ public class MyTitleManager : MonoBehaviour
 			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x + m_frontMovingSpeed,
 				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
 		}
-		if (FrontCharacter.transform.position.x >= FrontStopPosObj.transform.position.x)
+		//島の端に着いた時
+		if (FrontCharacter.transform.position.x >= FrontStopPosObj.transform.position.x && !m_frontLeave)
 		{
-			Anim.SetBool("isWalking", false);
+			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.StandStill);
 		}
 		if (m_frontLeave)
 		{
 			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x - m_frontMovingSpeed,
-							FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
+				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
 
 			if (FrontCharacter.transform.position.x < FrontStartPos)
 			{
@@ -289,13 +315,13 @@ public class MyTitleManager : MonoBehaviour
 		//回転
 		if (m_frontRotation)
 		{
-			if (FrontCharacter.transform.rotation.y < ROTATION_LIMIT)
+			if (m_rotationNum < ROTATION_LIMIT)
 			{
-				FrontCharacter.transform.Rotate(new Vector3(0, m_frontRotationSpeed, 0));
+				FrontCharacter.transform.Rotate(Vector3.up * m_frontRotationSpeed);
+				m_rotationNum += 1;
 			}
 			else
 			{
-				FrontCharacter.transform.eulerAngles = new Vector3(0, m_frontStartRotationY, 0);
 				m_frontRotation = false;
 			}
 		}

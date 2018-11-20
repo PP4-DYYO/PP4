@@ -155,6 +155,12 @@ public class MyJetWater : MonoBehaviour
 	[SerializeField]
 	float m_splasheSmollerAmount;
 
+	/// <summary>
+	/// ジェットの出す水しぶきの泡の高さ
+	/// </summary>
+	[SerializeField]
+	float m_jetSpreadSplasheHeight;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -165,7 +171,7 @@ public class MyJetWater : MonoBehaviour
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
 			Splashes[m_index] = Instantiate(Splashe, transform);
-			Splashes[m_index].ActiveChange(false);
+			Splashes[m_index].SplasheWaterScript.ActiveChange(false);
 		}
 	}
 
@@ -184,25 +190,28 @@ public class MyJetWater : MonoBehaviour
 			{
 				//配列の水しぶきの設定
 
-				Splashes[m_splasheNum].ActiveChange(true);
+				Splashes[m_splasheNum].SplasheWaterScript.ActiveChange(true);
 
 				//サイズのリセット
-				Splashes[m_splasheNum].transform.localScale = Vector3.one;
+				Splashes[m_splasheNum].SplasheWaterScript.transform.localScale = Vector3.one;
 
 				//親の設定
 				if (Splashes[m_splasheNum].transform.parent != Player.PlayersScript.SplashesTrans && Player)
 				{
 					Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
+					Splashes[m_splasheNum].transform.position = Vector3.zero;
+					Splashes[m_splasheNum].transform.rotation = Quaternion.identity;
+					Splashes[m_splasheNum].transform.localScale = Vector3.one;
 				}
 
 				//水しぶきの場所
-				Splashes[m_splasheNum].transform.position = JetCenter.transform.position;
+				Splashes[m_splasheNum].SplasheWaterScript.transform.position = JetCenter.transform.position;
 
 				//水しぶきの角度
-				Splashes[m_splasheNum].transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
+				Splashes[m_splasheNum].SplasheWaterScript.transform.LookAt(JetCenter.transform.position + JetCenter.transform.forward);
 
 				//水しぶきに力を加える
-				Splashes[m_splasheNum].AddingForce(-transform.forward * m_waterPower);
+				Splashes[m_splasheNum].SplasheWaterScript.AddingForce(-transform.forward * m_waterPower);
 
 				m_splasheNum++;
 
@@ -240,18 +249,18 @@ public class MyJetWater : MonoBehaviour
 		{
 			if (m_index == 0)
 			{
-				Splashes[m_index].transform.LookAt(Splashes[m_index].transform.position +
-					(Splashes[m_index].transform.position - Splashes[Splashes.Length - 1].transform.position));
+				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
+					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[Splashes.Length - 1].SplasheWaterScript.transform.position));
 			}
 			else
 			{
-				Splashes[m_index].transform.LookAt(Splashes[m_index].transform.position +
-					(Splashes[m_index].transform.position - Splashes[m_index - 1].transform.position));
+				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
+					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
 			}
 			//空中にあればサイズ変更
-			if (Splashes[m_index].transform.position.y > 0)
+			if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
 			{
-				m_splasheScale = Splashes[m_index].transform.localScale;
+				m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
 				if (m_index == 0)
 				{
 					m_splasheIndex = m_index - m_splasheNum;
@@ -270,7 +279,7 @@ public class MyJetWater : MonoBehaviour
 					}
 					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
 				}
-				Splashes[m_index].transform.localScale = m_splasheScale;
+				Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
 			}
 		}
 	}
@@ -281,14 +290,14 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	void OnTriggerStay(Collider other)
 	{
-		if (other.tag == StageInfo.GROUND_TAG)
+		if (other.tag == StageInfo.GROUND_TAG && m_isSplasheFire)
 		{
 			m_jetStayTime += Time.deltaTime;
 			if (m_jetStayTime > m_jetMakeSpreadTime)
 			{
 				MySpreadSplashe ss = Instantiate(SpreadSplashe, transform.parent);
 				m_splashePosition.x = transform.position.x;
-				m_splashePosition.y = 0;
+				m_splashePosition.y = m_jetSpreadSplasheHeight;
 				m_splashePosition.z = transform.position.z;
 				ss.transform.position = m_splashePosition;
 				m_jetStayTime = 0;
@@ -304,7 +313,7 @@ public class MyJetWater : MonoBehaviour
 	{
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			Splashes[m_index].ActiveChange(false);
+			Splashes[m_index].SplasheWaterScript.ActiveChange(false);
 		}
 	}
 }

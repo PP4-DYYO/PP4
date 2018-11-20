@@ -13,17 +13,10 @@ using UnityEngine;
 /// </summary>
 public class MySpreadSplashe : MonoBehaviour
 {
-
 	/// <summary>
 	/// 時間計測用
 	/// </summary>
 	float m_spreadSplasheTime;
-
-	/// <summary>
-	/// 変更対象の水しぶきの泡オブジェクト
-	/// </summary>
-	[SerializeField]
-	GameObject SpreadSplashe;
 
 	/// <summary>
 	/// 水しぶきの泡オブジェクトのサイズ
@@ -40,6 +33,16 @@ public class MySpreadSplashe : MonoBehaviour
 	/// 泡が消えるまでの時間
 	/// </summary>
 	float m_limitTime;
+
+	/// <summary>
+	/// 自分のパーティクルシステム
+	/// </summary>
+	[SerializeField]
+	ParticleSystem Effect;
+	public ParticleSystem SplasheEffect
+	{
+		get { return Effect; }
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -58,7 +61,7 @@ public class MySpreadSplashe : MonoBehaviour
 	void FixedUpdate()
 	{
 		SpreadSplasheScale = new Vector3(transform.localScale.x + (Time.fixedDeltaTime * (m_magni / m_limitTime)),
-			transform.localScale.y + (Time.fixedDeltaTime * (m_magni / m_limitTime)), transform.localScale.z);
+			transform.localScale.y + (Time.fixedDeltaTime * (m_magni / m_limitTime)), transform.localScale.z + ((Time.fixedDeltaTime * (m_magni / m_limitTime)) / 2));
 		transform.localScale = SpreadSplasheScale;
 	}
 }

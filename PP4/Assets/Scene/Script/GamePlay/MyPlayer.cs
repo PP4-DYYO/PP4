@@ -112,6 +112,14 @@ public enum PlayerBehaviorStatus
 	/// </summary>
 	HorizontalAccelerationMovement,
 	/// <summary>
+	/// 歩く
+	/// </summary>
+	Walk,
+	/// <summary>
+	/// 立ち尽くす
+	/// </summary>
+	StandStill,
+	/// <summary>
 	/// 変化なし
 	/// </summary>
 	Non,

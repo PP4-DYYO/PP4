@@ -164,7 +164,7 @@ public class MyJetWater : MonoBehaviour
 		//水しぶきの配列に代入
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			Splashes[m_index] = Instantiate(Splashe,gameObject.transform);
+			Splashes[m_index] = Instantiate(Splashe, transform);
 			Splashes[m_index].ActiveChange(false);
 		}
 	}
@@ -287,9 +287,9 @@ public class MyJetWater : MonoBehaviour
 			if (m_jetStayTime > m_jetMakeSpreadTime)
 			{
 				MySpreadSplashe ss = Instantiate(SpreadSplashe, transform.parent);
-				m_splashePosition.x = gameObject.transform.position.x;
-				m_splashePosition.y =0;
-				m_splashePosition.z = gameObject.transform.position.z;
+				m_splashePosition.x = transform.position.x;
+				m_splashePosition.y = 0;
+				m_splashePosition.z = transform.position.z;
 				ss.transform.position = m_splashePosition;
 				m_jetStayTime = 0;
 			}

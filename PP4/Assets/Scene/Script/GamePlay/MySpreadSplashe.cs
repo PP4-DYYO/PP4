@@ -11,7 +11,8 @@ using UnityEngine;
 /// <summary>
 /// 水しぶきの泡のサイズ調整
 /// </summary>
-public class MySpreadSplashe : MonoBehaviour {
+public class MySpreadSplashe : MonoBehaviour
+{
 
 	/// <summary>
 	/// 時間計測用
@@ -38,7 +39,7 @@ public class MySpreadSplashe : MonoBehaviour {
 	/// <summary>
 	/// 泡が消えるまでの時間
 	/// </summary>
-	float　m_limitTime;
+	float m_limitTime;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -46,7 +47,7 @@ public class MySpreadSplashe : MonoBehaviour {
 	/// </summary>
 	void Start()
 	{
-		m_limitTime = GetComponent<MyDestroySpreadSplashe>().LimitTime-0.5f;
+		m_limitTime = GetComponent<MyDestroySpreadSplashe>().LimitTime - 0.5f;
 		SpreadSplasheScale = transform.localScale;
 	}
 
@@ -54,9 +55,10 @@ public class MySpreadSplashe : MonoBehaviour {
 	/// <summary>
 	/// サイズの変更
 	/// </summary>
-	void FixedUpdate() {
-		SpreadSplasheScale = new Vector3(transform.localScale.x +(Time.fixedDeltaTime*(m_magni / m_limitTime)), 
-			transform.localScale.y+(Time.fixedDeltaTime * (m_magni / m_limitTime)),transform.localScale.z );
+	void FixedUpdate()
+	{
+		SpreadSplasheScale = new Vector3(transform.localScale.x + (Time.fixedDeltaTime * (m_magni / m_limitTime)),
+			transform.localScale.y + (Time.fixedDeltaTime * (m_magni / m_limitTime)), transform.localScale.z);
 		transform.localScale = SpreadSplasheScale;
 	}
 }

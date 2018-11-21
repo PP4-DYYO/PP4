@@ -373,6 +373,18 @@ public class MyPlayer : MonoBehaviour
 	float m_consumptionRateAtJetDeceleration;
 
 	/// <summary>
+	/// 加速時間
+	/// </summary>
+	[SerializeField]
+	float m_accelerationTime;
+
+	/// <summary>
+	/// 加速回復率
+	/// </summary>
+	[SerializeField]
+	float m_accelerationRecoveryRate;
+
+	/// <summary>
 	/// ジェット回復率
 	/// </summary>
 	[SerializeField]
@@ -398,6 +410,16 @@ public class MyPlayer : MonoBehaviour
 	/// ジェット使用時間を数える
 	/// </summary>
 	float m_countJetUseTime;
+
+	/// <summary>
+	/// 加速時間を数える
+	/// </summary>
+	float m_countAccelerationTime;
+
+	/// <summary>
+	/// 加速が使える
+	/// </summary>
+	bool m_isUseAcceleration = true;
 
 	/// <summary>
 	/// 回復操作の回数を数える
@@ -611,6 +633,9 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void ExamineJet()
 	{
+		//加速制限
+		RestrictAcceleration();
+
 		//飛んでいるand落下していない
 		if (m_isFly && !m_isFalling)
 		{
@@ -641,6 +666,33 @@ public class MyPlayer : MonoBehaviour
 		//水の残量
 		WaterGauge.localScale = Vector3.Scale(WaterGauge.localScale, Vector3.up + Vector3.forward)
 			+ Vector3.right * ((m_jetUseTime - m_countJetUseTime) / m_jetUseTime);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 加速を制限する
+	/// </summary>
+	void RestrictAcceleration()
+	{
+		//加速時間
+		m_countAccelerationTime += ((m_isKeepPressingRButton && m_isKeepPressingAButton)
+			|| (m_horizontalTravelDistance != Vector3.zero && m_isKeepPressingAButton) ?
+			Time.deltaTime : (-Time.deltaTime * m_accelerationRecoveryRate));
+
+		//加速時間の上限下限
+		if (m_countAccelerationTime > m_accelerationTime)
+		{
+			m_countAccelerationTime = m_accelerationTime;
+			m_isUseAcceleration = false;
+		}
+		if (m_countAccelerationTime < 0)
+		{
+			m_countAccelerationTime = 0;
+			m_isUseAcceleration = true;
+		}
+
+		//加速制限を設ける
+		m_isKeepPressingAButton = (m_isKeepPressingAButton && m_isUseAcceleration);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -945,7 +997,8 @@ public class MyPlayer : MonoBehaviour
 			return;
 
 		//相手のジェットウォータ―で下降する
-		transform.position -= Vector3.up * m_transferAmountByWaterPressure * Time.deltaTime;
+		if (m_isFly)
+			transform.position -= Vector3.up * m_transferAmountByWaterPressure * Time.deltaTime;
 
 		//ジェットウォータに当たる分だけ水分回復
 		m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
@@ -1055,6 +1108,10 @@ public class MyPlayer : MonoBehaviour
 		m_isFly = false;
 		Rb.isKinematic = false;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+		//加速の初期化
+		m_countAccelerationTime = 0;
+		m_isUseAcceleration = true;
 
 		//落下状態の初期化
 		m_countNumOfRecoveryOperations = 0;

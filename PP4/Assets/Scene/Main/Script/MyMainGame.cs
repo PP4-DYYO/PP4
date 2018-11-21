@@ -824,8 +824,9 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとUI
+			//プレイヤーとプレイヤーズとUI
 			PlayerBattleSettings();
+			Players.DisplaySplashes();
 			MainUi.BattleStartSetting();
 
 			//プレイヤー情報を戦績に代入
@@ -1240,7 +1241,7 @@ public class MyMainGame : MyGame
 
 			//プレイヤーとプレイヤーズとカメラとUI
 			MakePlayerIntoResultState();
-			Players.HideSplashes();
+			Players.DisplaySplashes(false);
 			OperatingCamera.BecomePursuitCamera(false, m_relativeCameraPosToPlayerInResultState);
 			MainUi.MakeItResultState();
 

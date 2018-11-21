@@ -31,7 +31,7 @@ public class MyPlayers : MonoBehaviour
 	{
 		get { return Game; }
 	}
-	
+
 	/// <summary>
 	/// 水しぶき
 	/// </summary>
@@ -87,6 +87,11 @@ public class MyPlayers : MonoBehaviour
 	}
 
 	/// <summary>
+	/// 水しぶきが表示中
+	/// </summary>
+	bool m_isDisplaySplash = true;
+
+	/// <summary>
 	/// 変更される番号
 	/// </summary>
 	int m_numToBeChanged;
@@ -117,7 +122,7 @@ public class MyPlayers : MonoBehaviour
 			return;
 
 		//全プレイヤー
-		foreach(var netPlayerSetting in m_netPlayerSettings)
+		foreach (var netPlayerSetting in m_netPlayerSettings)
 		{
 			//スキンのデフォルト化
 			netPlayerSetting.SelectSkin.DefaultSkinColor();
@@ -225,16 +230,28 @@ public class MyPlayers : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 水しぶきを隠す
+	/// 水しぶきを表示
 	/// </summary>
-	public void HideSplashes()
+	/// <param name="isDisplay">表示するか</param>
+	public void DisplaySplashes(bool isDisplay = true)
 	{
+		if (m_isDisplaySplash == isDisplay)
+			return;
+
+		m_isDisplaySplash = isDisplay;
+
 		//全水しぶき
-		foreach(Transform splash in Splashes)
+		foreach (Transform splash in Splashes)
 		{
-			//非表示
-			if (splash.gameObject.activeInHierarchy)
-				splash.gameObject.SetActive(false);
+			splash.gameObject.SetActive(isDisplay);
+			
+			//子供
+			foreach (Transform s in splash)
+			{
+				//水しぶきの水を非表示にさせる
+				if (!isDisplay && s.GetComponent<MySplasheWater>())
+					s.GetComponent<MySplasheWater>().MySplasheDestroy();
+			}
 		}
 	}
 }

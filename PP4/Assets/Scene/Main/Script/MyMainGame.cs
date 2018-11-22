@@ -384,13 +384,7 @@ public class MyMainGame : MyGame
 	/// </summary>
 	[SerializeField]
 	float m_playerInitialHeightOfResultState;
-
-	/// <summary>
-	/// 結果状態のプレイヤーへの相対的カメラ位置
-	/// </summary>
-	[SerializeField]
-	Vector3 m_relativeCameraPosToPlayerInResultState;
-
+	
 	/// <summary>
 	/// 結果表示中のプレイヤーから見たカメラ相対的位置たち
 	/// </summary>
@@ -1244,7 +1238,7 @@ public class MyMainGame : MyGame
 			//プレイヤーとプレイヤーズとカメラとUI
 			MakePlayerIntoResultState();
 			Players.DisplaySplashes(false);
-			OperatingCamera.BecomePursuitCamera(false, m_relativeCameraPosToPlayerInResultState);
+			OperatingCamera.BecomeCustomOperablePursuitCamera(false, (int)TypesOfCustomCamera.DistantTrackingCamera);
 			MainUi.MakeItResultState();
 
 			//フラグの初期化

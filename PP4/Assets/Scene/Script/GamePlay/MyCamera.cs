@@ -44,11 +44,32 @@ enum CameraMode
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
+/// 特別仕様カメラの種類
+/// </summary>
+public enum TypesOfCustomCamera
+{
+	/// <summary>
+	/// 落下カメラ
+	/// </summary>
+	FallingCamera,
+	/// <summary>
+	/// 遠い追跡カメラ
+	/// </summary>
+	DistantTrackingCamera,
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
 /// 特別仕様のカメラ
 /// </summary>
 [System.Serializable]
 public struct CustomCamera
 {
+	/// <summary>
+	/// 名前
+	/// </summary>
+	public string name;
+
 	/// <summary>
 	/// カメラとプレイヤーとの距離[m]
 	/// </summary>

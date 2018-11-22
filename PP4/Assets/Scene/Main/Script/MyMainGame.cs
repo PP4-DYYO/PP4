@@ -1075,6 +1075,8 @@ public class MyMainGame : MyGame
 
 		//タンクの残量
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
+		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingAccelerationGauge());
+		MainUi.SetMarkThatCanBeAccelerated(OperatingPlayer.IsUseAcceleration);
 
 		//順位の反映
 		MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetNetPlayerNum());

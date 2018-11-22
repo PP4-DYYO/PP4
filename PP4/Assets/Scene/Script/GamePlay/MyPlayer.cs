@@ -420,6 +420,10 @@ public class MyPlayer : MonoBehaviour
 	/// 加速が使える
 	/// </summary>
 	bool m_isUseAcceleration = true;
+	public bool IsUseAcceleration
+	{
+		get { return m_isUseAcceleration; }
+	}
 
 	/// <summary>
 	/// 回復操作の回数を数える
@@ -674,6 +678,9 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void RestrictAcceleration()
 	{
+		//加速制限を設ける
+		m_isKeepPressingAButton &= (m_isUseAcceleration && !m_isFalling);
+
 		//加速時間
 		m_countAccelerationTime += ((m_isKeepPressingRButton && m_isKeepPressingAButton)
 			|| (m_horizontalTravelDistance != Vector3.zero && m_isKeepPressingAButton) ?
@@ -690,9 +697,6 @@ public class MyPlayer : MonoBehaviour
 			m_countAccelerationTime = 0;
 			m_isUseAcceleration = true;
 		}
-
-		//加速制限を設ける
-		m_isKeepPressingAButton = (m_isKeepPressingAButton && m_isUseAcceleration);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1141,6 +1145,16 @@ public class MyPlayer : MonoBehaviour
 	public float GetPercentageOfRemainingWater()
 	{
 		return WaterGauge.localScale.x;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 残った加速ゲージの割合を得る
+	/// </summary>
+	/// <returns></returns>
+	public float GetPercentageOfRemainingAccelerationGauge()
+	{
+		return 1f - (m_countAccelerationTime / m_accelerationTime);
 	}
 
 	//----------------------------------------------------------------------------------------------------

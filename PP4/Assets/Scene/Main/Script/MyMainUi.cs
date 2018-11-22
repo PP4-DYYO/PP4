@@ -152,6 +152,18 @@ public class MyMainUi : MonoBehaviour
 	Image RemainingAmountOfWater;
 
 	/// <summary>
+	/// 加速の残量
+	/// </summary>
+	[SerializeField]
+	Image RemainingAmountOfAcceleration;
+
+	/// <summary>
+	/// 加速できる印
+	/// </summary>
+	[SerializeField]
+	Image MarkThatCanBeAccelerated;
+
+	/// <summary>
 	/// マップ上の順位
 	/// </summary>
 	[SerializeField]
@@ -837,6 +849,8 @@ public class MyMainUi : MonoBehaviour
 		BattleScreen.SetActive(true);
 		SetTimer(battleTime);
 		SetRemainingAmountOfWater();
+		SetRemainingAmountOfAcceleration();
+		SetMarkThatCanBeAccelerated();
 		WritePlayerNamesOnTheMap();
 		ShowRankOnMap();
 		SetNumOfCoins();
@@ -885,6 +899,26 @@ public class MyMainUi : MonoBehaviour
 	public void SetRemainingAmountOfWater(float remainingAmount = 1)
 	{
 		RemainingAmountOfWater.fillAmount = remainingAmount;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 加速の残量を設定する
+	/// </summary>
+	/// <param name="remainingAmount">残量</param>
+	public void SetRemainingAmountOfAcceleration(float remainingAmount = 1)
+	{
+		RemainingAmountOfAcceleration.fillAmount = remainingAmount;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 加速できる印を設定
+	/// </summary>
+	/// <param name="isCanAccelerate">加速できる</param>
+	public void SetMarkThatCanBeAccelerated(bool isCanAccelerate = true)
+	{
+		MarkThatCanBeAccelerated.enabled = isCanAccelerate;
 	}
 
 	//----------------------------------------------------------------------------------------------------

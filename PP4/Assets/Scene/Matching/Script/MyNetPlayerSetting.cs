@@ -43,6 +43,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	MyPlayer Player;
 
 	/// <summary>
+	/// 名札の親
+	/// </summary>
+	[SerializeField]
+	Transform NameplateParent;
+
+	/// <summary>
 	/// 名札たち
 	/// </summary>
 	[SerializeField]
@@ -202,6 +208,21 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 	#endregion
 
+	#region 名札
+	[Header("名札")]
+	/// <summary>
+	/// 頭上位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_overheadPos;
+
+	/// <summary>
+	/// 胸の位置
+	/// </summary>
+	[SerializeField]
+	Vector3 m_chestPos;
+	#endregion
+
 	#region 作業用
 	/// <summary>
 	/// 変更される番号
@@ -291,9 +312,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 					nameplate.text = player.m_playerName;
 				}
 			}
-
-			//自分の名を切り替える
-			ChangeDisplayNameOfNameplate();
 		}
 		else
 		{
@@ -515,8 +533,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		else
 			SearchSeed();
 
-		//名札の表示
+		//名札
 		NameplateDisplay();
+		ChangeDisplayNameOfNameplate();
+		NameplateParent.localPosition = m_overheadPos;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -673,6 +693,18 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			battleRecords[i].numOfCoins = 0;
 			battleRecords[i].score = 0;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル終了状態にする
+	/// </summary>
+	public void MakeItBattleEndState()
+	{
+		//名札の設定
+		ChangeDisplayNameOfNameplate();
+		NameplateDisplay();
+		NameplateParent.localPosition = m_chestPos;
 	}
 
 	//----------------------------------------------------------------------------------------------------

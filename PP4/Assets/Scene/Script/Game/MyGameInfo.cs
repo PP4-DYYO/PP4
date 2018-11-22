@@ -112,6 +112,11 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 	}
 
 	/// <summary>
+	/// 名前文字数の上限
+	/// </summary>
+	const int NAME_CHARACTER_UPPER_LIMIT = 8;
+
+	/// <summary>
 	/// レベル
 	/// </summary>
 	int m_level = 1;
@@ -204,6 +209,14 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 		m_level = PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_LEVEL + characterNum);
 		m_exp = PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_EXP + characterNum);
 		m_power = PlayerPrefs.GetInt(PlayerPrefsKeys.CHARACTER_POWER + characterNum);
+
+		//名前文字数の上限
+		if(m_playerName.Length > NAME_CHARACTER_UPPER_LIMIT)
+		{
+			//名前を削る
+			m_playerName = m_playerName.Substring(0, NAME_CHARACTER_UPPER_LIMIT);
+			PlayerPrefs.SetString(PlayerPrefsKeys.CHARACTER_NAME + characterNum, m_playerName);
+		}
 
 		m_characterNum = characterNum;
 	}

@@ -1117,8 +1117,7 @@ public class MyMainGame : MyGame
 
 			//プレイヤーとUIとフラグ
 			OperatingPlayer.MakeItBattleEndState();
-			OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
-			OperatingNetPlayerSetting.NameplateDisplay();
+			OperatingNetPlayerSetting.MakeItBattleEndState();
 			MainUi.EndBattle();
 			m_isFadeOutAfterBattleEnds = false;
 		}
@@ -1480,7 +1479,6 @@ public class MyMainGame : MyGame
 	{
 		m_state = GameStatus.RecruitPeople;
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
-		OperatingNetPlayerSetting.ChangeDisplayNameOfNameplate();
 	}
 
 	//----------------------------------------------------------------------------------------------------

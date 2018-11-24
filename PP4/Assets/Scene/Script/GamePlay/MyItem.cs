@@ -38,6 +38,12 @@ public class MyItem : MonoBehaviour
 	[SerializeField]
 	int m_rotateAngle;
 
+	/// <summary>
+	/// エフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem Effect;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -57,8 +63,9 @@ public class MyItem : MonoBehaviour
 		//プレイヤー
 		if(other.tag.Equals(PlayerInfo.TAG))
 		{
-			//非アクティブ化
+			//コイン取得
 			gameObject.SetActive(false);
+			Effect.Play();
 		}
 	}
 
@@ -68,6 +75,7 @@ public class MyItem : MonoBehaviour
 	/// </summary>
 	public void ResetItem()
 	{
-		gameObject.SetActive(true);
+		if (!gameObject.activeInHierarchy)
+			gameObject.SetActive(true);
 	}
 }

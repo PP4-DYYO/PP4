@@ -21,18 +21,18 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject Ship;
-
-	/// <summary>
-	/// コイン
-	/// </summary>
-	[SerializeField]
-	MyItem Coin;
-
+	
 	/// <summary>
 	/// フィールド上のコイン
 	/// </summary>
 	[SerializeField]
 	MyItem[] FieldCoins;
+
+	/// <summary>
+	/// 雲中のコイン
+	/// </summary>
+	[SerializeField]
+	MyItem[] CloudCoins;
 
 	/// <summary>
 	/// 嵐
@@ -121,6 +121,15 @@ public class MyField : MonoBehaviour
 	/// 雷の時間を数える
 	/// </summary>
 	float m_countThunderDuration = -1;
+	#endregion
+
+	#region コイン
+	[Header("コイン")]
+	/// <summary>
+	/// コインの高さ
+	/// </summary>
+	[SerializeField]
+	float[] m_coinHeight;
 	#endregion
 
 	#region 雲
@@ -237,15 +246,11 @@ public class MyField : MonoBehaviour
 		//表彰台を隠す
 		Podium.transform.position = m_posToHidePodium;
 
-		//全コイン
-		foreach (var coin in FieldCoins)
-		{
-			//リセット
-			coin.ResetItem();
-		}
-
 		//嵐を表示
 		ShowStorm();
+
+		//コインのリセット
+		ResetCoin();
 
 		//雲のリセット
 		ResetCloud();
@@ -278,12 +283,38 @@ public class MyField : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// コインのリセット
+	/// </summary>
+	void ResetCoin()
+	{
+		//フィールド上
+		foreach (var coin in FieldCoins)
+		{
+			//高さの変更
+			m_workVector3 = coin.transform.position;
+			m_workVector3.y = m_coinHeight[Random.Range(0, m_coinHeight.Length)];
+			coin.transform.position = m_workVector3;
+
+			//リセット
+			coin.ResetItem();
+		}
+
+		//雲中
+		foreach (var coin in CloudCoins)
+		{
+			//リセット
+			coin.ResetItem();
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 雲のリセット
 	/// </summary>
 	void ResetCloud()
 	{
 		//全ての雲
-		foreach(var cloud in Clouds)
+		foreach (var cloud in Clouds)
 		{
 			//高さの変更
 			m_workVector3 = cloud.transform.position;

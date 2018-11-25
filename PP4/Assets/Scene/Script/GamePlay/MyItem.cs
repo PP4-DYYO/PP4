@@ -43,6 +43,10 @@ public class MyItem : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	ParticleSystem Effect;
+	public ParticleSystem EffectParticle
+	{
+		get { return Effect; }
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>

@@ -537,6 +537,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		NameplateDisplay();
 		ChangeDisplayNameOfNameplate();
 		NameplateParent.localPosition = m_overheadPos;
+
+		//他プレイヤーの名札
+		foreach (var player in m_netPlayerSettings)
+		{
+			//位置
+			player.NameplateParent.localPosition = m_overheadPos;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -705,6 +712,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		ChangeDisplayNameOfNameplate();
 		NameplateDisplay();
 		NameplateParent.localPosition = m_chestPos;
+
+		//他プレイヤーの名札
+		foreach(var player in m_netPlayerSettings)
+		{
+			//位置
+			player.NameplateParent.localPosition = m_chestPos;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

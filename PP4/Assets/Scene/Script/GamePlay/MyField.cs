@@ -294,6 +294,7 @@ public class MyField : MonoBehaviour
 			m_workVector3 = coin.transform.position;
 			m_workVector3.y = m_coinHeight[Random.Range(0, m_coinHeight.Length)];
 			coin.transform.position = m_workVector3;
+			coin.EffectParticle.transform.position = coin.transform.position;
 
 			//リセット
 			coin.ResetItem();

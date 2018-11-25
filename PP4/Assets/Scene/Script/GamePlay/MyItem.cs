@@ -50,9 +50,9 @@ public class MyItem : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 定期フレーム
+	/// フレーム
 	/// </summary>
-	void FixedUpdate()
+	void Update()
 	{
 		transform.Rotate(Vector3.up, m_rotateAngle * Time.deltaTime);
 	}

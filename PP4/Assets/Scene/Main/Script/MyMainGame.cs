@@ -771,16 +771,16 @@ public class MyMainGame : MyGame
 		if (m_countTheTimeOfTheState <= m_timeWhenPlayerGoesToEdgeOfShip)
 		{
 			//プレイヤーの初期位置
-			m_workVector3 = m_playerPosWhenWaitingForPeople[OperatingNetPlayerSetting.GetNetPlayerNum()];
+			m_workVector3 = m_playerPosWhenWaitingForPeople[m_workInt];
 
 			//時間によるプレイヤーの位置
 			OperatingPlayer.transform.position = m_workVector3 +
 				((m_posOfEndOfShip[m_workInt] - m_workVector3) * (m_countTheTimeOfTheState / m_timeWhenPlayerGoesToEdgeOfShip));
 
 			//向きたい角度
-			m_workFloat = Vector3.Cross(OperatingPlayer.transform.forward, m_posToJumpOffShip[m_workInt] - m_workVector3).y;
+			m_workFloat = Vector3.Cross(OperatingPlayer.transform.forward, m_posOfEndOfShip[m_workInt] - m_workVector3).y;
 			m_workFloat = Vector3.Angle(OperatingPlayer.transform.forward,
-				Vector3.Scale((m_posToJumpOffShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
+				Vector3.Scale((m_posOfEndOfShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
 
 			//向ける角度が向きたい角度より大きい
 			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
@@ -802,6 +802,19 @@ public class MyMainGame : MyGame
 			//時間によるプレイヤーの位置
 			OperatingPlayer.transform.position = m_workVector3 + ((m_posToJumpOffShip[m_workInt] - m_workVector3)
 				* ((m_countTheTimeOfTheState - m_timeWhenPlayerGoesToEdgeOfShip) / m_timePlayerJumpsOffShip));
+
+			//向きたい角度
+			m_workFloat = Vector3.Cross(OperatingPlayer.transform.forward, m_posToJumpOffShip[m_workInt] - m_workVector3).y;
+			m_workFloat = Vector3.Angle(OperatingPlayer.transform.forward,
+				Vector3.Scale((m_posToJumpOffShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
+
+			//向ける角度が向きたい角度より大きい
+			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
+				OperatingPlayer.transform.Rotate(Vector3.up, m_workFloat);
+			else if (m_workFloat > 0)
+				OperatingPlayer.transform.Rotate(Vector3.up, m_playerRotationSpeed * Time.deltaTime);
+			else
+				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
 
 			return;
 		}

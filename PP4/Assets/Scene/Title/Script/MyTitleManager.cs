@@ -77,6 +77,11 @@ public class MyTitleManager : MonoBehaviour
 	GameObject LeftSurfingCharacter;
 
 	/// <summary>
+	/// 前キャラクターの目を輝かせるフラグ
+	/// </summary>
+	bool m_changeStarEye;
+
+	/// <summary>
 	/// 目から飛ぶ星用のエフェクト
 	/// </summary>
 	[SerializeField]
@@ -194,6 +199,16 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	const float LEAVE_CHARACTER_TIME_THREE = 1.5f;
 
+	/// <summary>
+	/// 中央のｘ座標
+	/// </summary>
+	const float CENTER_POS_X = 0f;
+
+	/// <summary>
+	/// 中央付近のｘ座標(右のサーファーがここを超えると前のキャラクターが目を輝かせる)
+	/// </summary>
+	const float NEAR_CENTER_POS_X = -3f;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// スタート
@@ -201,6 +216,7 @@ public class MyTitleManager : MonoBehaviour
 	void Start()
 	{
 		//手前のキャラクターの状態
+		m_changeStarEye = false;
 		FrontStartPos = FrontCharacter.transform.position.x;
 		m_frontStartRotationY = FrontCharacter.transform.eulerAngles.y;
 		FrontNomalMask.SetActive(true);
@@ -229,6 +245,21 @@ public class MyTitleManager : MonoBehaviour
 		RightSurfingCharacterMove();
 		LeftSufingCharacterMove();
 
+		if (Input.anyKeyDown)
+		{
+			Debug.Log("スタート");
+		}
+
+		//右から来るサーファーが飛び始めると目を輝かせる
+		if (RightSurfingCharacter.transform.position.x < NEAR_CENTER_POS_X && !m_changeStarEye)
+		{
+			m_changeStarEye = true;
+			FrontNomalMask.SetActive(false);
+			FrontStarEyeMask.SetActive(true);
+			GameObject el = Instantiate(StarEyesEffect, FrontCharacter.transform);
+			el.transform.position = StarEyesPosition.transform.position;
+		}
+
 		//右からのサーファーの移動終了後
 		if (RightSurfingCharacter.transform.position.x < END_POINT_X)
 		{
@@ -236,13 +267,10 @@ public class MyTitleManager : MonoBehaviour
 			m_isSurfing = false;
 			RightSurfingCharacter.transform.position = m_rightSurfingStartPos;
 
-			//手前のキャラクターを星目に変え、エフェクトを発生
+			//左のサーファーを動かす
 			m_endLeftSurfingMove = true;
-			FrontNomalMask.SetActive(false);
-			FrontStarEyeMask.SetActive(true);
-			GameObject el = Instantiate(StarEyesEffect, FrontCharacter.transform);
-			el.transform.position = StarEyesPosition.transform.position;
 
+			//手前のキャラクターが動きを始める
 			StartCoroutine("LeaveCharacter");
 		}
 	}
@@ -292,6 +320,7 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	void FrontCharacterMove()
 	{
+		//スタート直後である場合、島の端へ向かって歩く
 		if (FrontCharacter.transform.position.x < FrontStopPosObj.transform.position.x && !m_frontLeave && !m_endLeftSurfingMove)
 		{
 			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x + m_frontMovingSpeed,
@@ -302,11 +331,13 @@ public class MyTitleManager : MonoBehaviour
 		{
 			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.StandStill);
 		}
+		//画面外へ向かって歩く
 		if (m_frontLeave)
 		{
 			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x - m_frontMovingSpeed,
 				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
 
+			//停止位置で止まる
 			if (FrontCharacter.transform.position.x < FrontStartPos)
 			{
 				m_frontLeave = false;
@@ -335,8 +366,8 @@ public class MyTitleManager : MonoBehaviour
 	{
 		if (m_isSurfing)
 		{
-			//中央から上昇
-			if (RightSurfingCharacter.transform.position.x < 0)
+			//中央からは上昇する
+			if (RightSurfingCharacter.transform.position.x < CENTER_POS_X)
 			{
 				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - m_surfingSpeed,
 				RightSurfingCharacter.transform.position.y + m_surfingSpeed, RightSurfingCharacter.transform.position.z);
@@ -359,8 +390,8 @@ public class MyTitleManager : MonoBehaviour
 	{
 		if (m_frontSufingStart)
 		{
-			//中央から上昇
-			if (LeftSurfingCharacter.transform.position.x > 0)
+			//中央からは上昇する
+			if (LeftSurfingCharacter.transform.position.x > CENTER_POS_X)
 			{
 				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + m_surfingSpeed,
 					LeftSurfingCharacter.transform.position.y + +m_surfingSpeed, LeftSurfingCharacter.transform.position.z);

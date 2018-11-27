@@ -38,13 +38,6 @@ public class MyJetWater : MonoBehaviour
 	}
 
 	/// <summary>
-	/// プレイヤーのゲームオブジェクト
-	/// </summary>
-	[SerializeField]
-	GameObject PlayerObject;
-
-
-	/// <summary>
 	/// 水発射点のオブジェクト
 	/// </summary>
 	[SerializeField]
@@ -157,20 +150,19 @@ public class MyJetWater : MonoBehaviour
 	/// <summary>
 	/// ジェットの出す水しぶきの泡の高さ
 	/// </summary>
-	[SerializeField]
-	float m_jetSpreadSplasheHeight;
+	const float JET_SPREAD_SPLASHE_HEIGHT = 0;
 
 	/// <summary>
 	/// ジェットの出す水しぶきの位置用ゲームオブジェクト(1段階目)
 	/// </summary>
 	[SerializeField]
-	GameObject effectpos;
+	GameObject Effectpos;
 
 	/// <summary>
 	/// ジェットの出す水しぶきの位置用ゲームオブジェクト(2段階目)
 	/// </summary>
 	[SerializeField]
-	GameObject effectpos2;
+	GameObject Effectpos2;
 
 	/// <summary>
 	/// 水しぶきの位置が変わる高さ(1段階目)
@@ -316,22 +308,22 @@ public class MyJetWater : MonoBehaviour
 			if (m_jetStayTime > m_jetMakeSpreadTime)
 			{
 				MySpreadSplashe ss = Instantiate(SpreadSplashe, transform.parent);
-				m_splashePosition.y = m_jetSpreadSplasheHeight;
+				m_splashePosition.y = JET_SPREAD_SPLASHE_HEIGHT;
 				//プレイヤーの高さで水しぶきの泡の出現場所を変える
 				if (Player.transform.position.y > playerHeightThree)
 				{
 					m_splashePosition.x = JetCenter.transform.position.x;
-					m_splashePosition.z = JetCenter.transform.transform.position.z;
+					m_splashePosition.z = JetCenter.transform.position.z;
 				}
 				else if (Player.transform.position.y > playerHeightTwo)
 				{
-					m_splashePosition.x = effectpos2.transform.position.x;
-					m_splashePosition.z = effectpos2.transform.transform.position.z;
+					m_splashePosition.x = Effectpos2.transform.position.x;
+					m_splashePosition.z = Effectpos2.transform.position.z;
 				}
 				else if (Player.transform.position.y > playerHeightOne)
 				{
-					m_splashePosition.x = effectpos.transform.position.x;
-					m_splashePosition.z = effectpos.transform.transform.position.z;
+					m_splashePosition.x = Effectpos.transform.position.x;
+					m_splashePosition.z = Effectpos.transform.position.z;
 				}
 				else
 				{

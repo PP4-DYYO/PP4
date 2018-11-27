@@ -72,7 +72,7 @@ public class MySpreadSplashe : MonoBehaviour
 	void Update()
 	{
 		//空中では発生しない
-		if (transform.position.y > 0)
+		if (transform.position.y > HALF)
 		{
 			Effect.Stop();
 		}

@@ -178,14 +178,11 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	void OnTriggerEnter(Collider other)
 	{
-		if (m_isDisplay)
+		//ステージに衝突時消える
+		if (other.tag == StageInfo.GROUND_TAG)
 		{
-			//ステージに衝突時消える
-			if (other.tag == StageInfo.GROUND_TAG)
-			{
-				m_isfallen = true;
-				MakeSpreadSplashe();
-			}
+			m_isfallen = true;
+			MakeSpreadSplashe();
 		}
 	}
 
@@ -197,10 +194,12 @@ public class MySplasheWater : MonoBehaviour
 	{
 		//発生位置調整
 		m_spreadSplashePosition = makeSpreadSplasheObject.transform.position;
-		m_spreadSplashePosition.y = 0;
-
-		SpreadSplashe.SplasheEffect.transform.position = m_spreadSplashePosition;
-		SpreadSplashe.SplasheEffect.Play();
+		if (m_spreadSplashePosition.y > 0)
+		{
+			m_spreadSplashePosition.y = 0;
+			SpreadSplashe.SplasheEffect.transform.position = m_spreadSplashePosition;
+			SpreadSplashe.SplasheEffect.Play();
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

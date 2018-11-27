@@ -16,7 +16,7 @@ using UnityEngine;
 public class MySplasheWater : MonoBehaviour
 {
 	/// <summary>
-	/// 自身のRigitbode
+	/// 自身のRigidbody
 	/// </summary>
 	[SerializeField]
 	Rigidbody Rb;
@@ -81,6 +81,31 @@ public class MySplasheWater : MonoBehaviour
 		get { return Body; }
 	}
 
+	/// <summary>
+	/// 水しぶきのbodyの変更用
+	/// </summary>
+	Vector3 m_changedBody;
+
+	/// <summary>
+	/// 自身の表示状態
+	/// </summary>
+	bool m_isDisplay;
+	public bool isDisplay
+	{
+		get { return m_isDisplay; }
+	}
+
+	/// <summary>
+	/// 水しぶきの泡の発生位置
+	/// </summary>
+	Vector3 m_spreadSplashePosition;
+
+	/// <summary>
+	/// 水しぶきの泡発生位置用オブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject makeSpreadSplasheObject;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの動き
@@ -94,44 +119,57 @@ public class MySplasheWater : MonoBehaviour
 	/// <summary>
 	/// 水しぶきの動き
 	/// </summary>	
-	void FixedUpdate()
+	void Update()
 	{
-		//時間経過で消滅する
-		if (m_splasheLivingTime >= m_splasheLifeTime)
+		if (m_isDisplay)
 		{
-			MySplasheDestroy();
-		}
-
-		//着地後
-		if (m_isfallen)
-		{
-			//サイズが０以下になるときには消す
-			if (Body.transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
+			//時間経過で消滅する
+			if (m_splasheLivingTime >= m_splasheLifeTime)
 			{
 				MySplasheDestroy();
 			}
+
+			//着地後
+			if (m_isfallen)
+			{
+				//サイズが０以下になるときには消す
+				if (Body.transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) < 0)
+				{
+					MySplasheDestroy();
+				}
+				else
+				{
+					m_changedBody.x = Body.transform.localScale.x;
+					m_changedBody.y = Body.transform.localScale.y;
+					m_changedBody.z = Body.transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime);
+
+					Body.transform.localScale = m_changedBody;
+				}
+			}
+			//空中
 			else
 			{
-				Body.transform.localScale = new Vector3(Body.transform.localScale.x,
-						 Body.transform.localScale.y, Body.transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime));
+				//x、yがまだ小さくなれるとき
+				if (Body.transform.localScale.x - m_splasheXYSizeChange > 0)
+				{
+					//x、yは小さく、zは大きく変更される
+					m_changedBody.x = Body.transform.localScale.x - m_splasheXYSizeChange;
+					m_changedBody.y = Body.transform.localScale.y - m_splasheXYSizeChange;
+					m_changedBody.z = Body.transform.localScale.z + m_splasheSizeChange;
+					Body.transform.localScale = m_changedBody;
+				}
+				else
+				{
+					//x、yは同じサイズのまま、zだけ大きく変更される
+					m_changedBody.x = Body.transform.localScale.x;
+					m_changedBody.y = Body.transform.localScale.y;
+					m_changedBody.z = Body.transform.localScale.z + m_splasheSizeChange;
+					Body.transform.localScale = m_changedBody;
+				}
+				m_splasheScaleZ = Body.transform.localScale.z;
 			}
+			m_splasheLivingTime += Time.deltaTime;
 		}
-		//空中
-		else
-		{
-			if (Body.transform.localScale.x - m_splasheXYSizeChange > 0)
-			{
-				Body.transform.localScale = new Vector3(Body.transform.localScale.x - m_splasheXYSizeChange,
-					 Body.transform.localScale.y - m_splasheXYSizeChange, Body.transform.localScale.z + m_splasheSizeChange);
-			}
-			else
-			{
-				Body.transform.localScale = new Vector3(Body.transform.localScale.x,
-					 Body.transform.localScale.y, Body.transform.localScale.z + m_splasheSizeChange);
-			}
-			m_splasheScaleZ = Body.transform.localScale.z;
-		}
-		m_splasheLivingTime += Time.deltaTime;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -140,11 +178,14 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	void OnTriggerEnter(Collider other)
 	{
-		//ステージに衝突時消える
-		if (other.tag == StageInfo.GROUND_TAG)
+		if (m_isDisplay)
 		{
-			m_isfallen = true;
-			MakeSpreadSplashe();
+			//ステージに衝突時消える
+			if (other.tag == StageInfo.GROUND_TAG)
+			{
+				m_isfallen = true;
+				MakeSpreadSplashe();
+			}
 		}
 	}
 
@@ -154,8 +195,12 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	void MakeSpreadSplashe()
 	{
+		//発生位置調整
+		m_spreadSplashePosition = makeSpreadSplasheObject.transform.position;
+		m_spreadSplashePosition.y = 0;
+
+		SpreadSplashe.SplasheEffect.transform.position = m_spreadSplashePosition;
 		SpreadSplashe.SplasheEffect.Play();
-		SpreadSplashe.SplasheEffect.transform.position = transform.position;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -166,6 +211,7 @@ public class MySplasheWater : MonoBehaviour
 	{
 		Body.SetActive(false);
 		m_isfallen = false;
+		m_isDisplay = false;
 		m_splasheLivingTime = 0;
 	}
 
@@ -176,6 +222,7 @@ public class MySplasheWater : MonoBehaviour
 	public void ActiveChange(bool choosing)
 	{
 		Body.SetActive(choosing);
+		m_isDisplay = choosing;
 		m_splasheLivingTime = 0;
 	}
 

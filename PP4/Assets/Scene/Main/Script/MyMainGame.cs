@@ -71,6 +71,11 @@ public class MyMainGame : MyGame
 	GameObject GhostPlayers;
 
 	/// <summary>
+	/// ネットワークマネージャ
+	/// </summary>
+	MyNetworkManager m_netManager;
+
+	/// <summary>
 	/// 操作しているネットワークプレイヤー設定
 	/// </summary>
 	MyNetPlayerSetting OperatingNetPlayerSetting;
@@ -567,6 +572,8 @@ public class MyMainGame : MyGame
 	{
 		m_state = GameStatus.CreateSkin;
 		m_statePrev = GameStatus.Result;
+
+		m_netManager = FindObjectOfType<MyNetworkManager>();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -611,6 +618,10 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void FixedUpdate()
 	{
+		//サーバと接続が切れている
+		if (m_netManager != null && m_netManager.IsConnectionWithServerIsBroken)
+			return;
+
 		//全体の状態初期設定
 		if (m_state != m_statePrev)
 			m_countTheTimeOfTheState = 0;
@@ -706,7 +717,7 @@ public class MyMainGame : MyGame
 		else if (m_countTheTimeOfTheState > m_timeToWaitForPeople)
 		{
 			//プレイヤーの解放（ネット接続を切る）
-			FindObjectOfType<MyNetworkManager>().StopConnection();
+			m_netManager.StopConnection();
 		}
 		else
 		{
@@ -1034,8 +1045,11 @@ public class MyMainGame : MyGame
 			{
 				//落雷
 				m_countPlayerChargeRate[m_workInt] -= 1f;
-				Stage.CurrentFieldScript.StartThunderbolt(
-					MyNetPlayerSetting.NetPlayerSettings[m_workInt].transform.position, OperatingPlayer.transform.position.y);
+
+				//プレイヤーが存在
+				if (MyNetPlayerSetting.NetPlayerSettings[m_workInt] != null)
+					Stage.CurrentFieldScript.StartThunderbolt(
+						MyNetPlayerSetting.NetPlayerSettings[m_workInt].transform.position, OperatingPlayer.transform.position.y);
 			}
 		}
 	}
@@ -1500,7 +1514,7 @@ public class MyMainGame : MyGame
 	/// </summary>
 	public override void LeaveBattle()
 	{
-		FindObjectOfType<MyNetworkManager>().StopConnection();
+		m_netManager.StopConnection();
 		MySceneManager.Instance.ChangeScene(MyScene.Armed);
 	}
 

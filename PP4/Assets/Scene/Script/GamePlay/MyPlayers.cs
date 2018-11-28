@@ -92,6 +92,11 @@ public class MyPlayers : MonoBehaviour
 	bool m_isDisplaySplash = true;
 
 	/// <summary>
+	/// 切断された数
+	/// </summary>
+	int m_numOfDisconnections;
+
+	/// <summary>
 	/// 変更される番号
 	/// </summary>
 	int m_numToBeChanged;
@@ -125,7 +130,8 @@ public class MyPlayers : MonoBehaviour
 		foreach (var netPlayerSetting in m_netPlayerSettings)
 		{
 			//スキンのデフォルト化
-			netPlayerSetting.SelectSkin.DefaultSkinColor();
+			if (netPlayerSetting)
+				netPlayerSetting.SelectSkin.DefaultSkinColor();
 		}
 	}
 
@@ -148,6 +154,10 @@ public class MyPlayers : MonoBehaviour
 		//全プレイヤー
 		for (var i = 0; i < m_netPlayerSettings.Length; i++)
 		{
+			//プレイヤーが存在していない
+			if (m_netPlayerSettings[i] == null)
+				continue;
+
 			//プレイヤー番号とスキンの変更
 			m_netPlayerSettings[i].PlayerNum = m_heightRanks[i];
 			m_netPlayerSettings[i].SelectSkin.SetTeamColor(m_playerColor[m_heightRanks[i]]);
@@ -209,18 +219,41 @@ public class MyPlayers : MonoBehaviour
 		if (m_netPlayerSettings[0] == null)
 			return;
 
+		//切断された数
+		m_numOfDisconnections = 0;
+
 		//全プレイヤーにアクセス
 		for (m_numToBeChanged = 0; m_numToBeChanged < m_netPlayerSettings.Length; m_numToBeChanged++)
 		{
+			//クライアント接続が切れている
+			if (m_netPlayerSettings[m_numToBeChanged] == null)
+			{
+				//最下位
+				m_numOfDisconnections++;
+				m_heightRanks[m_numToBeChanged] = m_netPlayerSettings.Length - m_numOfDisconnections;
+				continue;
+			}
+
 			//変更される番号以外のプレイヤーにアクセス
 			for (m_targetNum = m_netPlayerSettings.Length - 1; m_targetNum > m_numToBeChanged; m_targetNum--)
 			{
+				//クライアント接続が切れている
+				if (m_netPlayerSettings[m_targetNum] == null)
+				{
+					m_heightRanks[m_targetNum] = m_netPlayerSettings.Length - 1;
+					continue;
+				}
+
 				//高さが小さければ順位を下げる
 				if ((int)m_netPlayerSettings[m_numToBeChanged].transform.position.y < (int)m_netPlayerSettings[m_targetNum].transform.position.y)
 					m_heightRanks[m_numToBeChanged]++;
 				else
 					m_heightRanks[m_targetNum]++;
 			}
+
+			//プレイヤーが存在していない
+			if (m_netPlayerSettings[m_numToBeChanged] == null)
+				continue;
 
 			//最大高度の取得
 			m_maximumAltitude = (m_maximumAltitude < m_netPlayerSettings[m_numToBeChanged].transform.position.y) ?

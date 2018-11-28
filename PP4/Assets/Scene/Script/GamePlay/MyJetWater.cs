@@ -10,10 +10,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //----------------------------------------------------------------------------------------------------
-//Enum・Struct
-//----------------------------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------------------------
 /// <summary>
 /// ジェットウォーター情報
 /// </summary>
@@ -24,10 +20,6 @@ public struct JetWaterInfo
 	/// </summary>
 	public const string TAG = "JetWater";
 }
-
-//----------------------------------------------------------------------------------------------------
-//クラス
-//----------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
@@ -158,8 +150,35 @@ public class MyJetWater : MonoBehaviour
 	/// <summary>
 	/// ジェットの出す水しぶきの泡の高さ
 	/// </summary>
+	const float JET_SPREAD_SPLASHE_HEIGHT = 0;
+
+	/// <summary>
+	/// ジェットの出す水しぶきの位置用ゲームオブジェクト(1段階目)
+	/// </summary>
 	[SerializeField]
-	float m_jetSpreadSplasheHeight;
+	GameObject Effectpos;
+
+	/// <summary>
+	/// ジェットの出す水しぶきの位置用ゲームオブジェクト(2段階目)
+	/// </summary>
+	[SerializeField]
+	GameObject Effectpos2;
+
+	/// <summary>
+	/// 水しぶきの位置が変わる高さ(1段階目)
+	/// </summary>
+	const float playerHeightOne = 1.5f;
+
+	/// <summary>
+	/// 水しぶきの位置が変わる高さ(2段階目)
+	/// </summary>
+	const float playerHeightTwo = 3.5f;
+
+	/// <summary>
+	/// 水しぶきの位置が変わる高さは(3段階目)
+	/// </summary>
+	const float playerHeightThree = 5.5f;
+
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -247,39 +266,32 @@ public class MyJetWater : MonoBehaviour
 		//水しぶきの向きの変更
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			if (m_index == 0)
+			if (Splashes[m_index].SplasheWaterScript.isDisplay)
 			{
-				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
-					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[Splashes.Length - 1].SplasheWaterScript.transform.position));
-			}
-			else
-			{
-				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
-					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
-			}
-			//空中にあればサイズ変更
-			if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
-			{
-				m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
 				if (m_index == 0)
 				{
-					m_splasheIndex = m_index - m_splasheNum;
-					if (m_splasheIndex < 0)
-					{
-						m_splasheIndex += Splashes.Length;
-					}
-					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
+					Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
+						(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[Splashes.Length - 1].SplasheWaterScript.transform.position));
 				}
 				else
 				{
+					Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
+						(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
+				}
+				//空中にあればサイズ変更
+				if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
+				{
+					m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
+
 					m_splasheIndex = m_index - m_splasheNum;
 					if (m_splasheIndex < 0)
 					{
 						m_splasheIndex += Splashes.Length;
 					}
 					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
+
+					Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
 				}
-				Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
 			}
 		}
 	}
@@ -296,9 +308,28 @@ public class MyJetWater : MonoBehaviour
 			if (m_jetStayTime > m_jetMakeSpreadTime)
 			{
 				MySpreadSplashe ss = Instantiate(SpreadSplashe, transform.parent);
-				m_splashePosition.x = transform.position.x;
-				m_splashePosition.y = m_jetSpreadSplasheHeight;
-				m_splashePosition.z = transform.position.z;
+				m_splashePosition.y = JET_SPREAD_SPLASHE_HEIGHT;
+				//プレイヤーの高さで水しぶきの泡の出現場所を変える
+				if (Player.transform.position.y > playerHeightThree)
+				{
+					m_splashePosition.x = JetCenter.transform.position.x;
+					m_splashePosition.z = JetCenter.transform.position.z;
+				}
+				else if (Player.transform.position.y > playerHeightTwo)
+				{
+					m_splashePosition.x = Effectpos2.transform.position.x;
+					m_splashePosition.z = Effectpos2.transform.position.z;
+				}
+				else if (Player.transform.position.y > playerHeightOne)
+				{
+					m_splashePosition.x = Effectpos.transform.position.x;
+					m_splashePosition.z = Effectpos.transform.position.z;
+				}
+				else
+				{
+					m_splashePosition.x = transform.position.x;
+					m_splashePosition.z = transform.position.z;
+				}
 				ss.transform.position = m_splashePosition;
 				m_jetStayTime = 0;
 			}

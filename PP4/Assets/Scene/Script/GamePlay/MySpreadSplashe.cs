@@ -30,9 +30,9 @@ public class MySpreadSplashe : MonoBehaviour
 	float m_magni;
 
 	/// <summary>
-	/// 泡が消えるまでの時間
+	/// スケールが変更される時間
 	/// </summary>
-	float m_limitTime;
+	float m_scaleChangeTime;
 
 	/// <summary>
 	/// 自分のパーティクルシステム
@@ -44,24 +44,44 @@ public class MySpreadSplashe : MonoBehaviour
 		get { return Effect; }
 	}
 
+	/// <summary>
+	/// 毎フレーム行うサイズ変更の大きさの変数
+	/// </summary>
+	float m_changeScaleSize;
+
+	/// <summary>
+	/// 0.5fの設定
+	/// </summary>
+	const float HALF = 0.5f;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// スタート処理
 	/// </summary>
 	void Start()
 	{
-		m_limitTime = GetComponent<MyDestroySpreadSplashe>().LimitTime - 0.5f;
+		//消えるまでの時間より少し小さい数
+		m_scaleChangeTime = GetComponent<MyDestroySpreadSplashe>().LimitTime - HALF;
 		SpreadSplasheScale = transform.localScale;
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// サイズの変更
+	/// スケールの変更
 	/// </summary>
-	void FixedUpdate()
+	void Update()
 	{
-		SpreadSplasheScale = new Vector3(transform.localScale.x + (Time.fixedDeltaTime * (m_magni / m_limitTime)),
-			transform.localScale.y + (Time.fixedDeltaTime * (m_magni / m_limitTime)), transform.localScale.z + ((Time.fixedDeltaTime * (m_magni / m_limitTime)) / 2));
+		//空中では発生しない
+		if (transform.position.y > HALF)
+		{
+			Effect.Stop();
+		}
+		m_changeScaleSize = Time.deltaTime * (m_magni / m_scaleChangeTime);
+
+		SpreadSplasheScale.x = transform.localScale.x + m_changeScaleSize;
+		SpreadSplasheScale.y = transform.localScale.y + m_changeScaleSize;
+		SpreadSplasheScale.z = transform.localScale.z + (m_changeScaleSize * HALF);
+
 		transform.localScale = SpreadSplasheScale;
 	}
 }

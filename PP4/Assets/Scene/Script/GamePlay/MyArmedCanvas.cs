@@ -186,9 +186,14 @@ public class MyArmedCanvas : MonoBehaviour
 	bool m_isBButtonDown;
 
 	/// <summary>
-	/// Bボタンを押し続ける
+	/// Xボタンを押した
 	/// </summary>
-	bool m_isKeepressingBButton;
+	bool m_isXButtonDown;
+
+	/// <summary>
+	/// Xボタンを押し続ける
+	/// </summary>
+	bool m_isKeepressingXButton;
 
 	/// <summary>
 	/// バックボタンを押した
@@ -199,6 +204,16 @@ public class MyArmedCanvas : MonoBehaviour
 	/// ホームボタンを押した
 	/// </summary>
 	bool m_isHomeButtonDown;
+
+	/// <summary>
+	/// Mキーを押した
+	/// </summary>
+	bool m_isMKeyDown;
+
+	/// <summary>
+	/// 左コントロールキーを押し続ける
+	/// </summary>
+	bool m_isKeepressingLCtrlKey;
 
 	/// <summary>
 	/// DパッドXがポジティブになった
@@ -229,7 +244,7 @@ public class MyArmedCanvas : MonoBehaviour
 	{
 		ArmedCamera.enabled = false;
 	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// フレーム
@@ -250,10 +265,14 @@ public class MyArmedCanvas : MonoBehaviour
 			m_isAButtonDown = true;
 		if (Input.GetButtonDown("BButton"))
 			m_isBButtonDown = true;
+		if (Input.GetButtonDown("XButton"))
+			m_isXButtonDown = true;
 		if (Input.GetButtonDown("BackButton"))
 			m_isBackButtonDown = true;
 		if (Input.GetButtonDown("HomeButton"))
 			m_isHomeButtonDown = true;
+		if (Input.GetKeyDown(KeyCode.M))
+			m_isMKeyDown = true;
 		if (Input.GetAxis("DpadX") > 0 && !m_isDpadXBecamePositivePrev)
 			m_isDpadXBecamePositive = true;
 		m_isDpadXBecamePositivePrev = (Input.GetAxis("DpadX") > 0);
@@ -262,7 +281,8 @@ public class MyArmedCanvas : MonoBehaviour
 		m_isDpadXBecameNegativePrev = (Input.GetAxis("DpadX") < 0);
 
 		//押し続けている
-		m_isKeepressingBButton = (Input.GetButton("BButton"));
+		m_isKeepressingXButton = (Input.GetButton("XButton"));
+		m_isKeepressingLCtrlKey = (Input.GetKey(KeyCode.LeftControl));
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -278,12 +298,12 @@ public class MyArmedCanvas : MonoBehaviour
 				SelectCharacterProcess();
 				break;
 			case ArmedMode.CreateCharacter:
-				CreateCharacterprocess();
+				CreateCharacterProcess();
 				break;
 		}
 
-		//ゴミ箱のリセット
-		ResetGarbageCan();
+		//共通の処理
+		CommonProcess();
 
 		//入力のリセット
 		ResetInput();
@@ -311,12 +331,12 @@ public class MyArmedCanvas : MonoBehaviour
 		if (m_isHomeButtonDown)
 			OnClickButtonToStartGame();
 
-		//Bボタンで削除時間初期化
-		if (m_isBButtonDown)
+		//Xボタンで削除時間初期化
+		if (m_isXButtonDown)
 			m_countTimeToDelete = 0;
 
 		//Bボタン長押しで削除時間を増やす
-		if (m_isKeepressingBButton)
+		if (m_isKeepressingXButton)
 		{
 			//プレイヤーが消えかける
 			m_countTimeToDelete += Time.deltaTime;
@@ -436,7 +456,7 @@ public class MyArmedCanvas : MonoBehaviour
 	/// <summary>
 	/// キャラクターを生成する処理
 	/// </summary>
-	void CreateCharacterprocess()
+	void CreateCharacterProcess()
 	{
 		//Aボタンで名前生成
 		if (m_isAButtonDown)
@@ -450,8 +470,8 @@ public class MyArmedCanvas : MonoBehaviour
 		if (m_isDpadXBecamePositive)
 			OnClickButtonToDisplayNext();
 
-		//ホームボタンでゲームスタート
-		if (m_isHomeButtonDown)
+		//名前が入力されているandホームボタンでゲームスタート
+		if (!(System.String.IsNullOrEmpty(PlayerName.text)) && ((m_isHomeButtonDown && !m_isMKeyDown) || (m_isMKeyDown && m_isKeepressingLCtrlKey)))
 			OnClickButtonToStartGame();
 
 		//キャラクターは常にSelect状態
@@ -463,6 +483,20 @@ public class MyArmedCanvas : MonoBehaviour
 
 		//プレイヤー名が何もないとスタートボタンが無効
 		ButtonToStartGame.interactable = !(System.String.IsNullOrEmpty(PlayerName.text));
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 共通の処理
+	/// </summary>
+	void CommonProcess()
+	{
+		//Bボタンでタイトルへ
+		if (m_isBButtonDown)
+			MySceneManager.Instance.ChangeScene(MyScene.Title);
+
+		//ゴミ箱のリセット
+		ResetGarbageCan();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -486,8 +520,10 @@ public class MyArmedCanvas : MonoBehaviour
 	{
 		m_isAButtonDown = false;
 		m_isBButtonDown = false;
+		m_isXButtonDown = false;
 		m_isBackButtonDown = false;
 		m_isHomeButtonDown = false;
+		m_isMKeyDown = false;
 		m_isDpadXBecamePositive = false;
 		m_isDpadXBecameNegative = false;
 	}

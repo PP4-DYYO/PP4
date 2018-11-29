@@ -21,6 +21,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public enum MyScene
 {
+	Title,
 	Armed,
 	Matching,
 	Non,

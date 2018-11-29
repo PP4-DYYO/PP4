@@ -164,6 +164,7 @@ public class MyMatching : MonoBehaviour
 	void Start()
 	{
 		m_netManager = FindObjectOfType<MyNetworkManager>();
+		m_netManager.IsStandbyState = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

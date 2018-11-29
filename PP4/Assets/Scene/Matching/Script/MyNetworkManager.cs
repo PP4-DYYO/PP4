@@ -92,7 +92,7 @@ public class MyNetworkManager : NetworkManager
 		m_match = matchMaker;
 		matches = null;
 
-		m_isStandbyState = false;
+		m_isStandbyState = true;
 		m_isConnectionWithServerIsBroken = false;
 	}
 

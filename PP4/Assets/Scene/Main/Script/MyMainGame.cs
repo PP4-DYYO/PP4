@@ -307,6 +307,18 @@ public class MyMainGame : MyGame
 	float[] m_chargeRateByRank;
 
 	/// <summary>
+	/// 隕石が落下するプレイヤー高低差
+	/// </summary>
+	[SerializeField]
+	float m_differenceInElevationOfPlayersFallingMeteorite;
+
+	/// <summary>
+	/// 隕石発生する相対的高さ
+	/// </summary>
+	[SerializeField]
+	float m_meteoriteGenerationRelativeHeight;
+
+	/// <summary>
 	/// 順位の表示
 	/// </summary>
 	bool m_isDisplayRank;
@@ -1052,6 +1064,10 @@ public class MyMainGame : MyGame
 						MyNetPlayerSetting.NetPlayerSettings[m_workInt].transform.position, OperatingPlayer.transform.position.y);
 			}
 		}
+
+		//隕石の発生
+		if (Players.MaximumAltitude - Players.MinimumAltitude >= m_differenceInElevationOfPlayersFallingMeteorite)
+			Stage.CurrentFieldScript.StartOfFallingMeteorite(Players.MaximumAltitude + m_meteoriteGenerationRelativeHeight);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1142,7 +1158,8 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとUIとフラグ
+			//ステージとプレイヤーとUIとフラグ
+			Stage.CurrentFieldScript.PauseMeteorit();
 			OperatingPlayer.MakeItBattleEndState();
 			OperatingNetPlayerSetting.MakeItBattleEndState();
 			MainUi.EndBattle();
@@ -1165,8 +1182,8 @@ public class MyMainGame : MyGame
 		{
 			m_state = GameStatus.Result;
 
-			//嵐の停止
-			Stage.CurrentFieldScript.ShowStorm(false);
+			//ステージの停止
+			Stage.CurrentFieldScript.StopField();
 		}
 	}
 

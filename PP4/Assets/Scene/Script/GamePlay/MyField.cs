@@ -21,7 +21,7 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject Ship;
-	
+
 	/// <summary>
 	/// フィールド上のコイン
 	/// </summary>
@@ -69,6 +69,12 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	MyCloud[] Clouds;
+
+	/// <summary>
+	/// 隕石
+	/// </summary>
+	[SerializeField]
+	GameObject Meteorite;
 
 	/// <summary>
 	/// 表彰台
@@ -121,6 +127,44 @@ public class MyField : MonoBehaviour
 	/// 雷の時間を数える
 	/// </summary>
 	float m_countThunderDuration = -1;
+	#endregion
+
+	#region 隕石
+	[Header("隕石")]
+	/// <summary>
+	/// 隕石落下の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeOfMeteoriteFall;
+
+	/// <summary>
+	/// 隕石出現の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeOfMeteoriteAppearance;
+
+	/// <summary>
+	/// 隕石消滅の時間
+	/// </summary>
+	[SerializeField]
+	float m_timeForMeteoriteExtinction;
+
+	/// <summary>
+	/// 隕石の速度
+	/// </summary>
+	[SerializeField]
+	float m_meteoriteSpeed;
+
+	/// <summary>
+	/// 隕石の回転速度
+	/// </summary>
+	[SerializeField]
+	float m_meteoriteRotateSpeed;
+
+	/// <summary>
+	/// 隕石の時間を数える
+	/// </summary>
+	float m_countMeteoriteTime = -1;
 	#endregion
 
 	#region コイン
@@ -188,6 +232,10 @@ public class MyField : MonoBehaviour
 		//雷時間を使用している
 		if (m_countThunderDuration != -1)
 			ThunderFalls();
+
+		//隕石時間を使用している
+		if (m_countMeteoriteTime != -1)
+			MeteoriteFalls();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -222,6 +270,49 @@ public class MyField : MonoBehaviour
 			}
 			return;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石が落ちる
+	/// </summary>
+	void MeteoriteFalls()
+	{
+		m_countMeteoriteTime += Time.deltaTime;
+
+		//落下
+		Meteorite.transform.position += Vector3.down * m_meteoriteSpeed * Time.deltaTime;
+		Meteorite.transform.Rotate(Vector3.up, m_meteoriteRotateSpeed * Time.deltaTime);
+
+		//隕石が出現する時間
+		if(m_countMeteoriteTime <= m_timeOfMeteoriteAppearance)
+		{
+			//出現中
+			Meteorite.transform.localScale = Vector3.one * (m_countMeteoriteTime / m_timeOfMeteoriteAppearance);
+		}
+		else if(m_countMeteoriteTime >= m_timeOfMeteoriteFall - m_timeForMeteoriteExtinction)
+		{
+			//消滅中
+			m_workVector3 = Vector3.one * ((m_timeOfMeteoriteFall - m_countMeteoriteTime) / m_timeForMeteoriteExtinction);
+			if (m_workVector3.x < 0)
+				Meteorite.transform.localScale = Vector3.zero;
+			else
+				Meteorite.transform.localScale = m_workVector3;
+		}
+
+		//隕石が消滅する時間
+		if (m_countMeteoriteTime >= m_timeOfMeteoriteFall)
+			StopMeteorit();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石の停止
+	/// </summary>
+	void StopMeteorit()
+	{
+		m_countMeteoriteTime = -1;
+		Meteorite.SetActive(false);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -346,6 +437,42 @@ public class MyField : MonoBehaviour
 		Thundercloud.Play();
 		ThunderNotice.SetActive(true);
 		m_countThunderDuration = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下隕石の開始
+	/// </summary>
+	/// <param name="startPos">開始高さ</param>
+	public void StartOfFallingMeteorite(float startHeight)
+	{
+		//隕石時間が使用中
+		if (m_countMeteoriteTime != -1)
+			return;
+
+		Meteorite.transform.localScale = Vector3.zero;
+		Meteorite.transform.position = Vector3.up * startHeight;
+		Meteorite.SetActive(true);
+		m_countMeteoriteTime = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石の一時停止
+	/// </summary>
+	public void PauseMeteorit()
+	{
+		m_countMeteoriteTime = -1;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// フィールドの停止
+	/// </summary>
+	public void StopField()
+	{
+		ShowStorm(false);
+		StopMeteorit();
 	}
 
 	//----------------------------------------------------------------------------------------------------

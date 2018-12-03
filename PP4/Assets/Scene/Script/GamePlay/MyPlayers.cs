@@ -78,6 +78,15 @@ public class MyPlayers : MonoBehaviour
 	}
 
 	/// <summary>
+	/// 最低高度
+	/// </summary>
+	float m_minimumAltitude;
+	public float MinimumAltitude
+	{
+		get { return m_minimumAltitude; }
+	}
+
+	/// <summary>
 	/// 高さの順位
 	/// </summary>
 	int[] m_heightRanks;
@@ -214,6 +223,7 @@ public class MyPlayers : MonoBehaviour
 			m_heightRanks[m_targetNum] = 0;
 		}
 		m_maximumAltitude = 0;
+		m_minimumAltitude = float.MaxValue;
 
 		//ネットプレイヤー非対応
 		if (m_netPlayerSettings[0] == null)
@@ -255,9 +265,11 @@ public class MyPlayers : MonoBehaviour
 			if (m_netPlayerSettings[m_numToBeChanged] == null)
 				continue;
 
-			//最大高度の取得
+			//最大最小高度の取得
 			m_maximumAltitude = (m_maximumAltitude < m_netPlayerSettings[m_numToBeChanged].transform.position.y) ?
 				m_netPlayerSettings[m_numToBeChanged].transform.position.y : m_maximumAltitude;
+			m_minimumAltitude = (m_minimumAltitude > m_netPlayerSettings[m_numToBeChanged].transform.position.y) ?
+				m_netPlayerSettings[m_numToBeChanged].transform.position.y : m_minimumAltitude;
 		}
 	}
 

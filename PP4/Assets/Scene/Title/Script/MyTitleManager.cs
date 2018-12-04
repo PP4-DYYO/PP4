@@ -218,7 +218,7 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 右のサーファーのジェットウォータークラスの起動状態
 	/// </summary>
-	bool m_StartRightJetWater;
+	bool m_startRightJetWater;
 
 	/// <summary>
 	/// 左のサーファーのジェットウォータークラス
@@ -229,7 +229,7 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 左のサーファーのジェットウォータークラスの起動状態
 	/// </summary>
-	bool m_StartLeftJetWater;
+	bool m_startLeftJetWater;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -397,7 +397,7 @@ public class MyTitleManager : MonoBehaviour
 			//中央からは上昇する
 			if (RightSurfingCharacter.transform.position.x < CENTER_POS_X)
 			{
-				if (!m_StartRightJetWater)
+				if (!m_startRightJetWater)
 				{
 					//水しぶきの発射
 					StartRightSurfingJetWater();
@@ -426,7 +426,7 @@ public class MyTitleManager : MonoBehaviour
 			//中央からは上昇する
 			if (LeftSurfingCharacter.transform.position.x > CENTER_POS_X)
 			{
-				if (!m_StartLeftJetWater)
+				if (!m_startLeftJetWater)
 				{
 					//水しぶきの発射
 					StartLeftSurfingJetWater();
@@ -457,6 +457,7 @@ public class MyTitleManager : MonoBehaviour
 	void StartRightSurfingJetWater()
 	{
 		RightMyJetWater.JetFire(true);
+		m_startRightJetWater = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -466,6 +467,7 @@ public class MyTitleManager : MonoBehaviour
 	void StartLeftSurfingJetWater()
 	{
 		LeftMyJetWater.JetFire(true);
+		m_startLeftJetWater = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------

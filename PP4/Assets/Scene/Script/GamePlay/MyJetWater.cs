@@ -303,7 +303,7 @@ public class MyJetWater : MonoBehaviour
 			m_jetStayTime += Time.deltaTime;
 			if (m_jetStayTime > m_jetMakeSpreadTime)
 			{
-				MySpreadSplashe ss = Instantiate(SpreadSplashe, transform.parent);
+				MySpreadSplashe ss = Instantiate(SpreadSplashe, Player.transform);
 				m_splashePosition.y = JET_SPREAD_SPLASHE_HEIGHT;
 				//プレイヤーの高さで水しぶきの泡の出現場所を変える
 				if (Player.transform.position.y > PLAYER_HEIGHT_THREE)

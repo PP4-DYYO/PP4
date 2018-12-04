@@ -247,7 +247,14 @@ public class MyTitleManager : MonoBehaviour
 
 		if (Input.anyKeyDown)
 		{
-			MySceneManager.Instance.ChangeScene(MyScene.Armed);
+			if (Input.GetKeyDown(KeyCode.Backspace))
+			{
+				Application.Quit();
+			}
+			else
+			{
+				MySceneManager.Instance.ChangeScene(MyScene.Armed);
+			}
 		}
 
 		//右から来るサーファーが飛び始めると目を輝かせる

@@ -33,6 +33,11 @@ public struct StageInfo
 	/// 雷の通知タグ
 	/// </summary>
 	public const string THUNDER_NOTICE_TAG = "ThunderNotice";
+
+	/// <summary>
+	/// 隕石のタグ
+	/// </summary>
+	public const string METEORITE_TAG = "Meteorite";
 }
 
 //----------------------------------------------------------------------------------------------------

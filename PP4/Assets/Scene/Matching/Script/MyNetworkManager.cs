@@ -29,14 +29,44 @@ public class MyNetworkManager : NetworkManager
 	const uint MATCH_SIZE = 8U;
 
 	/// <summary>
-	/// 部屋に入った
+	/// 待機状態フラグ
 	/// </summary>
-	bool m_isIGotIntoTheRoom;
+	bool m_isStandbyState;
+	public bool IsStandbyState
+	{
+		get { return m_isStandbyState; }
+		set { m_isStandbyState = value; }
+	}
 
 	/// <summary>
 	/// 部屋名
 	/// </summary>
 	const string ROOM_NAME = "Fountain";
+
+	/// <summary>
+	/// 部屋作成中フラグ
+	/// </summary>
+	bool m_isCreateRoom;
+
+	/// <summary>
+	/// サーバーとの接続が切れた
+	/// </summary>
+	bool m_isConnectionWithServerIsBroken;
+	public bool IsConnectionWithServerIsBroken
+	{
+		get { return m_isConnectionWithServerIsBroken; }
+		set { m_isConnectionWithServerIsBroken = value; }
+	}
+
+	/// <summary>
+	/// 使用中のネットワークID
+	/// </summary>
+	UInt64 m_networkIdInUse;
+
+	/// <summary>
+	/// 使用不可のネットワークID
+	/// </summary>
+	List<UInt64> m_unusableNetworkId = new List<UInt64>();
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -60,9 +90,10 @@ public class MyNetworkManager : NetworkManager
 		StartMatchMaker();
 		matchSize = MATCH_SIZE;
 		m_match = matchMaker;
-		m_match.ListMatches(0, 20, "", true, 0, 0, OnMatchList);
+		matches = null;
 
-		m_isIGotIntoTheRoom = false;
+		m_isStandbyState = true;
+		m_isConnectionWithServerIsBroken = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -71,9 +102,24 @@ public class MyNetworkManager : NetworkManager
 	/// </summary>
 	void Update()
 	{
-		//部屋に入った
-		if (m_isIGotIntoTheRoom)
+		//待機状態
+		if (m_isStandbyState)
 			return;
+
+		//部屋作成中
+		if(m_isCreateRoom)
+		{
+			//更新
+			m_match.ListMatches(0, 20, "", true, 0, 0, OnMatchList);
+
+			//使用中のネットワークIDを取得
+			if (matches.Count >= 1)
+			{
+				m_networkIdInUse = (UInt64)(matches[0].networkId);
+				m_isStandbyState = true;
+			}
+			return;
+		}
 
 		//リストマッチの更新
 		if (matches == null)
@@ -81,19 +127,44 @@ public class MyNetworkManager : NetworkManager
 			//更新
 			m_match.ListMatches(0, 20, "", true, 0, 0, OnMatchList);
 		}
-		else if(matches.Count >= 1)
+		else if (matches.Count >= 1 && IsMatch())
 		{
 			//ルームに参加
-			m_match.JoinMatch(matches[0].networkId, "", "", "", 0, 0, OnMatchJoined);
-			m_isIGotIntoTheRoom = true;
+			m_match.JoinMatch((UnityEngine.Networking.Types.NetworkID)m_networkIdInUse, "", "", "", 0, 0, OnMatchJoined);
+			m_isStandbyState = true;
 		}
 		else
 		{
 			//ルームの作成
 			matchName = ROOM_NAME + DateTime.Now.ToLongTimeString();
 			m_match.CreateMatch(matchName, matchSize, true, "", "", "", 0, 0, OnMatchCreate);
-			m_isIGotIntoTheRoom = true;
+			m_isCreateRoom = true;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マッチできるか
+	/// </summary>
+	bool IsMatch()
+	{
+		//マッチした情報
+		foreach (var match in matches)
+		{
+			m_networkIdInUse = (UInt64)match.networkId;
+
+			//使えないネットワークID検索
+			foreach (var unusable in m_unusableNetworkId)
+			{
+				if (m_networkIdInUse == unusable)
+					m_networkIdInUse = 0;
+			}
+
+			if (m_networkIdInUse != 0)
+				return true;
+		}
+
+		return false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -103,8 +174,7 @@ public class MyNetworkManager : NetworkManager
 	/// <param name="connectionInfo">接続情報</param>
 	public override void OnServerDisconnect(NetworkConnection connectionInfo)
 	{
-		base.OnServerDisconnect(connectionInfo);
-		Debug.Log("クライアントの接続が切れました");
+		NetworkServer.DestroyPlayersForConnection(connectionInfo);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -114,8 +184,31 @@ public class MyNetworkManager : NetworkManager
 	/// <param name="connectionInfo">接続情報</param>
 	public override void OnClientDisconnect(NetworkConnection connectionInfo)
 	{
-		base.OnClientDisconnect(connectionInfo);
-		Debug.Log("サーバとの接続が切れました");
+		//ホストの終了
+		StopHost();
+
+		//使えないネットワークID
+		m_unusableNetworkId.Add(m_networkIdInUse);
+
+		//マッチングのリセット
+		ResetMatching();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マッチングのリセット
+	/// </summary>
+	void ResetMatching()
+	{
+		//マネージャーの設定
+		StartMatchMaker();
+		matchSize = MATCH_SIZE;
+		m_match = matchMaker;
+		matches = null;
+
+		m_isStandbyState = true;
+		m_isCreateRoom = false;
+		m_isConnectionWithServerIsBroken = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -124,6 +217,10 @@ public class MyNetworkManager : NetworkManager
 	/// </summary>
 	public void StopConnection()
 	{
+		//ホストの終了
 		StopHost();
+
+		//マッチングのリセット
+		ResetMatching();
 	}
 }

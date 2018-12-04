@@ -71,6 +71,11 @@ public class MyMainGame : MyGame
 	GameObject GhostPlayers;
 
 	/// <summary>
+	/// ネットワークマネージャ
+	/// </summary>
+	MyNetworkManager m_netManager;
+
+	/// <summary>
 	/// 操作しているネットワークプレイヤー設定
 	/// </summary>
 	MyNetPlayerSetting OperatingNetPlayerSetting;
@@ -300,6 +305,18 @@ public class MyMainGame : MyGame
 	/// </summary>
 	[SerializeField]
 	float[] m_chargeRateByRank;
+
+	/// <summary>
+	/// 隕石が落下するプレイヤー高低差
+	/// </summary>
+	[SerializeField]
+	float m_differenceInElevationOfPlayersFallingMeteorite;
+
+	/// <summary>
+	/// 隕石発生する相対的高さ
+	/// </summary>
+	[SerializeField]
+	float m_meteoriteGenerationRelativeHeight;
 
 	/// <summary>
 	/// 順位の表示
@@ -567,6 +584,8 @@ public class MyMainGame : MyGame
 	{
 		m_state = GameStatus.CreateSkin;
 		m_statePrev = GameStatus.Result;
+
+		m_netManager = FindObjectOfType<MyNetworkManager>();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -611,6 +630,10 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void FixedUpdate()
 	{
+		//サーバと接続が切れている
+		if (m_netManager != null && m_netManager.IsConnectionWithServerIsBroken)
+			return;
+
 		//全体の状態初期設定
 		if (m_state != m_statePrev)
 			m_countTheTimeOfTheState = 0;
@@ -706,7 +729,7 @@ public class MyMainGame : MyGame
 		else if (m_countTheTimeOfTheState > m_timeToWaitForPeople)
 		{
 			//プレイヤーの解放（ネット接続を切る）
-			FindObjectOfType<MyNetworkManager>().StopConnection();
+			m_netManager.StopConnection();
 		}
 		else
 		{
@@ -1034,10 +1057,17 @@ public class MyMainGame : MyGame
 			{
 				//落雷
 				m_countPlayerChargeRate[m_workInt] -= 1f;
-				Stage.CurrentFieldScript.StartThunderbolt(
-					MyNetPlayerSetting.NetPlayerSettings[m_workInt].transform.position, OperatingPlayer.transform.position.y);
+
+				//プレイヤーが存在
+				if (MyNetPlayerSetting.NetPlayerSettings[m_workInt] != null)
+					Stage.CurrentFieldScript.StartThunderbolt(
+						MyNetPlayerSetting.NetPlayerSettings[m_workInt].transform.position, OperatingPlayer.transform.position.y);
 			}
 		}
+
+		//隕石の発生
+		if (Players.MaximumAltitude - Players.MinimumAltitude >= m_differenceInElevationOfPlayersFallingMeteorite)
+			Stage.CurrentFieldScript.StartOfFallingMeteorite(Players.MaximumAltitude + m_meteoriteGenerationRelativeHeight);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1128,7 +1158,8 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとUIとフラグ
+			//ステージとプレイヤーとUIとフラグ
+			Stage.CurrentFieldScript.PauseMeteorit();
 			OperatingPlayer.MakeItBattleEndState();
 			OperatingNetPlayerSetting.MakeItBattleEndState();
 			MainUi.EndBattle();
@@ -1151,8 +1182,8 @@ public class MyMainGame : MyGame
 		{
 			m_state = GameStatus.Result;
 
-			//嵐の停止
-			Stage.CurrentFieldScript.ShowStorm(false);
+			//ステージの停止
+			Stage.CurrentFieldScript.StopField();
 		}
 	}
 
@@ -1500,7 +1531,7 @@ public class MyMainGame : MyGame
 	/// </summary>
 	public override void LeaveBattle()
 	{
-		FindObjectOfType<MyNetworkManager>().StopConnection();
+		m_netManager.StopConnection();
 		MySceneManager.Instance.ChangeScene(MyScene.Armed);
 	}
 

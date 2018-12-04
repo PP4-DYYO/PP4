@@ -169,6 +169,10 @@ public enum ReasonForFalling
 	/// 落雷
 	/// </summary>
 	Thunderbolt,
+	/// <summary>
+	/// 隕石
+	/// </summary>
+	Meteorite,
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -1025,12 +1029,25 @@ public class MyPlayer : MonoBehaviour
 				m_isFalling = false;
 				break;
 			case PlayerInfo.TAG:
-				//(Aボタンを押しているand水平移動)or(Aボタンを押しているand上昇中)
-				if ((m_isKeepPressingAButton && m_horizontalTravelDistance != Vector3.zero)
-					|| (m_isKeepPressingAButton && m_isKeepPressingRButton))
+				//加速移動していない
+				if (!(m_isKeepPressingAButton && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
 				{
 					m_isFalling = true;
 					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+				}
+				break;
+			case StageInfo.METEORITE_TAG:
+				//加速移動していない
+				if (!(m_isKeepPressingAButton && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
+				{
+					m_isFalling = true;
+					m_reasonForFalling = ReasonForFalling.Meteorite;
+				}
+				else
+				{
+					//加速が使えないようになる
+					m_countAccelerationTime = m_accelerationTime;
+					m_isUseAcceleration = false;
 				}
 				break;
 		}

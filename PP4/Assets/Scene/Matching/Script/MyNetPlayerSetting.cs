@@ -26,6 +26,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		set { m_netPlayerSettings = value; }
 	}
 
+	/// <summary>
+	/// 切断された数
+	/// </summary>
+	static int m_numOfDisconnections;
+
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
@@ -254,6 +259,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//権限のないプレイヤーになる
 		Player.BecomeUnauthorizedPlayer();
+
+		//クラス変数の初期化
+		if (m_netPlayerSettings.Count > 0 && m_netPlayerSettings[0].Player == null)
+			m_netPlayerSettings.Clear();
 
 		m_netPlayerSettings.Add(this);
 	}
@@ -542,7 +551,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		foreach (var player in m_netPlayerSettings)
 		{
 			//位置
-			player.NameplateParent.localPosition = m_overheadPos;
+			if (player)
+				player.NameplateParent.localPosition = m_overheadPos;
 		}
 	}
 
@@ -717,7 +727,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		foreach(var player in m_netPlayerSettings)
 		{
 			//位置
-			player.NameplateParent.localPosition = m_chestPos;
+			if (player)
+				player.NameplateParent.localPosition = m_chestPos;
 		}
 	}
 
@@ -801,19 +812,27 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			for (m_targetNum = m_numToBeChanged + 1; m_targetNum < m_netPlayerSettings.Count; m_targetNum++)
 			{
 				//低いスコアのプレイヤーが順位が下がる
-				if (m_netPlayerSettings[m_numToBeChanged].Score > m_netPlayerSettings[m_targetNum].Score)
+				if (m_netPlayerSettings[m_numToBeChanged].Score >= m_netPlayerSettings[m_targetNum].Score)
 					m_netPlayerSettings[m_targetNum].Rank++;
 				else
 					m_netPlayerSettings[m_numToBeChanged].Rank++;
 			}
 		}
 
+		//切断された数
+		m_numOfDisconnections = 0;
+
 		//全ての戦績
 		for (m_targetNum = 0; m_targetNum < battleRecords.Length; m_targetNum++)
 		{
 			//ネットワーク切れのプレイヤー
 			if (!m_netPlayerSettings[m_targetNum])
+			{
+				//最下位
+				m_numOfDisconnections++;
+				battleRecords[m_targetNum].rank = m_netPlayerSettings.Count - m_numOfDisconnections;
 				continue;
+			}
 
 			//プレイヤー成果の代入
 			battleRecords[m_targetNum].rank = m_netPlayerSettings[m_targetNum].Rank;

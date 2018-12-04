@@ -1070,6 +1070,9 @@ public class MyMainUi : MonoBehaviour
 				StatementOfFallReason.text = m_statementsOfFallReason[3];
 				StartThunder();
 				break;
+			case ReasonForFalling.Meteorite:
+				StatementOfFallReason.text = m_statementsOfFallReason[4];
+				break;
 		}
 
 		Falling.SetActive(true);

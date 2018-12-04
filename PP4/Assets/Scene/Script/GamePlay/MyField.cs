@@ -77,6 +77,24 @@ public class MyField : MonoBehaviour
 	GameObject Meteorite;
 
 	/// <summary>
+	/// 隕石の本体
+	/// </summary>
+	[SerializeField]
+	GameObject MeteoriteBody;
+
+	/// <summary>
+	/// 隕石の落下エフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem[] MeteoriteFallEffects;
+
+	/// <summary>
+	/// 隕石の破壊エフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem MeteoriteDestructionEffect;
+
+	/// <summary>
 	/// 表彰台
 	/// </summary>
 	[SerializeField]
@@ -313,6 +331,7 @@ public class MyField : MonoBehaviour
 	{
 		m_countMeteoriteTime = -1;
 		Meteorite.SetActive(false);
+		MeteoriteDestructionEffect.Stop();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -453,7 +472,32 @@ public class MyField : MonoBehaviour
 		Meteorite.transform.localScale = Vector3.zero;
 		Meteorite.transform.position = Vector3.up * startHeight;
 		Meteorite.SetActive(true);
+		if(!MeteoriteBody.activeInHierarchy)
+		{
+			MeteoriteBody.SetActive(true);
+			foreach(var effect in MeteoriteFallEffects)
+			{
+				effect.Play();
+			}
+		}
 		m_countMeteoriteTime = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石の破壊
+	/// </summary>
+	public void DestructionOfMeteorite()
+	{
+		//落下演出の停止
+		MeteoriteBody.SetActive(false);
+		foreach(var effect in MeteoriteFallEffects)
+		{
+			effect.Stop();
+		}
+
+		//爆発演出
+		MeteoriteDestructionEffect.Play();
 	}
 
 	//----------------------------------------------------------------------------------------------------

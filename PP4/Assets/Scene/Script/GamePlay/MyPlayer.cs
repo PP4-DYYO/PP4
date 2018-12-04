@@ -500,6 +500,16 @@ public class MyPlayer : MonoBehaviour
 	/// 風の向き
 	/// </summary>
 	Vector3 m_windDirection;
+
+	/// <summary>
+	/// 隕石破壊フラグ
+	/// </summary>
+	bool m_isMeteoriteDestruction;
+	public bool IsMeteoriteDestruction
+	{
+		get { return m_isMeteoriteDestruction; }
+		set { m_isMeteoriteDestruction = value; }
+	}
 	#endregion
 
 	#region キーボード関係
@@ -1045,9 +1055,10 @@ public class MyPlayer : MonoBehaviour
 				}
 				else
 				{
-					//加速が使えないようになる
+					//隕石の破壊
 					m_countAccelerationTime = m_accelerationTime;
 					m_isUseAcceleration = false;
+					m_isMeteoriteDestruction = true;
 				}
 				break;
 		}
@@ -1142,6 +1153,9 @@ public class MyPlayer : MonoBehaviour
 
 		//風が吹く前の位置
 		m_posBeforeWindBlows = transform.position;
+
+		//隕石のフラグ
+		m_isMeteoriteDestruction = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

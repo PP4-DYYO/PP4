@@ -211,6 +211,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		get { return m_score; }
 		set { m_score = value; }
 	}
+
+	/// <summary>
+	/// 隕石破壊フラグ
+	/// </summary>
+	[SyncVar(hook = "SyncIsMeteoriteDestruction")]
+	bool m_isMeteoriteDestruction;
 	#endregion
 
 	#region 名札
@@ -424,11 +430,57 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			nameplate.transform.LookAt(nameplate.transform.position + (nameplate.transform.position - Camera.main.transform.position));
 		}
 
+		//プレイヤー変数の管理
+		ManagingPlayerVariables();
+
 		//アニメーション処理
 		AnimProcess();
 
 		//ジェットウォータ処理
 		JetWaterProcess();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤー変数の管理
+	/// </summary>
+	void ManagingPlayerVariables()
+	{
+		//操作プレイヤーでない
+		if (!isLocalPlayer)
+			return;
+
+		//隕石破壊フラグ
+		if(Player.IsMeteoriteDestruction)
+		{
+			//隕石破壊
+			Player.IsMeteoriteDestruction = false;
+			CmdIsMeteoriteDestruction(true);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石破壊フラグの通知
+	/// </summary>
+	/// <param name="isMeteoriteDestruction">隕石破壊フラグ</param>
+	[Command]
+	void CmdIsMeteoriteDestruction(bool isMeteoriteDestruction)
+	{
+		m_isMeteoriteDestruction = isMeteoriteDestruction;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石破壊フラグの同期
+	/// </summary>
+	/// <param name="isMeteoriteDestruction">隕石破壊フラグ</param>
+	[Client]
+	void SyncIsMeteoriteDestruction(bool isMeteoriteDestruction)
+	{
+		//隕石破壊
+		Game.StageScript.CurrentFieldScript.DestructionOfMeteorite();
+		m_isMeteoriteDestruction = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

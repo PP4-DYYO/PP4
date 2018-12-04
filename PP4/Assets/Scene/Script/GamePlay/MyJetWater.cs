@@ -179,7 +179,6 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	const float playerHeightThree = 5.5f;
 
-
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -266,32 +265,29 @@ public class MyJetWater : MonoBehaviour
 		//水しぶきの向きの変更
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			if (Splashes[m_index].SplasheWaterScript.isDisplay)
+			if (!Splashes[m_index].SplasheWaterScript.isDisplay)
+				continue;
+			if (m_index == 0)
 			{
-				if (m_index == 0)
-				{
-					Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
-						(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[Splashes.Length - 1].SplasheWaterScript.transform.position));
-				}
-				else
-				{
-					Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
-						(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
-				}
-				//空中にあればサイズ変更
-				if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
-				{
-					m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
+				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
+					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[Splashes.Length - 1].SplasheWaterScript.transform.position));
+			}
+			else
+			{
+				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
+					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
+			}
+			//空中にあればサイズ変更
+			if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
+			{
+				m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
 
-					m_splasheIndex = m_index - m_splasheNum;
-					if (m_splasheIndex < 0)
-					{
-						m_splasheIndex += Splashes.Length;
-					}
-					m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
+				m_splasheIndex = m_index - m_splasheNum;
+				if (m_splasheIndex < 0)
+					m_splasheIndex += Splashes.Length;
+				m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
 
-					Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
-				}
+				Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
 			}
 		}
 	}

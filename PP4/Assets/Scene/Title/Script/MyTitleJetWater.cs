@@ -1,6 +1,6 @@
 ﻿////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//2018/9/3～
+//2018/12/4～
 //作成者　京都コンピュータ学院京都駅前校　ゲーム学科　4回生　吉田純基
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9,33 +9,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//----------------------------------------------------------------------------------------------------
-/// <summary>
-/// ジェットウォーター情報
-/// </summary>
-public struct JetWaterInfo
+public class MyTitleJetWater : MonoBehaviour
 {
-	/// <summary>
-	/// タグ
-	/// </summary>
-	public const string TAG = "JetWater";
-}
 
-//----------------------------------------------------------------------------------------------------
-/// <summary>
-/// ジェットウォーター
-/// </summary>
-public class MyJetWater : MonoBehaviour
-{
 	/// <summary>
 	/// プレイヤーのスクリプト
 	/// </summary>
 	[SerializeField]
-	MyPlayer Player;
-	public MyPlayer PlayerScript
-	{
-		set { Player = value; }
-	}
+	GameObject Player;
 
 	/// <summary>
 	/// 水発射点のオブジェクト
@@ -179,6 +160,12 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	const float PLAYER_HEIGHT_THREE = 5.5f;
 
+	/// <summary>
+	/// 水しぶきの親用ゲームオブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject SplashesObject;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -188,7 +175,7 @@ public class MyJetWater : MonoBehaviour
 		//水しぶきの配列に代入
 		for (m_index = 0; m_index < Splashes.Length; m_index++)
 		{
-			Splashes[m_index] = Instantiate(Splashe, transform);
+			Splashes[m_index] = Instantiate(Splashe, SplashesObject.transform);
 			Splashes[m_index].SplasheWaterScript.ActiveChange(false);
 		}
 	}
@@ -214,9 +201,9 @@ public class MyJetWater : MonoBehaviour
 				Splashes[m_splasheNum].SplasheWaterScript.transform.localScale = Vector3.one;
 
 				//親の設定
-				if (Splashes[m_splasheNum].transform.parent != Player.PlayersScript.SplashesTrans && Player)
+				if (Splashes[m_splasheNum].transform.parent != SplashesObject.transform)
 				{
-					Splashes[m_splasheNum].transform.parent = Player.PlayersScript.SplashesTrans;
+					Splashes[m_splasheNum].transform.parent = SplashesObject.transform;
 					Splashes[m_splasheNum].transform.position = Vector3.zero;
 					Splashes[m_splasheNum].transform.rotation = Quaternion.identity;
 					Splashes[m_splasheNum].transform.localScale = Vector3.one;

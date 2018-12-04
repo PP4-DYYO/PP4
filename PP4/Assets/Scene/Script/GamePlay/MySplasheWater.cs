@@ -150,7 +150,7 @@ public class MySplasheWater : MonoBehaviour
 			else
 			{
 				//x、yがまだ小さくなれるとき
-				if (Body.transform.localScale.x - m_splasheXYSizeChange > 0)
+				if (Body.transform.localScale.x - m_splasheXYSizeChange > 0 && Body.transform.localScale.z < 20)
 				{
 					//x、yは小さく、zは大きく変更される
 					m_changedBody.x = Body.transform.localScale.x - m_splasheXYSizeChange;
@@ -158,7 +158,7 @@ public class MySplasheWater : MonoBehaviour
 					m_changedBody.z = Body.transform.localScale.z + m_splasheSizeChange;
 					Body.transform.localScale = m_changedBody;
 				}
-				else
+				else if (Body.transform.localScale.z < 20)
 				{
 					//x、yは同じサイズのまま、zだけ大きく変更される
 					m_changedBody.x = Body.transform.localScale.x;

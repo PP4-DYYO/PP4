@@ -209,6 +209,28 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	const float NEAR_CENTER_POS_X = -3f;
 
+	/// <summary>
+	/// 右のサーファーのジェットウォータークラス
+	/// </summary>
+	[SerializeField]
+	MyTitleJetWater RightMyJetWater;
+
+	/// <summary>
+	/// 右のサーファーのジェットウォータークラスの起動状態
+	/// </summary>
+	bool m_StartRightJetWater;
+
+	/// <summary>
+	/// 左のサーファーのジェットウォータークラス
+	/// </summary>
+	[SerializeField]
+	MyTitleJetWater LeftMyJetWater;
+
+	/// <summary>
+	/// 左のサーファーのジェットウォータークラスの起動状態
+	/// </summary>
+	bool m_StartLeftJetWater;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// スタート
@@ -303,7 +325,7 @@ public class MyTitleManager : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 手前のキャラクターの動きの制御
+	/// 手前のキャラクターの動き(戻るとき)の制御
 	/// </summary>
 	IEnumerator LeaveCharacter()
 	{
@@ -330,7 +352,7 @@ public class MyTitleManager : MonoBehaviour
 		//スタート直後である場合、島の端へ向かって歩く
 		if (FrontCharacter.transform.position.x < FrontStopPosObj.transform.position.x && !m_frontLeave && !m_endLeftSurfingMove)
 		{
-			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x + m_frontMovingSpeed,
+			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x + (m_frontMovingSpeed * Time.deltaTime),
 				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
 		}
 		//島の端に着いた時
@@ -341,9 +363,8 @@ public class MyTitleManager : MonoBehaviour
 		//画面外へ向かって歩く
 		if (m_frontLeave)
 		{
-			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x - m_frontMovingSpeed,
+			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x - (m_frontMovingSpeed * Time.deltaTime),
 				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
-
 			//停止位置で止まる
 			if (FrontCharacter.transform.position.x < FrontStartPos)
 			{
@@ -355,7 +376,7 @@ public class MyTitleManager : MonoBehaviour
 		{
 			if (m_rotationNum < ROTATION_LIMIT)
 			{
-				FrontCharacter.transform.Rotate(Vector3.up * m_frontRotationSpeed);
+				FrontCharacter.transform.Rotate(Vector3.up * m_frontRotationSpeed * Time.deltaTime);
 				m_rotationNum += 1;
 			}
 			else
@@ -376,14 +397,19 @@ public class MyTitleManager : MonoBehaviour
 			//中央からは上昇する
 			if (RightSurfingCharacter.transform.position.x < CENTER_POS_X)
 			{
-				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - m_surfingSpeed,
-				RightSurfingCharacter.transform.position.y + m_surfingSpeed, RightSurfingCharacter.transform.position.z);
+				if (!m_StartRightJetWater)
+				{
+					//水しぶきの発射
+					StartRightSurfingJetWater();
+				}
+				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingSpeed * Time.deltaTime),
+				RightSurfingCharacter.transform.position.y + (1.5f * m_surfingSpeed * Time.deltaTime), RightSurfingCharacter.transform.position.z);
 
 				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
 			}
 			else
 			{
-				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - m_surfingSpeed,
+				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingSpeed * Time.deltaTime),
 				RightSurfingCharacter.transform.position.y, RightSurfingCharacter.transform.position.z);
 			}
 		}
@@ -400,13 +426,18 @@ public class MyTitleManager : MonoBehaviour
 			//中央からは上昇する
 			if (LeftSurfingCharacter.transform.position.x > CENTER_POS_X)
 			{
-				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + m_surfingSpeed,
-					LeftSurfingCharacter.transform.position.y + +m_surfingSpeed, LeftSurfingCharacter.transform.position.z);
+				if (!m_StartLeftJetWater)
+				{
+					//水しぶきの発射
+					StartLeftSurfingJetWater();
+				}
+				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingSpeed * Time.deltaTime),
+					LeftSurfingCharacter.transform.position.y + (1.5f * m_surfingSpeed * Time.deltaTime), LeftSurfingCharacter.transform.position.z);
 				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
 			}
 			else
 			{
-				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + m_surfingSpeed,
+				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingSpeed * Time.deltaTime),
 					LeftSurfingCharacter.transform.position.y, LeftSurfingCharacter.transform.position.z);
 			}
 
@@ -421,17 +452,35 @@ public class MyTitleManager : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 右のサーファーのジェットの起動
+	/// </summary>
+	void StartRightSurfingJetWater()
+	{
+		RightMyJetWater.JetFire(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 左のサーファーのジェットの起動
+	/// </summary>
+	void StartLeftSurfingJetWater()
+	{
+		LeftMyJetWater.JetFire(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// スタートメッセージの色の変更
 	/// </summary>
 	private void MessageColorChange()
 	{
 		if (m_messagAlphaColor > 0 && !m_messagAlphaColorPlus)
 		{
-			m_messagAlphaColor -= m_ChangeAlphaColorSpeed;
+			m_messagAlphaColor -= m_ChangeAlphaColorSpeed * Time.deltaTime;
 		}
 		else if (m_messagAlphaColor < 1 && m_messagAlphaColorPlus)
 		{
-			m_messagAlphaColor += m_ChangeAlphaColorSpeed;
+			m_messagAlphaColor += m_ChangeAlphaColorSpeed * Time.deltaTime;
 		}
 
 		if (m_messagAlphaColor >= 1)

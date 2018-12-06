@@ -297,6 +297,12 @@ public class MyMatching : MonoBehaviour
 	/// </summary>
 	void FinishMatching()
 	{
+		//初期状態
+		m_state = MatchingStatus.Matching;
+		m_netManager.IsStandbyState = true;
+		m_netManager.IsConnectionWithServerIsBroken = false;
+		MatchingUi.HideRematch();
+
 		MySceneManager.Instance.ChangeScene(MyScene.Armed);
 	}
 

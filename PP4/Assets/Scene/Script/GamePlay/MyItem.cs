@@ -70,6 +70,7 @@ public class MyItem : MonoBehaviour
 			//コイン取得
 			gameObject.SetActive(false);
 			Effect.Play();
+			MySoundManager.Instance.Play(SeCollection.Coin, true, false, transform.position);
 		}
 	}
 

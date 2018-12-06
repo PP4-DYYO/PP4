@@ -176,6 +176,9 @@ public class MyCloud : MonoBehaviour
 			//数字のループ
 			if (m_thunderNum >= int.MaxValue)
 				m_thunderNum = 0;
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Thundercloud, true, transform.position.x, transform.position.y, transform.position.z);
 		}
 
 		//落雷が終わるタイミング
@@ -190,6 +193,38 @@ public class MyCloud : MonoBehaviour
 		//雷の向き(カメラ向き＋ローカルXZ軸回転の無効)
 		Thunder.transform.LookAt(Camera.main.transform);
 		Thunder.transform.localEulerAngles = Vector3.Scale(Thunder.transform.localEulerAngles, Vector3.up);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 重なり始める判定
+	/// </summary>
+	/// <param name="other">重なったもの</param>
+	void OnTriggerEnter(Collider other)
+	{
+		//タイプ
+		switch (m_type)
+		{
+			case CloudType.RainCloud:
+				RainCloudProcess();
+				break;
+			case CloudType.Thundercloud:
+				break;
+			case CloudType.WindCloud:
+				MySoundManager.Instance.Play(SeCollection.WindCloud, true, transform.position.x, transform.position.y, transform.position.z);
+				break;
+			case CloudType.GoldCloud:
+				break;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 雨雲の処理
+	/// </summary>
+	void RainCloudProcess()
+	{
+		MySoundManager.Instance.Play(SeCollection.RainCloud, true, transform.position.x, transform.position.y, transform.position.z);
 	}
 
 	//----------------------------------------------------------------------------------------------------

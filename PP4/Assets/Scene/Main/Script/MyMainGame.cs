@@ -718,6 +718,9 @@ public class MyMainGame : MyGame
 			//レベルとパワーの同期
 			OperatingNetPlayerSetting.CmdLevel(MyGameInfo.Instance.Level);
 			OperatingNetPlayerSetting.CmdPower(MyGameInfo.Instance.Power);
+
+			//BGM
+			MySoundManager.Instance.Play(BgmCollection.Matching);
 		}
 
 		//ゲームが開始できるか
@@ -925,6 +928,9 @@ public class MyMainGame : MyGame
 			m_isDisplayRank = true;
 			SettingOfCameraInBattleStartState();
 			MainUi.BattleStart(m_battleTime);
+
+			//BGM
+			MySoundManager.Instance.StopBGM();
 		}
 
 		//バトル直前のタイミング
@@ -1006,6 +1012,9 @@ public class MyMainGame : MyGame
 			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomeOperablePursuitCamera();
 			m_isTimeToDisplayPlayerNameOnMapHasPassed = false;
+
+			//BGM
+			MySoundManager.Instance.Play(BgmCollection.Battle);
 		}
 
 		//ステージとプレイヤーとカメラとUI
@@ -1164,6 +1173,9 @@ public class MyMainGame : MyGame
 			OperatingNetPlayerSetting.MakeItBattleEndState();
 			MainUi.EndBattle();
 			m_isFadeOutAfterBattleEnds = false;
+
+			//BGM
+			MySoundManager.Instance.StopBGM();
 		}
 
 		//フェードアウトしていないandフェードアウト時間
@@ -1321,6 +1333,9 @@ public class MyMainGame : MyGame
 
 			//表彰台の完全表示
 			Stage.CurrentFieldScript.MovePodium(1);
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Result);
 		}
 
 		//結果表示していないand結果表示する時間

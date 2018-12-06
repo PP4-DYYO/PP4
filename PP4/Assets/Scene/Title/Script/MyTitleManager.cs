@@ -254,6 +254,9 @@ public class MyTitleManager : MonoBehaviour
 		//左のサーファーの状態
 		m_leftSurfingStartPos = LeftSurfingCharacter.transform.position;
 		m_endLeftSurfingMove = false;
+
+		//BGM
+		MySoundManager.Instance.Play(BgmCollection.Title);
 	}
 
 	//----------------------------------------------------------------------------------------------------

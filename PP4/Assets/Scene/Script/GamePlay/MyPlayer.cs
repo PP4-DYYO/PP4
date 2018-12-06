@@ -816,6 +816,9 @@ public class MyPlayer : MonoBehaviour
 			//平面のベクトルの長さをステージ半径にする
 			transform.position = (Vector3.Scale(transform.position, (Vector3.right + Vector3.forward)).normalized
 				* Players.GameScript.StageScript.CurrentFieldScript.FieldRudius) + (Vector3.up * transform.position.y);
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Storm, true, true, transform.position);
 		}
 	}
 

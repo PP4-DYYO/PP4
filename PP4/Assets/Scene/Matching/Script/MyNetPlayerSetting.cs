@@ -436,8 +436,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//アニメーション処理
 		AnimProcess();
 
-		//ジェットウォータ処理
-		JetWaterProcess();
+		//アニメーションに影響される処理
+		ProcessAffectedByAnim();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -542,6 +542,21 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncState(PlayerBehaviorStatus state)
 	{
 		m_state = state;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// アニメーションに影響を受ける処理
+	/// </summary>
+	void ProcessAffectedByAnim()
+	{
+		//水噴射SE
+		if (m_state == PlayerBehaviorStatus.HorizontalMovement || m_state == PlayerBehaviorStatus.IdleInTheAir
+			|| m_state == PlayerBehaviorStatus.JetDescent || m_state == PlayerBehaviorStatus.JetRise)
+			MySoundManager.Instance.Play(SeCollection.WaterInjection, true, transform.position.x, transform.position.y, transform.position.z);
+
+		//ジェットウォータ処理
+		JetWaterProcess();
 	}
 
 	//----------------------------------------------------------------------------------------------------

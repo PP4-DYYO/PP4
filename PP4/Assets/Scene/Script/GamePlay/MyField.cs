@@ -285,6 +285,7 @@ public class MyField : MonoBehaviour
 			{
 				ThunderNotice.SetActive(false);
 				LightningOfThunder.SetActive(true);
+				MySoundManager.Instance.Play(SeCollection.Lightning);
 			}
 			return;
 		}
@@ -456,6 +457,9 @@ public class MyField : MonoBehaviour
 		Thundercloud.Play();
 		ThunderNotice.SetActive(true);
 		m_countThunderDuration = 0;
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Thundercloud);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -498,6 +502,7 @@ public class MyField : MonoBehaviour
 
 		//爆発演出
 		MeteoriteDestructionEffect.Play();
+		MySoundManager.Instance.Play(SeCollection.MeteoriteDestroyed, true, true, Meteorite.transform.position);
 	}
 
 	//----------------------------------------------------------------------------------------------------

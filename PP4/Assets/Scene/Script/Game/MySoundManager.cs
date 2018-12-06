@@ -1,0 +1,425 @@
+﻿////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//2018/8/11～
+//制作者　京都コンピュータ学院京都駅前校　ゲーム学科　四回生　奥田裕也
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+//----------------------------------------------------------------------------------------------------
+//Enum・Struct
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// BGM集
+/// </summary>
+public enum BgmCollection
+{
+	/// <summary>
+	/// タイトル
+	/// </summary>
+	Title,
+	/// <summary>
+	/// 武装
+	/// </summary>
+	Armed,
+	/// <summary>
+	/// マッチング
+	/// </summary>
+	Matching,
+	/// <summary>
+	/// バトルの始まり
+	/// </summary>
+	BeginningOfBattle,
+	/// <summary>
+	/// バトル
+	/// </summary>
+	Battle,
+	/// <summary>
+	/// 勝ち
+	/// </summary>
+	Win,
+	/// <summary>
+	/// 負け
+	/// </summary>
+	Defeat,
+	/// <summary>
+	/// クレジット
+	/// </summary>
+	Credit,
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// SE集
+/// </summary>
+public enum SeCollection
+{
+	/// <summary>
+	/// 選択
+	/// </summary>
+	Select,
+	/// <summary>
+	/// 決定
+	/// </summary>
+	Decide,
+	/// <summary>
+	/// キャンセル
+	/// </summary>
+	Cancel,
+	/// <summary>
+	/// 注意
+	/// </summary>
+	Note,
+	/// <summary>
+	/// 目が輝く
+	/// </summary>
+	EyesShine,
+	/// <summary>
+	/// 水噴射
+	/// </summary>
+	WaterInjection,
+	/// <summary>
+	/// 水しぶきの泡
+	/// </summary>
+	SplashedFoam,
+	/// <summary>
+	/// 足音
+	/// </summary>
+	Footsteps,
+	/// <summary>
+	/// 水しぶきが水面に落ちる
+	/// </summary>
+	SplashFallsOnSurfaceOfWater,
+	/// <summary>
+	/// キャラクターが消える
+	/// </summary>
+	CharacterDisappears,
+	/// <summary>
+	/// プレイヤーが入室
+	/// </summary>
+	PlayerEnters,
+	/// <summary>
+	/// プレイヤーが退出
+	/// </summary>
+	PlayerLeaves,
+	/// <summary>
+	/// 人が集まった
+	/// </summary>
+	PeopleGathered,
+	/// <summary>
+	/// 準備
+	/// </summary>
+	Ready,
+	/// <summary>
+	/// ゲーム開始
+	/// </summary>
+	Go,
+	/// <summary>
+	/// 水を被る
+	/// </summary>
+	WearWater,
+	/// <summary>
+	/// 帯電
+	/// </summary>
+	Charging,
+	/// <summary>
+	/// 炎オーラ
+	/// </summary>
+	FlameAura,
+	/// <summary>
+	/// 雷オーラ
+	/// </summary>
+	LightningAura,
+	/// <summary>
+	/// 土オーラ
+	/// </summary>
+	EarthAura,
+	/// <summary>
+	/// 落下の始まり
+	/// </summary>
+	BeginningOfFall,
+	/// <summary>
+	/// 落下中
+	/// </summary>
+	Falling,
+	/// <summary>
+	/// コイン
+	/// </summary>
+	Coin,
+	/// <summary>
+	/// 嵐
+	/// </summary>
+	Storm,
+	/// <summary>
+	/// 雨雲
+	/// </summary>
+	RainCloud,
+	/// <summary>
+	/// 風雲
+	/// </summary>
+	WindCloud,
+	/// <summary>
+	/// 雷雲
+	/// </summary>
+	Thundercloud,
+	/// <summary>
+	/// 落雷
+	/// </summary>
+	Lightning,
+	/// <summary>
+	/// 隕石
+	/// </summary>
+	Meteorite,
+	/// <summary>
+	/// 隕石が破壊
+	/// </summary>
+	MeteoriteDestroyed,
+	/// <summary>
+	/// 空中ミサイル
+	/// </summary>
+	AirMissile,
+	/// <summary>
+	/// バトル終了
+	/// </summary>
+	BattleEnd,
+	/// <summary>
+	/// 着地成功
+	/// </summary>
+	SuccessfulLanding,
+	/// <summary>
+	/// 着地失敗
+	/// </summary>
+	LandingFailed,
+	/// <summary>
+	/// 結果
+	/// </summary>
+	Result,
+	/// <summary>
+	/// 経験値のアップ
+	/// </summary>
+	UpExp,
+	/// <summary>
+	/// レベルのアップ
+	/// </summary>
+	UpLv,
+	/// <summary>
+	/// プレイヤーが横切る
+	/// </summary>
+	PlayerCrosses,
+}
+
+//----------------------------------------------------------------------------------------------------
+//クラス
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// サウンドマネージャークラス
+/// </summary>
+public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
+{
+	#region オーディオソース
+	[Header("オーディオソース")]
+	/// <summary>
+	/// BGM用のオーディオソース
+	/// </summary>
+	[SerializeField]
+	AudioSource BgmAudioSource;
+
+	/// <summary>
+	/// SE用の3Dオーディオソース
+	/// </summary>
+	[SerializeField]
+	AudioSource[] Se3DAudioSources;
+
+	/// <summary>
+	/// SE用の2Dオーディオソース
+	/// </summary>
+	[SerializeField]
+	AudioSource Se2DAudioSource;
+	#endregion
+
+	#region BGM
+	[Header("BGM")]
+	/// <summary>
+	/// BGM達
+	/// </summary>
+	[SerializeField]
+	AudioClip[] Bgms;
+
+	/// <summary>
+	/// BGMの小音量
+	/// </summary>
+	[SerializeField]
+	float m_bgmSmallVolume;
+
+	/// <summary>
+	/// BGM鳴らすか
+	/// </summary>
+	bool m_isBgm = true;
+	public bool IsBgm
+	{
+		set
+		{
+			m_isBgm = value;
+			BgmAudioSource.mute = m_isBgm;
+		}
+	}
+
+	/// <summary>
+	/// BGMの音量
+	/// </summary>
+	float m_bgmVolume;
+	public float BgmVolume
+	{
+		set
+		{
+			m_bgmVolume = value;
+			BgmAudioSource.volume = m_bgmVolume;
+		}
+	}
+
+	/// <summary>
+	/// BGMのピッチ
+	/// </summary>
+	float m_bgmPitch;
+	public float BgmPitch
+	{
+		set
+		{
+			m_bgmPitch = value;
+			BgmAudioSource.pitch = m_bgmPitch;
+		}
+	}
+	#endregion
+
+	#region SE
+	[Header("SE")]
+	/// <summary>
+	/// SE達
+	/// </summary>
+	[SerializeField]
+	AudioClip[] Ses;
+
+	/// <summary>
+	/// SE鳴らすか
+	/// </summary>
+	bool m_isSe = true;
+	public bool IsSe
+	{
+		set
+		{
+			m_isSe = value;
+			foreach(var audioSource in Se3DAudioSources)
+			{
+				audioSource.mute = m_isSe;
+			}
+			Se2DAudioSource.mute = m_isSe;
+		}
+	}
+
+	/// <summary>
+	/// 3DのSEの番号
+	/// </summary>
+	int m_se3DAudioSourceNum;
+	#endregion
+
+	#region 作業用
+	[Header("作業用")]
+	/// <summary>
+	/// 作業用のAudioSource
+	/// </summary>
+	AudioSource m_workAudioSource;
+
+	/// <summary>
+	/// 作業用のVector３
+	/// </summary>
+	Vector3 m_workVector3 = new Vector3();
+	#endregion
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// BGMを再生
+	/// </summary>
+	/// <param name="Bgm">BGM</param>
+	public void Play(BgmCollection Bgm)
+	{
+		if (m_isBgm)
+		{
+			//BGMを止める
+			StopBGM();
+
+			//BGMをセット
+			BgmAudioSource.clip = Bgms[(int)Bgm];
+
+			//再生
+			BgmAudioSource.Play();
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// BGMを止める
+	/// </summary>
+	public void StopBGM()
+	{
+		if (BgmAudioSource.isPlaying)
+		{
+			BgmAudioSource.Stop();
+			BgmAudioSource.pitch = 1f;
+			BgmAudioSource.volume = 1f;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// BGMを小音量にする
+	/// </summary>
+	public void MakeBgmSmallVolume()
+	{
+		m_bgmVolume = m_bgmSmallVolume;
+		BgmAudioSource.volume = m_bgmVolume;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// SEを再生
+	/// </summary>
+	/// <param name="Se">サウンドエフェクト</param>
+	/// <param name="isSe3D">3DのSEか</param>
+	/// <param name="posX">Xの位置</param>
+	/// <param name="posY">Yの位置</param>
+	/// <param name="posZ">Zの位置</param>
+	public void Play(SeCollection Se, bool isSe3D = false, float posX = 0, float posY = 0, float posZ = 0)
+	{
+		if (m_isSe)
+		{
+			//2DのSEか3DのSEか
+			if(!isSe3D)
+			{
+				m_workAudioSource = Se2DAudioSource;
+			}
+			else
+			{
+				//音切れ防止
+				m_workAudioSource = Se3DAudioSources[m_se3DAudioSourceNum];
+				m_se3DAudioSourceNum = (m_se3DAudioSourceNum + 1) % Se3DAudioSources.Length;
+			}
+
+			//位置
+			m_workVector3.Set(posX, posY, posZ);
+			m_workAudioSource.transform.position = m_workVector3;
+
+			//SEの設定
+			m_workAudioSource.clip = Ses[(int)Se];
+
+			//再生
+			m_workAudioSource.Play();
+		}
+	}
+}

@@ -553,7 +553,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//水噴射SE
 		if (m_state == PlayerBehaviorStatus.HorizontalMovement || m_state == PlayerBehaviorStatus.IdleInTheAir
 			|| m_state == PlayerBehaviorStatus.JetDescent || m_state == PlayerBehaviorStatus.JetRise)
-			MySoundManager.Instance.Play(SeCollection.WaterInjection, true, transform.position.x, transform.position.y, transform.position.z);
+			MySoundManager.Instance.Play(SeCollection.WaterInjection, true, false, transform.position);
 
 		//ジェットウォータ処理
 		JetWaterProcess();

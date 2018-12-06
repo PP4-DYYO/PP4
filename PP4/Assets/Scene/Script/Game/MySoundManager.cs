@@ -214,6 +214,35 @@ public enum SeCollection
 }
 
 //----------------------------------------------------------------------------------------------------
+/// <summary>
+/// 特別なSE集
+/// </summary>
+public enum SpecialSeCollection
+{
+	/// <summary>
+	/// 嵐
+	/// </summary>
+	Storm,
+	/// <summary>
+	/// 雨雲
+	/// </summary>
+	RainCloud,
+	/// <summary>
+	/// 風雲
+	/// </summary>
+	WindCloud,
+	/// <summary>
+	/// 雷雲
+	/// </summary>
+	Thundercloud,
+
+	/// <summary>
+	/// 数
+	/// </summary>
+	Count,
+}
+
+//----------------------------------------------------------------------------------------------------
 //クラス
 //----------------------------------------------------------------------------------------------------
 
@@ -236,6 +265,12 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 	/// </summary>
 	[SerializeField]
 	AudioSource[] Se3DAudioSources;
+
+	/// <summary>
+	/// 特別なSE用の3Dオーディオソース
+	/// </summary>
+	[SerializeField]
+	AudioSource[] SpecialSe3DAudioSources;
 
 	/// <summary>
 	/// SE用の2Dオーディオソース
@@ -327,6 +362,11 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 	/// 3DのSEの番号
 	/// </summary>
 	int m_se3DAudioSourceNum;
+
+	/// <summary>
+	/// 特別なSE番号の配列
+	/// </summary>
+	int[] m_specialSeNum = new int[(int)SpecialSeCollection.Count];
 	#endregion
 
 	#region 作業用
@@ -335,12 +375,27 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 	/// 作業用のAudioSource
 	/// </summary>
 	AudioSource m_workAudioSource;
-
+	
 	/// <summary>
-	/// 作業用のVector３
+	/// 作業用のInt
 	/// </summary>
-	Vector3 m_workVector3 = new Vector3();
+	int m_workInt;
 	#endregion
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 起動
+	/// </summary>
+	protected override void Awake()
+	{
+		base.Awake();
+
+		//特別なSE番号の初期化
+		for(m_workInt = 0; m_workInt < m_specialSeNum.Length; m_workInt++)
+		{
+			m_specialSeNum[m_workInt] = -1;
+		}
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -392,10 +447,9 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 	/// </summary>
 	/// <param name="Se">サウンドエフェクト</param>
 	/// <param name="isSe3D">3DのSEか</param>
-	/// <param name="posX">Xの位置</param>
-	/// <param name="posY">Yの位置</param>
-	/// <param name="posZ">Zの位置</param>
-	public void Play(SeCollection Se, bool isSe3D = false, float posX = 0, float posY = 0, float posZ = 0)
+	/// <param name="isSpecial">特別か</param>
+	/// <param name="pos">位置</param>
+	public void Play(SeCollection Se, bool isSe3D = false, bool isSpecial = false, Vector3? pos = null)
 	{
 		if (m_isSe)
 		{
@@ -406,20 +460,43 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 			}
 			else
 			{
-				//音切れ防止
-				m_workAudioSource = Se3DAudioSources[m_se3DAudioSourceNum];
-				m_se3DAudioSourceNum = (m_se3DAudioSourceNum + 1) % Se3DAudioSources.Length;
+				if (isSpecial)
+				{
+					//特別なSE番号の検索
+					for(m_workInt = 0; m_workInt < m_specialSeNum.Length; m_workInt++)
+					{
+						//未使用オーディオソース
+						if (m_specialSeNum[m_workInt] == -1)
+						{
+							m_specialSeNum[m_workInt] = (int)Se;
+						}
+
+						//特別なSEのオーディオソース発見
+						if (m_specialSeNum[m_workInt] == (int)Se)
+						{
+							m_workAudioSource = SpecialSe3DAudioSources[m_workInt];
+							break;
+						}
+					}
+				}
+				else
+				{
+					//音切れ防止
+					m_workAudioSource = Se3DAudioSources[m_se3DAudioSourceNum];
+					m_se3DAudioSourceNum = (m_se3DAudioSourceNum + 1) % Se3DAudioSources.Length;
+				}
 			}
 
 			//位置
-			m_workVector3.Set(posX, posY, posZ);
-			m_workAudioSource.transform.position = m_workVector3;
+			pos = (pos == null) ? Vector3.zero : pos;
+			m_workAudioSource.transform.position = (Vector3)pos;
 
 			//SEの設定
 			m_workAudioSource.clip = Ses[(int)Se];
 
 			//再生
-			m_workAudioSource.Play();
+			if (!isSpecial || !m_workAudioSource.isPlaying)
+				m_workAudioSource.Play();
 		}
 	}
 }

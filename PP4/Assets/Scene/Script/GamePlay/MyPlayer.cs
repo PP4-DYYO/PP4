@@ -127,28 +127,6 @@ public enum PlayerBehaviorStatus
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
-/// プレイヤー情報
-/// </summary>
-public struct PlayerInfo
-{
-	/// <summary>
-	/// タグ
-	/// </summary>
-	public const string TAG = "Player";
-
-	/// <summary>
-	/// アニメーションパラメータ名
-	/// </summary>
-	public const string ANIM_PARAMETER_NAME = "PlayerAnimIdx";
-
-	/// <summary>
-	/// アニメーションの回転名
-	/// </summary>
-	public const string ANIM_ROTATION_NAME = "Rotation";
-}
-
-//----------------------------------------------------------------------------------------------------
-/// <summary>
 /// 落下理由
 /// </summary>
 public enum ReasonForFalling
@@ -173,6 +151,74 @@ public enum ReasonForFalling
 	/// 隕石
 	/// </summary>
 	Meteorite,
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// オーラ属性
+/// </summary>
+public enum AuraAttribute
+{
+	/// <summary>
+	/// 温熱
+	/// </summary>
+	Heat,
+	/// <summary>
+	/// 弾性
+	/// </summary>
+	Elasticity,
+	/// <summary>
+	/// 電気
+	/// </summary>
+	Electrical,
+	/// <summary>
+	/// なし
+	/// </summary>
+	Non,
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// プレイヤー情報
+/// </summary>
+public struct PlayerInfo
+{
+	/// <summary>
+	/// タグ
+	/// </summary>
+	public const string TAG = "Player";
+
+	/// <summary>
+	/// アニメーションパラメータ名
+	/// </summary>
+	public const string ANIM_PARAMETER_NAME = "PlayerAnimIdx";
+
+	/// <summary>
+	/// アニメーションの回転名
+	/// </summary>
+	public const string ANIM_ROTATION_NAME = "Rotation";
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
+/// オーラ情報
+/// </summary>
+public struct AuraInfo
+{
+	/// <summary>
+	/// 温熱のタグ
+	/// </summary>
+	public const string HEAT_TAG = "HeatAura";
+
+	/// <summary>
+	/// 弾性のタグ
+	/// </summary>
+	public const string ELASTICITY_TAG = "ElasticityAura";
+
+	/// <summary>
+	/// 電気のタグ
+	/// </summary>
+	public const string ELECTRICAL_TAG = "ElectricalAura";
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -249,6 +295,24 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	ParticleSystem StaticElectricity;
+
+	/// <summary>
+	/// 温熱オーラ
+	/// </summary>
+	[SerializeField]
+	GameObject HeatAura;
+
+	/// <summary>
+	/// 弾性オーラ
+	/// </summary>
+	[SerializeField]
+	GameObject ElasticityAura;
+
+	/// <summary>
+	/// 電気オーラ
+	/// </summary>
+	[SerializeField]
+	GameObject ElectricalAura;
 	#endregion
 
 	#region トランスフォーム
@@ -308,12 +372,6 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_transferAmountByWaterPressure;
-
-	/// <summary>
-	/// 加速による移動倍率
-	/// </summary>
-	[SerializeField]
-	float m_magnificationOfMovementByAcceleration;
 
 	/// <summary>
 	/// 滞在するための回転量
@@ -377,18 +435,6 @@ public class MyPlayer : MonoBehaviour
 	float m_consumptionRateAtJetDeceleration;
 
 	/// <summary>
-	/// 加速時間
-	/// </summary>
-	[SerializeField]
-	float m_accelerationTime;
-
-	/// <summary>
-	/// 加速回復率
-	/// </summary>
-	[SerializeField]
-	float m_accelerationRecoveryRate;
-
-	/// <summary>
 	/// ジェット回復率
 	/// </summary>
 	[SerializeField]
@@ -416,23 +462,58 @@ public class MyPlayer : MonoBehaviour
 	float m_countJetUseTime;
 
 	/// <summary>
-	/// 加速時間を数える
-	/// </summary>
-	float m_countAccelerationTime;
-
-	/// <summary>
-	/// 加速が使える
-	/// </summary>
-	bool m_isUseAcceleration = true;
-	public bool IsUseAcceleration
-	{
-		get { return m_isUseAcceleration; }
-	}
-
-	/// <summary>
 	/// 回復操作の回数を数える
 	/// </summary>
 	int m_countNumOfRecoveryOperations;
+	#endregion
+
+	#region オーラ
+	[Header("オーラ")]
+	/// <summary>
+	/// スペシャル時間
+	/// </summary>
+	[SerializeField]
+	float m_spTime;
+
+	/// <summary>
+	/// スペシャル回復率
+	/// </summary>
+	[SerializeField]
+	float m_spRecoveryRate;
+
+	/// <summary>
+	/// オーラによる変数倍率
+	/// </summary>
+	[SerializeField]
+	float m_variableMagnificationByAura;
+
+	/// <summary>
+	/// オーラ属性
+	/// </summary>
+	AuraAttribute m_aura;
+	public AuraAttribute Aura
+	{
+		get { return m_aura; }
+	}
+
+	/// <summary>
+	/// フレーム前のオーラ属性
+	/// </summary>
+	AuraAttribute m_auraPrev = AuraAttribute.Non;
+
+	/// <summary>
+	/// スペシャル時間を数える
+	/// </summary>
+	float m_countSpTime;
+
+	/// <summary>
+	/// スペシャルが使える
+	/// </summary>
+	bool m_isUseSp = true;
+	public bool IsUseSp
+	{
+		get { return m_isUseSp; }
+	}
 	#endregion
 
 	#region サポート
@@ -484,7 +565,7 @@ public class MyPlayer : MonoBehaviour
 	/// 雨雲回復率
 	/// </summary>
 	[SerializeField]
-	float m_RainCloudRecoveryRate;
+	float m_rainCloudRecoveryRate;
 
 	/// <summary>
 	/// 風が吹く間隔を数える
@@ -518,6 +599,16 @@ public class MyPlayer : MonoBehaviour
 	/// Aボタンを押しっぱなし
 	/// </summary>
 	bool m_isKeepPressingAButton;
+
+	/// <summary>
+	/// Bボタンを押しっぱなし
+	/// </summary>
+	bool m_isKeepPressingBButton;
+
+	/// <summary>
+	/// Xボタンを押しっぱなし
+	/// </summary>
+	bool m_isKeepPressingXButton;
 
 	/// <summary>
 	/// Lボタンを押しっぱなし
@@ -577,6 +668,8 @@ public class MyPlayer : MonoBehaviour
 	void Update()
 	{
 		m_isKeepPressingAButton = Input.GetButton("AButton");
+		m_isKeepPressingBButton = Input.GetButton("BButton");
+		m_isKeepPressingXButton = Input.GetButton("XButton");
 		m_isKeepPressingLButton = Input.GetButton("LButton");
 		m_isKeepPressingRButton = Input.GetButton("RButton");
 		m_isPushedRButton = Input.GetButtonDown("RButton");
@@ -651,8 +744,8 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void ExamineJet()
 	{
-		//加速制限
-		RestrictAcceleration();
+		//スペシャルの制御
+		ControlSpecials();
 
 		//飛んでいるand落下していない
 		if (m_isFly && !m_isFalling)
@@ -660,12 +753,16 @@ public class MyPlayer : MonoBehaviour
 			//ジェットの上昇(加速含む)・下降・滞在(加速含む)によってジェットの燃料が減る
 			if (m_isKeepPressingRButton)
 				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetAcceleration
-					* (m_isKeepPressingAButton ? m_magnificationOfMovementByAcceleration : 1);
+					* (m_aura == AuraAttribute.Heat ? m_variableMagnificationByAura : 1);
 			else if (m_isKeepPressingLButton)
 				m_countJetUseTime += Time.deltaTime * m_consumptionRateAtJetDeceleration;
 			else
 				m_countJetUseTime += Time.deltaTime
-					* (m_horizontalTravelDistance != Vector3.zero && m_isKeepPressingAButton ? m_magnificationOfMovementByAcceleration : 1);
+					* (m_horizontalTravelDistance != Vector3.zero && m_aura == AuraAttribute.Heat ? m_variableMagnificationByAura : 1);
+
+			//オーラによる回復
+			if (m_aura == AuraAttribute.Elasticity)
+				m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - Time.deltaTime * m_variableMagnificationByAura);
 		}
 		else if (!m_isFalling)
 		{
@@ -688,28 +785,79 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 加速を制限する
+	/// スペシャルを制御する
 	/// </summary>
-	void RestrictAcceleration()
+	void ControlSpecials()
 	{
-		//加速制限を設ける
-		m_isKeepPressingAButton &= (m_isUseAcceleration && !m_isFalling);
+		//スペシャルの制限を設ける
+		m_isKeepPressingAButton &= (m_isUseSp && !m_isFalling) && !m_isKeepPressingBButton && !m_isKeepPressingXButton;
+		m_isKeepPressingBButton &= (m_isUseSp && !m_isFalling) && !m_isKeepPressingAButton && !m_isKeepPressingXButton;
+		m_isKeepPressingXButton &= (m_isUseSp && !m_isFalling) && !m_isKeepPressingAButton && !m_isKeepPressingBButton;
 
-		//加速時間
-		m_countAccelerationTime += ((m_isKeepPressingRButton && m_isKeepPressingAButton)
-			|| (m_horizontalTravelDistance != Vector3.zero && m_isKeepPressingAButton) ?
-			Time.deltaTime : (-Time.deltaTime * m_accelerationRecoveryRate));
+		//スペシャル時間
+		m_countSpTime += (m_isKeepPressingAButton || m_isKeepPressingBButton || m_isKeepPressingXButton) ?
+			Time.deltaTime : (-Time.deltaTime * m_spRecoveryRate);
 
-		//加速時間の上限下限
-		if (m_countAccelerationTime > m_accelerationTime)
+		//スペシャル時間の上限下限
+		if (m_countSpTime > m_spTime)
 		{
-			m_countAccelerationTime = m_accelerationTime;
-			m_isUseAcceleration = false;
+			m_countSpTime = m_spTime;
+			m_isUseSp = false;
 		}
-		if (m_countAccelerationTime < 0)
+		if (m_countSpTime < 0)
 		{
-			m_countAccelerationTime = 0;
-			m_isUseAcceleration = true;
+			m_countSpTime = 0;
+			m_isUseSp = true;
+		}
+
+		//オーラの纏
+		m_aura = m_isKeepPressingAButton ? AuraAttribute.Heat :
+			m_isKeepPressingBButton ? AuraAttribute.Electrical :
+			m_isKeepPressingXButton ? AuraAttribute.Elasticity : AuraAttribute.Non;
+		WrappingUpAura(m_aura);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラをまとう
+	/// </summary>
+	/// <param name="aura">オーラ</param>
+	void WrappingUpAura(AuraAttribute aura)
+	{
+		m_aura = aura;
+
+		//オーラが変わった
+		if(m_aura != m_auraPrev)
+		{
+			//前回のオーラ
+			switch(m_auraPrev)
+			{
+				case AuraAttribute.Heat:
+					HeatAura.SetActive(false);
+					break;
+				case AuraAttribute.Elasticity:
+					ElasticityAura.SetActive(false);
+					break;
+				case AuraAttribute.Electrical:
+					ElectricalAura.SetActive(false);
+					break;
+			}
+
+			//今回のオーラ
+			switch (aura)
+			{
+				case AuraAttribute.Heat:
+					HeatAura.SetActive(true);
+					break;
+				case AuraAttribute.Elasticity:
+					ElasticityAura.SetActive(true);
+					break;
+				case AuraAttribute.Electrical:
+					ElectricalAura.SetActive(true);
+					break;
+			}
+
+			m_auraPrev = aura;
 		}
 	}
 
@@ -730,14 +878,15 @@ public class MyPlayer : MonoBehaviour
 				transform.position -= Vector3.Scale(BoardDirection.forward, Vector3.up) * (m_transferAmountByWaterPressure * Time.deltaTime);
 
 			//Rボタンでジェット上昇(ボードの傾きで上昇量の変化）
-			//Aボタン同時押しで加速
+			//温熱オーラ(Aボタン同時押し)で加速、弾性オーラ(Xボタン同時押し)で減速
 			if (m_isKeepPressingRButton)
 				transform.position += Vector3.Scale(BoardDirection.forward, Vector3.up)
 					* (m_transferAmountByWaterPressure * m_supportRate * Time.deltaTime
-					* (m_isKeepPressingAButton ? m_magnificationOfMovementByAcceleration : 1));
+					* (m_aura == AuraAttribute.Heat ? m_variableMagnificationByAura :
+					m_aura == AuraAttribute.Elasticity ? (1 / m_variableMagnificationByAura) : 1));
 
 			//移動倍率
-			m_workFloat = m_magnificationOfMovementByAcceleration;
+			m_workFloat = m_variableMagnificationByAura;
 
 			//ジェット上昇下降なし
 			if (!m_isKeepPressingLButton && !m_isKeepPressingRButton)
@@ -753,10 +902,10 @@ public class MyPlayer : MonoBehaviour
 				}
 			}
 
-			//水圧による自動移動(Aボタンで加速)
+			//水圧による自動移動(温熱オーラで加速)
 			transform.position += Vector3.Scale(BoardDirection.forward, Vector3.right + Vector3.forward)
 				* (m_transferAmountByWaterPressure * Time.deltaTime
-				* (m_isKeepPressingAButton ? m_workFloat : 1));
+				* (m_aura == AuraAttribute.Heat ? m_workFloat : 1));
 		}
 
 		//後処理
@@ -911,11 +1060,11 @@ public class MyPlayer : MonoBehaviour
 
 		//上昇と下降と水平移動と空中状態と地上
 		if (m_isKeepPressingRButton)
-			m_state = (!m_isKeepPressingAButton ? PlayerBehaviorStatus.JetRise : PlayerBehaviorStatus.JetAccelerationRise);
+			m_state = (m_aura != AuraAttribute.Heat ? PlayerBehaviorStatus.JetRise : PlayerBehaviorStatus.JetAccelerationRise);
 		else if (m_isKeepPressingLButton)
 			m_state = PlayerBehaviorStatus.JetDescent;
 		else if (m_horizontalTravelDistance != Vector3.zero)
-			m_state = (!m_isFly || !m_isKeepPressingAButton) ?
+			m_state = (!m_isFly || m_aura != AuraAttribute.Heat) ?
 				PlayerBehaviorStatus.HorizontalMovement : PlayerBehaviorStatus.HorizontalAccelerationMovement;
 		else if (m_isFly)
 			m_state = PlayerBehaviorStatus.IdleInTheAir;
@@ -977,8 +1126,35 @@ public class MyPlayer : MonoBehaviour
 				break;
 			case StageInfo.THUNDER_TAG:
 				//被雷
-				m_isFalling = true;
-				m_reasonForFalling = ReasonForFalling.Thunderbolt;
+				if (m_aura != AuraAttribute.Electrical)
+				{
+					m_isFalling = true;
+					m_reasonForFalling = ReasonForFalling.Thunderbolt;
+				}
+				break;
+			case AuraInfo.HEAT_TAG:
+				//温熱オーラ
+				if(m_aura == AuraAttribute.Elasticity || m_aura == AuraAttribute.Non)
+				{
+					m_isFalling = true;
+					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+				}
+				break;
+			case AuraInfo.ELASTICITY_TAG:
+				//弾性オーラ
+				if (m_aura == AuraAttribute.Electrical || m_aura == AuraAttribute.Non)
+				{
+					m_isFalling = true;
+					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+				}
+				break;
+			case AuraInfo.ELECTRICAL_TAG:
+				//電気オーラ
+				if (m_aura == AuraAttribute.Heat || m_aura == AuraAttribute.Non)
+				{
+					m_isFalling = true;
+					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+				}
 				break;
 		}
 	}
@@ -1000,7 +1176,8 @@ public class MyPlayer : MonoBehaviour
 				StaticElectricity.Emit(1);
 				break;
 			case CloudInfo.RAIN_TAG:
-				m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_RainCloudRecoveryRate));
+				m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime
+					- (Time.deltaTime * ((m_aura == AuraAttribute.Elasticity) ? m_variableMagnificationByAura : m_rainCloudRecoveryRate)));
 				m_isWearWater = true;
 				break;
 		}
@@ -1043,7 +1220,7 @@ public class MyPlayer : MonoBehaviour
 				break;
 			case PlayerInfo.TAG:
 				//加速移動していない
-				if (!(m_isKeepPressingAButton && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
+				if (!(m_aura == AuraAttribute.Heat && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
 				{
 					m_isFalling = true;
 					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
@@ -1051,7 +1228,7 @@ public class MyPlayer : MonoBehaviour
 				break;
 			case StageInfo.METEORITE_TAG:
 				//加速移動していない
-				if (!(m_isKeepPressingAButton && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
+				if (!(m_aura == AuraAttribute.Heat && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
 				{
 					m_isFalling = true;
 					m_reasonForFalling = ReasonForFalling.Meteorite;
@@ -1059,8 +1236,8 @@ public class MyPlayer : MonoBehaviour
 				else
 				{
 					//隕石の破壊
-					m_countAccelerationTime = m_accelerationTime;
-					m_isUseAcceleration = false;
+					m_countSpTime = m_spTime;
+					m_isUseSp = false;
 					m_isMeteoriteDestruction = true;
 				}
 				break;
@@ -1144,9 +1321,10 @@ public class MyPlayer : MonoBehaviour
 		Rb.isKinematic = false;
 		Rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-		//加速の初期化
-		m_countAccelerationTime = 0;
-		m_isUseAcceleration = true;
+		//スペシャルの初期化
+		WrappingUpAura(AuraAttribute.Non);
+		m_countSpTime = 0;
+		m_isUseSp = true;
 
 		//落下状態の初期化
 		m_countNumOfRecoveryOperations = 0;
@@ -1183,12 +1361,12 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 残った加速ゲージの割合を得る
+	/// 残ったスペシャルゲージの割合を得る
 	/// </summary>
 	/// <returns></returns>
 	public float GetPercentageOfRemainingAccelerationGauge()
 	{
-		return 1f - (m_countAccelerationTime / m_accelerationTime);
+		return 1f - (m_countSpTime / m_spTime);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1219,6 +1397,9 @@ public class MyPlayer : MonoBehaviour
 
 		//水を満タンにする
 		WaterGauge.localScale = Vector3.one;
+
+		//オーラの終了
+		WrappingUpAura(AuraAttribute.Non);
 	}
 
 	//----------------------------------------------------------------------------------------------------

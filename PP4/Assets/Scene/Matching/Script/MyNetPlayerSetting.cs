@@ -216,7 +216,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// オーラ
 	/// </summary>
 	[SyncVar(hook = "SyncAura")]
-	AuraAttribute m_aura;
+	AuraAttribute m_aura = AuraAttribute.Non;
 
 	/// <summary>
 	/// オーラボール
@@ -508,11 +508,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	[Client]
 	void SyncAura(AuraAttribute aura)
 	{
-		if (m_aura != aura)
-		{
-			Player.WrappingUpAura(aura);
-			m_aura = aura;
-		}
+		m_aura = aura;
+		Player.WrappingUpAura(m_aura);
 	}
 
 	//----------------------------------------------------------------------------------------------------

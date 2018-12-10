@@ -450,7 +450,7 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// オーラ属性
 	/// </summary>
-	AuraAttribute m_aura;
+	AuraAttribute m_aura = AuraAttribute.Non;
 	public AuraAttribute Aura
 	{
 		get { return m_aura; }

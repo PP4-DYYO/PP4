@@ -229,6 +229,7 @@ public class MyAuraBall : MonoBehaviour
 				break;
 		}
 
+		m_countTravelTime = 0;
 		m_target = target;
 		m_aura = aura;
 		transform.position = Pitcher.position;

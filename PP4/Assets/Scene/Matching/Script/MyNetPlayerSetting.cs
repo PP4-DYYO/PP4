@@ -869,6 +869,21 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// オーラボールのリセット
+	/// </summary>
+	public void ResetAuraBall()
+	{
+		if(isLocalPlayer)
+		{
+			if (m_auraBall != AuraAttribute.Non)
+				CmdAuraBall(AuraAttribute.Non);
+			if (m_auraBallTarget != null)
+				CmdAuraBallTarget(null);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// オーラボールの通知
 	/// </summary>
 	/// <param name="aura">オーラ</param>

@@ -72,6 +72,12 @@ public class MyAuraBall : MonoBehaviour
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
+	/// プレイヤー
+	/// </summary>
+	[SerializeField]
+	GameObject Player;
+
+	/// <summary>
 	/// 投手
 	/// </summary>
 	[SerializeField]
@@ -182,7 +188,7 @@ public class MyAuraBall : MonoBehaviour
 	void OnTriggerEnter(Collider other)
 	{
 		//プレイヤー
-		if (other.tag == PlayerInfo.TAG)
+		if (other.tag == PlayerInfo.TAG && other.gameObject != Player)
 			EraseAura();
 
 		//オーラ

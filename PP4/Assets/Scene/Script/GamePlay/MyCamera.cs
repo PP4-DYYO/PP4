@@ -459,8 +459,8 @@ public class MyCamera : MonoBehaviour
 			SetPosition(-m_target.transform.forward + Vector3.up * m_playerHeight);
 
 		//カメラの回転量
-		m_rotX = Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity;
-		m_rotY = Input.GetAxis("Mouse Y") * Time.deltaTime * m_rotationSensitivity;
+		m_rotX = Input.GetAxis("RightStickX") * Time.deltaTime * m_rotationSensitivity;
+		m_rotY = Input.GetAxis("RightStickY") * Time.deltaTime * m_rotationSensitivity;
 
 		//プレイヤーの中心位置
 		m_playerCenterPos = m_target.transform.position + Vector3.up * m_heightToWatch;
@@ -496,9 +496,9 @@ public class MyCamera : MonoBehaviour
 
 		//カメラの回転量
 		m_rotX = (m_customCamera[m_numOfCustomCamera].isHorizontalMovement ?
-			Input.GetAxis("Mouse X") * Time.deltaTime * m_rotationSensitivity : 0);
+			Input.GetAxis("RightStickX") * Time.deltaTime * m_rotationSensitivity : 0);
 		m_rotY = (m_customCamera[m_numOfCustomCamera].isVerticalMovement ?
-			Input.GetAxis("Mouse Y") * Time.deltaTime * m_rotationSensitivity : 0);
+			Input.GetAxis("RightStickY") * Time.deltaTime * m_rotationSensitivity : 0);
 
 		//プレイヤーの中心位置
 		m_playerCenterPos = m_target.transform.position + Vector3.up * m_customCamera[m_numOfCustomCamera].heightToWatch;

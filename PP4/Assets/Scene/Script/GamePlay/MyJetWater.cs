@@ -207,7 +207,6 @@ public class MyJetWater : MonoBehaviour
 			if (m_countFiringIntervalTime >= m_firingIntervalTime)
 			{
 				//配列の水しぶきの設定
-
 				Splashes[m_splasheNum].SplasheWaterScript.ActiveChange(true);
 
 				//サイズのリセット

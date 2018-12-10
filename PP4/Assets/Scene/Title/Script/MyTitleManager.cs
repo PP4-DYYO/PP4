@@ -53,6 +53,11 @@ public class MyTitleManager : MonoBehaviour
 	float m_frontMovingSpeed;
 
 	/// <summary>
+	/// 手前にいるキャラクターのコルーチンの開始状況
+	/// </summary>
+	bool m_startFrontCoroutine;
+
+	/// <summary>
 	/// 右からサーブボードで移動するキャラクター
 	/// </summary>
 	[SerializeField]
@@ -88,6 +93,24 @@ public class MyTitleManager : MonoBehaviour
 	GameObject StarEyesEffect;
 
 	/// <summary>
+	/// 左のサーファーの目から飛ぶ星の位置のオブジェクト
+	/// </summary>
+	[SerializeField]
+	Transform StarEyesEffectNomalPosition;
+
+	/// <summary>
+	/// 左のサーファーの目から飛ぶ星の位置のオブジェクト
+	/// </summary>
+	[SerializeField]
+	Transform StarEyesEffectFlyingPosition;
+
+	/// <summary>
+	/// 左のサーファーの目から飛ぶ星のオブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject StarEyesEffectObject;
+
+	/// <summary>
 	/// 右のサーファーが移動しているか
 	/// </summary>
 	bool m_isSurfing;
@@ -96,6 +119,11 @@ public class MyTitleManager : MonoBehaviour
 	/// 右のサーファーのx座標端
 	/// </summary>
 	const float END_POINT_X = -15.0f;
+
+	/// <summary>
+	/// 手前のキャラクターが動き出す右のサーファーのx座標
+	/// </summary>
+	const float START_FRONT_POINT_X = -7.0f;
 
 	/// <summary>
 	/// 右のサーフィン開始位置
@@ -116,7 +144,7 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 左からのサーファーの移動を始める
 	/// </summary>
-	bool m_frontSufingStart;
+	bool m_leftSufingStart;
 
 	/// <summary>
 	/// 左からサーブボードで移動するキャラクターのアニメーション
@@ -169,11 +197,6 @@ public class MyTitleManager : MonoBehaviour
 	float m_frontStartRotationY;
 
 	/// <summary>
-	/// 回転の上限回数
-	/// </summary>
-	const float ROTATION_LIMIT = 45;
-
-	/// <summary>
 	/// 回転の回数
 	/// </summary>
 	float m_rotationNum;
@@ -183,6 +206,16 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_frontRotationSpeed;
+
+	/// <summary>
+	/// 前のキャラクターの最大の回転角度
+	/// </summary>
+	const float MAX_ANGLE = 180;
+
+	/// <summary>
+	/// 回転の上限回数
+	/// </summary>
+	float m_rotationLimit;
 
 	/// <summary>
 	/// 前キャラクターのコルーチン１番目待ち時間
@@ -231,12 +264,29 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	bool m_startLeftJetWater;
 
+	/// <summary>
+	/// タイトルの動きが全て終わった
+	/// </summary>
+	bool m_endTitle;
+
+	/// <summary>
+	/// 再スタートの待ち時間
+	/// </summary>
+	[SerializeField]
+	float m_waitingRestartTime;
+
+	/// <summary>
+	/// 動きが全て終わってからの経過時間
+	/// </summary>
+	float m_elapsedTime;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// スタート
 	/// </summary>
 	void Start()
 	{
+		m_rotationLimit = Mathf.Abs(MAX_ANGLE / m_frontRotationSpeed);
 		//手前のキャラクターの状態
 		m_changeStarEye = false;
 		FrontStartPos = FrontCharacter.transform.position.x;
@@ -292,6 +342,13 @@ public class MyTitleManager : MonoBehaviour
 			el.transform.position = StarEyesPosition.transform.position;
 		}
 
+		if (RightSurfingCharacter.transform.position.x < START_FRONT_POINT_X && !m_startFrontCoroutine)
+		{
+			//手前のキャラクターが動きを始める
+			StartCoroutine("LeaveCharacter");
+			m_startFrontCoroutine = true;
+		}
+
 		//右からのサーファーの移動終了後
 		if (RightSurfingCharacter.transform.position.x < END_POINT_X)
 		{
@@ -301,9 +358,17 @@ public class MyTitleManager : MonoBehaviour
 
 			//左のサーファーを動かす
 			m_endLeftSurfingMove = true;
+		}
 
-			//手前のキャラクターが動きを始める
-			StartCoroutine("LeaveCharacter");
+		if (m_endTitle)
+		{
+			m_elapsedTime += Time.deltaTime;
+			if (m_elapsedTime > m_waitingRestartTime)
+			{
+				m_elapsedTime = 0;
+				m_endTitle = false;
+				Restart();
+			}
 		}
 	}
 
@@ -341,9 +406,9 @@ public class MyTitleManager : MonoBehaviour
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
 		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_THREE);
 		//状態リセット
-		FrontCharacter.transform.eulerAngles = new Vector3(0, m_frontStartRotationY, 0);
-		m_rotationNum = 0;
-		m_frontSufingStart = true;
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.StandStill);
+		m_leftSufingStart = true;
+		m_startFrontCoroutine = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -377,9 +442,9 @@ public class MyTitleManager : MonoBehaviour
 		//回転
 		if (m_frontRotation)
 		{
-			if (m_rotationNum < ROTATION_LIMIT)
+			if (m_rotationNum < m_rotationLimit)
 			{
-				FrontCharacter.transform.Rotate(Vector3.up * m_frontRotationSpeed * Time.deltaTime);
+				FrontCharacter.transform.Rotate(Vector3.up * m_frontRotationSpeed);
 				m_rotationNum += 1;
 			}
 			else
@@ -424,7 +489,7 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	void LeftSufingCharacterMove()
 	{
-		if (m_frontSufingStart)
+		if (m_leftSufingStart)
 		{
 			//中央からは上昇する
 			if (LeftSurfingCharacter.transform.position.x > CENTER_POS_X)
@@ -433,6 +498,8 @@ public class MyTitleManager : MonoBehaviour
 				{
 					//水しぶきの発射
 					StartLeftSurfingJetWater();
+					//目の位置の補正
+					ChangeStarEyesPosition(m_startLeftJetWater);
 				}
 				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingSpeed * Time.deltaTime),
 					LeftSurfingCharacter.transform.position.y + (1.5f * m_surfingSpeed * Time.deltaTime), LeftSurfingCharacter.transform.position.z);
@@ -447,8 +514,9 @@ public class MyTitleManager : MonoBehaviour
 			if (LeftSurfingCharacter.transform.position.x > m_rightSurfingStartPos.x)
 			{
 				LeftSurfingCharacter.transform.position = m_leftSurfingStartPos;
-				m_frontSufingStart = false;
-				Start();
+				m_startLeftJetWater = false;
+				m_leftSufingStart = false;
+				m_endTitle = true;
 			}
 		}
 	}
@@ -471,6 +539,25 @@ public class MyTitleManager : MonoBehaviour
 	{
 		LeftMyJetWater.JetFire(true);
 		m_startLeftJetWater = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 左のサーファーの星目の位置調整
+	/// </summary>
+	/// <param name="b">左のサーファーが飛んでいるか</param>
+	void ChangeStarEyesPosition(bool b)
+	{
+		if (b == true)
+		{
+			StarEyesEffectObject.transform.parent = StarEyesEffectFlyingPosition.transform;
+			StarEyesEffectObject.transform.position = StarEyesEffectFlyingPosition.position;
+		}
+		else
+		{
+			StarEyesEffectObject.transform.parent = StarEyesEffectNomalPosition.transform;
+			StarEyesEffectObject.transform.position = StarEyesEffectNomalPosition.position;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -498,5 +585,29 @@ public class MyTitleManager : MonoBehaviour
 		}
 		StartMessage.GetComponent<Text>().color =
 			new Color(StartMessage.color.r, StartMessage.color.g, StartMessage.color.b, m_messagAlphaColor);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 初期状態へ再設定する
+	/// </summary>
+	void Restart()
+	{
+		//手前のキャラクターの状態
+		m_changeStarEye = false;
+		m_rotationNum = 0;
+		FrontNomalMask.SetActive(true);
+		FrontStarEyeMask.SetActive(false);
+		FrontCharacter.transform.eulerAngles = new Vector3(0, m_frontStartRotationY, 0);
+		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
+
+		//右のサーファーの状態
+		m_isSurfing = true;
+		SetAnimation(PlayerBehaviorStatus.Idle, 1);
+
+		//左のサーファーの状態
+		m_endLeftSurfingMove = false;
+		SetAnimation(PlayerBehaviorStatus.Idle, 2);
+		ChangeStarEyesPosition(m_startLeftJetWater);
 	}
 }

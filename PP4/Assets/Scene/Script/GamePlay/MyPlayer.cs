@@ -500,6 +500,10 @@ public class MyPlayer : MonoBehaviour
 	/// フレーム前のオーラ属性
 	/// </summary>
 	AuraAttribute m_auraPrev = AuraAttribute.Non;
+	public AuraAttribute AuraPrev
+	{
+		get { return m_auraPrev; }
+	}
 
 	/// <summary>
 	/// スペシャル時間を数える
@@ -822,7 +826,7 @@ public class MyPlayer : MonoBehaviour
 	/// オーラをまとう
 	/// </summary>
 	/// <param name="aura">オーラ</param>
-	void WrappingUpAura(AuraAttribute aura)
+	public void WrappingUpAura(AuraAttribute aura)
 	{
 		m_aura = aura;
 

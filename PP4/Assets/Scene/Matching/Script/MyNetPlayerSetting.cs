@@ -213,6 +213,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
+	/// オーラ
+	/// </summary>
+	[SyncVar(hook = "SyncAura")]
+	AuraAttribute m_aura;
+
+	/// <summary>
 	/// 隕石破壊フラグ
 	/// </summary>
 	[SyncVar(hook = "SyncIsMeteoriteDestruction")]
@@ -450,12 +456,42 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!isLocalPlayer)
 			return;
 
+		//オーラ
+		if (Player.Aura != Player.AuraPrev)
+			CmdAura(Player.Aura);
+
 		//隕石破壊フラグ
-		if(Player.IsMeteoriteDestruction)
+		if (Player.IsMeteoriteDestruction)
 		{
 			//隕石破壊
 			Player.IsMeteoriteDestruction = false;
 			CmdIsMeteoriteDestruction(true);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラの通知
+	/// </summary>
+	/// <param name="aura">オーラ</param>
+	[Command]
+	void CmdAura(AuraAttribute aura)
+	{
+		m_aura = aura;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラの同期
+	/// </summary>
+	/// <param name="aura">オーラ</param>
+	[Client]
+	void SyncAura(AuraAttribute aura)
+	{
+		if (m_aura != aura)
+		{
+			Player.WrappingUpAura(aura);
+			m_aura = aura;
 		}
 	}
 
@@ -478,9 +514,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	[Client]
 	void SyncIsMeteoriteDestruction(bool isMeteoriteDestruction)
 	{
-		//隕石破壊
-		Game.StageScript.CurrentFieldScript.DestructionOfMeteorite();
-		m_isMeteoriteDestruction = false;
+		if (m_isMeteoriteDestruction != isMeteoriteDestruction)
+		{
+			m_isMeteoriteDestruction = isMeteoriteDestruction;
+
+			//隕石破壊
+			Game.StageScript.CurrentFieldScript.DestructionOfMeteorite();
+			m_isMeteoriteDestruction = false;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -791,7 +832,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		NameplateParent.localPosition = m_chestPos;
 
 		//他プレイヤーの名札
-		foreach(var player in m_netPlayerSettings)
+		foreach (var player in m_netPlayerSettings)
 		{
 			//位置
 			if (player)

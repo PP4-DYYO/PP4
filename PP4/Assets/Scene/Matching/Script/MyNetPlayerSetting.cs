@@ -231,6 +231,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	GameObject m_auraBallTarget;
 
 	/// <summary>
+	/// オーラボールがある
+	/// </summary>
+	bool m_isAuraBall;
+
+	/// <summary>
+	/// オーラボールの対象がある
+	/// </summary>
+	bool m_isAuraBallTarget;
+
+	/// <summary>
 	/// 隕石破壊フラグ
 	/// </summary>
 	[SyncVar(hook = "SyncIsMeteoriteDestruction")]
@@ -465,11 +475,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void ManagingPlayerVariables()
 	{
 		//オーラボール
-		if (m_auraBallTarget != null && m_auraBall != AuraAttribute.Non)
+		if (m_isAuraBallTarget && m_isAuraBall)
 		{
+			m_isAuraBallTarget = false;
+			m_isAuraBall = false;
 			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall);
-			m_auraBallTarget = null;
-			m_auraBall = AuraAttribute.Non;
 		}
 
 		//操作プレイヤーでない
@@ -877,6 +887,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncAuraBall(AuraAttribute aura)
 	{
 		m_auraBall = aura;
+		m_isAuraBall = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -899,6 +910,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncAuraBallTarget(GameObject target)
 	{
 		m_auraBallTarget = target;
+		m_isAuraBallTarget = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------

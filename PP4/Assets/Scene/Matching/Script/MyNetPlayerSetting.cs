@@ -464,14 +464,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void ManagingPlayerVariables()
 	{
-		//操作プレイヤーでない
-		if (!isLocalPlayer)
-			return;
-
-		//オーラ
-		if (Player.Aura != Player.AuraPrev)
-			CmdAura(Player.Aura);
-
 		//オーラボール
 		if (m_auraBallTarget != null && m_auraBall != AuraAttribute.Non)
 		{
@@ -479,6 +471,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			m_auraBallTarget = null;
 			m_auraBall = AuraAttribute.Non;
 		}
+
+		//操作プレイヤーでない
+		if (!isLocalPlayer)
+			return;
+
+		//オーラ
+		if (Player.Aura != m_aura)
+			CmdAura(Player.Aura);
 
 		//隕石破壊フラグ
 		if (Player.IsMeteoriteDestruction)

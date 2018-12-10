@@ -1089,6 +1089,10 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="other">重なったもの</param>
 	void OnTriggerEnter(Collider other)
 	{
+		//オーラボール
+		if (other.gameObject == AuraBall.gameObject)
+			return;
+
 		//重なったもののタグ
 		switch (other.transform.tag)
 		{
@@ -1336,7 +1340,7 @@ public class MyPlayer : MonoBehaviour
 	/// 残ったスペシャルゲージの割合を得る
 	/// </summary>
 	/// <returns></returns>
-	public float GetPercentageOfRemainingAccelerationGauge()
+	public float GetPercentageOfRemainingSpGauge()
 	{
 		return 1f - (m_countSpTime / m_spTime);
 	}

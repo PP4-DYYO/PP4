@@ -855,8 +855,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <param name="aura">オーラ</param>
 	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
 	{
-		//タンクが満タンでない
-		if (Player.GetPercentageOfRemainingWater() < 1f)
+		//SPゲージが満タンでない
+		if (Player.GetPercentageOfRemainingSpGauge() < 1f)
 			return;
 
 		//投げる

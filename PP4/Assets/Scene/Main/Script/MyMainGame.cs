@@ -319,6 +319,12 @@ public class MyMainGame : MyGame
 	float m_meteoriteGenerationRelativeHeight;
 
 	/// <summary>
+	/// オーラボールをリセットするスペシャルゲージ割合
+	/// </summary>
+	[SerializeField]
+	float m_spRatioToResetAuraBall;
+
+	/// <summary>
 	/// 順位の表示
 	/// </summary>
 	bool m_isDisplayRank;
@@ -1115,16 +1121,16 @@ public class MyMainGame : MyGame
 		OperatingPlayer.SupportRate = 1 +
 			(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
 
-		//水が満タンでない
-		if (OperatingPlayer.GetPercentageOfRemainingWater() < 1f)
-			return;
-
 		//オーラボールのリセット
-		if (!m_isResetAuraBall)
+		if (!m_isResetAuraBall && OperatingPlayer.GetPercentageOfRemainingSpGauge() < m_spRatioToResetAuraBall)
 		{
 			m_isResetAuraBall = true;
 			OperatingNetPlayerSetting.ResetAuraBall();
 		}
+
+		//SPゲージが満タンでない
+		if (OperatingPlayer.GetPercentageOfRemainingSpGauge() < 1f)
+			return;
 
 		//操作プレイヤーの上位の順位
 		m_workInt = Players.HeightRanks[OperatingNetPlayerSetting.GetNetPlayerNum()] - 1;
@@ -1175,7 +1181,7 @@ public class MyMainGame : MyGame
 
 		//タンクの残量
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
-		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingAccelerationGauge());
+		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingSpGauge());
 		MainUi.SetMarkThatCanBeAccelerated(OperatingPlayer.IsUseSp);
 
 		//順位の反映

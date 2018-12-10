@@ -537,6 +537,16 @@ public class MyMainGame : MyGame
 	/// フレーム前にDパッドXがネガティブになった
 	/// </summary>
 	bool m_isDpadXBecameNegativePrev;
+	
+	/// <summary>
+	/// DパッドのY軸がネガティブになった
+	/// </summary>
+	bool m_isDpadYBecameNegative;
+
+	/// <summary>
+	/// フレーム前にDパッドのY軸がネガティブになった
+	/// </summary>
+	bool m_isDpadYBecameNegativePrev;
 
 	/// <summary>
 	/// 水平移動量がポジティブになった
@@ -574,6 +584,11 @@ public class MyMainGame : MyGame
 	/// 作業用のFloat
 	/// </summary>
 	float m_workFloat;
+
+	/// <summary>
+	/// 作業用のGameObjec
+	/// </summary>
+	GameObject m_workGameObj;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -616,6 +631,9 @@ public class MyMainGame : MyGame
 		if (Input.GetAxis("DpadX") < 0 && !m_isDpadXBecameNegativePrev)
 			m_isDpadXBecameNegative = true;
 		m_isDpadXBecameNegativePrev = (Input.GetAxis("DpadX") < 0);
+		if (Input.GetAxis("DpadY") < 0 && !m_isDpadYBecameNegativePrev)
+			m_isDpadYBecameNegative = true;
+		m_isDpadYBecameNegativePrev = (Input.GetAxis("DpadY") < 0);
 		if (Input.GetAxis("Horizontal") > 0 && !m_isHorizontalBecamePositivePrev)
 			m_isHorizontalBecamePositive = true;
 		m_isHorizontalBecamePositivePrev = (Input.GetAxis("Horizontal") > 0);
@@ -1091,6 +1109,23 @@ public class MyMainGame : MyGame
 		//プレイヤーサポート(サポート率０回避付き)
 		OperatingPlayer.SupportRate = 1 +
 			(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
+
+		//操作プレイヤーの上位の順位
+		m_workInt = Players.HeightRanks[OperatingNetPlayerSetting.GetNetPlayerNum()] - 1;
+
+		if (m_workInt < 0)
+			return;
+
+		//一つ上の上位プレイヤー
+		m_workGameObj = Players.GetPlayer(m_workInt);
+
+		//3種のオーラ
+		if (m_isDpadYBecameNegative)
+			OperatingNetPlayerSetting.ThrowAuraBall(m_workGameObj, AuraAttribute.Heat);
+		if (m_isDpadXBecameNegative)
+			OperatingNetPlayerSetting.ThrowAuraBall(m_workGameObj, AuraAttribute.Elasticity);
+		if (m_isDpadXBecamePositive)
+			OperatingNetPlayerSetting.ThrowAuraBall(m_workGameObj, AuraAttribute.Electrical);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1561,6 +1596,7 @@ public class MyMainGame : MyGame
 		m_isYButtonDown = false;
 		m_isDpadXBecamePositive = false;
 		m_isDpadXBecameNegative = false;
+		m_isDpadYBecameNegative = false;
 		m_isHorizontalBecamePositive = false;
 		m_isHorizontalBecameNegative = false;
 	}

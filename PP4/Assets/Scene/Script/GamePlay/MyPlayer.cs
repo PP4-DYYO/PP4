@@ -155,30 +155,6 @@ public enum ReasonForFalling
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
-/// オーラ属性
-/// </summary>
-public enum AuraAttribute
-{
-	/// <summary>
-	/// 温熱
-	/// </summary>
-	Heat,
-	/// <summary>
-	/// 弾性
-	/// </summary>
-	Elasticity,
-	/// <summary>
-	/// 電気
-	/// </summary>
-	Electrical,
-	/// <summary>
-	/// なし
-	/// </summary>
-	Non,
-}
-
-//----------------------------------------------------------------------------------------------------
-/// <summary>
 /// プレイヤー情報
 /// </summary>
 public struct PlayerInfo
@@ -197,28 +173,6 @@ public struct PlayerInfo
 	/// アニメーションの回転名
 	/// </summary>
 	public const string ANIM_ROTATION_NAME = "Rotation";
-}
-
-//----------------------------------------------------------------------------------------------------
-/// <summary>
-/// オーラ情報
-/// </summary>
-public struct AuraInfo
-{
-	/// <summary>
-	/// 温熱のタグ
-	/// </summary>
-	public const string HEAT_TAG = "HeatAura";
-
-	/// <summary>
-	/// 弾性のタグ
-	/// </summary>
-	public const string ELASTICITY_TAG = "ElasticityAura";
-
-	/// <summary>
-	/// 電気のタグ
-	/// </summary>
-	public const string ELECTRICAL_TAG = "ElectricalAura";
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -313,6 +267,12 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject ElectricalAura;
+
+	/// <summary>
+	/// オーラボール
+	/// </summary>
+	[SerializeField]
+	MyAuraBall AuraBall;
 	#endregion
 
 	#region トランスフォーム
@@ -671,11 +631,23 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		InputProcess();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 入力処理
+	/// </summary>
+	void InputProcess()
+	{
+		//ボタンを押している
 		m_isKeepPressingAButton = Input.GetButton("AButton");
 		m_isKeepPressingBButton = Input.GetButton("BButton");
 		m_isKeepPressingXButton = Input.GetButton("XButton");
 		m_isKeepPressingLButton = Input.GetButton("LButton");
 		m_isKeepPressingRButton = Input.GetButton("RButton");
+
+		//ボタンを押した
 		m_isPushedRButton = Input.GetButtonDown("RButton");
 	}
 
@@ -831,10 +803,10 @@ public class MyPlayer : MonoBehaviour
 		m_aura = aura;
 
 		//オーラが変わった
-		if(m_aura != m_auraPrev)
+		if (m_aura != m_auraPrev)
 		{
 			//前回のオーラ
-			switch(m_auraPrev)
+			switch (m_auraPrev)
 			{
 				case AuraAttribute.Heat:
 					HeatAura.SetActive(false);
@@ -1138,7 +1110,7 @@ public class MyPlayer : MonoBehaviour
 				break;
 			case AuraInfo.HEAT_TAG:
 				//温熱オーラ
-				if(m_aura == AuraAttribute.Elasticity || m_aura == AuraAttribute.Non)
+				if (m_aura == AuraAttribute.Elasticity || m_aura == AuraAttribute.Non)
 				{
 					m_isFalling = true;
 					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
@@ -1388,6 +1360,25 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		return false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 投げる
+	/// </summary>
+	/// <param name="target">ターゲット</param>
+	/// <param name="aura">オーラ</param>
+	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
+	{
+		//タンクが満タンでない
+		if (GetPercentageOfRemainingWater() < 1f)
+			return;
+
+		//投げる
+		AuraBall.Throw(target, aura);
+		m_countJetUseTime = m_jetUseTime;
+		m_countSpTime = m_spTime;
+		m_isUseSp = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

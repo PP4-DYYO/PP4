@@ -219,6 +219,18 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	AuraAttribute m_aura;
 
 	/// <summary>
+	/// オーラボール
+	/// </summary>
+	[SyncVar(hook = "SyncAuraBall")]
+	AuraAttribute m_auraBall;
+
+	/// <summary>
+	/// オーラボールの対象
+	/// </summary>
+	[SyncVar(hook = "SyncAuraBallTarget")]
+	GameObject m_auraBallTarget;
+
+	/// <summary>
 	/// 隕石破壊フラグ
 	/// </summary>
 	[SyncVar(hook = "SyncIsMeteoriteDestruction")]
@@ -817,6 +829,84 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			battleRecords[i].height = 0;
 			battleRecords[i].numOfCoins = 0;
 			battleRecords[i].score = 0;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 投げる
+	/// </summary>
+	/// <param name="target">ターゲット</param>
+	/// <param name="aura">オーラ</param>
+	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
+	{
+		//タンクが満タンでない
+		if (Player.GetPercentageOfRemainingWater() < 1f)
+			return;
+
+		//投げる
+		if (isLocalPlayer)
+		{
+			CmdAuraBall(aura);
+			CmdAuraBallTarget(target);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボールの通知
+	/// </summary>
+	/// <param name="aura">オーラ</param>
+	[Command]
+	void CmdAuraBall(AuraAttribute aura)
+	{
+		m_auraBall = aura;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボールの同期
+	/// </summary>
+	/// <param name="aura">オーラ</param>
+	[Client]
+	void SyncAuraBall(AuraAttribute aura)
+	{
+		m_auraBall = aura;
+
+		if (m_auraBallTarget)
+		{
+			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall);
+			m_auraBallTarget = null;
+			m_auraBall = AuraAttribute.Non;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボール対象の通知
+	/// </summary>
+	/// <param name="target">標的</param>
+	[Command]
+	void CmdAuraBallTarget(GameObject target)
+	{
+		m_auraBallTarget = target;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボール対象の同期
+	/// </summary>
+	/// <param name="target">標的</param>
+	[Client]
+	void SyncAuraBallTarget(GameObject target)
+	{
+		m_auraBallTarget = target;
+
+		if (m_auraBall != AuraAttribute.Non)
+		{
+			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall);
+			m_auraBallTarget = null;
+			m_auraBall = AuraAttribute.Non;
 		}
 	}
 

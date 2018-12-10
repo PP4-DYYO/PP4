@@ -275,6 +275,25 @@ public class MyPlayers : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// プレイヤーを取得する
+	/// </summary>
+	/// <param name="rank">順位</param>
+	/// <returns>プレイヤー</returns>
+	public GameObject GetPlayer(int rank)
+	{
+		//順位検索
+		for(m_targetNum = 0; m_targetNum < m_heightRanks.Length; m_targetNum++)
+		{
+			//指定順位のプレイヤー
+			if (m_heightRanks[m_targetNum] == rank)
+				return m_netPlayerSettings[m_targetNum].gameObject;
+		}
+
+		return null;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 水しぶきを表示
 	/// </summary>
 	/// <param name="isDisplay">表示するか</param>

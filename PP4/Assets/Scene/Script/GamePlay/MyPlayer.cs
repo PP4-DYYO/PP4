@@ -1089,6 +1089,10 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="other">重なったもの</param>
 	void OnTriggerEnter(Collider other)
 	{
+		//オーラボール
+		if (other.gameObject == AuraBall.gameObject)
+			return;
+
 		//重なったもののタグ
 		switch (other.transform.tag)
 		{
@@ -1336,7 +1340,7 @@ public class MyPlayer : MonoBehaviour
 	/// 残ったスペシャルゲージの割合を得る
 	/// </summary>
 	/// <returns></returns>
-	public float GetPercentageOfRemainingAccelerationGauge()
+	public float GetPercentageOfRemainingSpGauge()
 	{
 		return 1f - (m_countSpTime / m_spTime);
 	}
@@ -1367,12 +1371,11 @@ public class MyPlayer : MonoBehaviour
 	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
 	{
 		//タンクが満タンでない
-		if (GetPercentageOfRemainingWater() < 1f)
+		if (GetPercentageOfRemainingSpGauge() < 1f)
 			return;
 
 		//投げる
 		AuraBall.Throw(target, aura);
-		m_countJetUseTime = m_jetUseTime;
 		m_countSpTime = m_spTime;
 		m_isUseSp = false;
 	}

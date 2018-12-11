@@ -136,10 +136,16 @@ public class MyTitleManager : MonoBehaviour
 	Vector3 m_leftSurfingStartPos;
 
 	/// <summary>
-	/// サーフィン移動速度
+	/// サーフィンの横移動速度
 	/// </summary>
 	[SerializeField]
-	float m_surfingSpeed;
+	float m_surfingHorizontalSpeed;
+
+	/// <summary>
+	/// サーフィンの縦移動速度
+	/// </summary>
+	[SerializeField]
+	float m_surfingVerticalSpeed;
 
 	/// <summary>
 	/// 左からのサーファーの移動を始める
@@ -286,8 +292,8 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	void Start()
 	{
-		m_rotationLimit = Mathf.Abs(MAX_ANGLE / m_frontRotationSpeed);
 		//手前のキャラクターの状態
+		m_rotationLimit = Mathf.Abs(MAX_ANGLE / m_frontRotationSpeed);
 		m_changeStarEye = false;
 		FrontStartPos = FrontCharacter.transform.position.x;
 		m_frontStartRotationY = FrontCharacter.transform.eulerAngles.y;
@@ -315,9 +321,16 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		//スタートメッセージの点滅
 		MessageColorChange();
+
+		//手前のキャラクターの動作
 		FrontCharacterMove();
+
+		//右側のキャラクターの動作
 		RightSurfingCharacterMove();
+
+		//左側のキャラクターの動作
 		LeftSufingCharacterMove();
 
 		if (Input.anyKeyDown)
@@ -332,43 +345,9 @@ public class MyTitleManager : MonoBehaviour
 			}
 		}
 
-		//右から来るサーファーが飛び始めると目を輝かせる
-		if (RightSurfingCharacter.transform.position.x < NEAR_CENTER_POS_X && !m_changeStarEye)
-		{
-			m_changeStarEye = true;
-			FrontNomalMask.SetActive(false);
-			FrontStarEyeMask.SetActive(true);
-			GameObject el = Instantiate(StarEyesEffect, FrontCharacter.transform);
-			el.transform.position = StarEyesPosition.transform.position;
-		}
-
-		if (RightSurfingCharacter.transform.position.x < START_FRONT_POINT_X && !m_startFrontCoroutine)
-		{
-			//手前のキャラクターが動きを始める
-			StartCoroutine("LeaveCharacter");
-			m_startFrontCoroutine = true;
-		}
-
-		//右からのサーファーの移動終了後
-		if (RightSurfingCharacter.transform.position.x < END_POINT_X)
-		{
-			//右のサーファーの位置を初期位置に戻す
-			m_isSurfing = false;
-			RightSurfingCharacter.transform.position = m_rightSurfingStartPos;
-
-			//左のサーファーを動かす
-			m_endLeftSurfingMove = true;
-		}
-
 		if (m_endTitle)
 		{
-			m_elapsedTime += Time.deltaTime;
-			if (m_elapsedTime > m_waitingRestartTime)
-			{
-				m_elapsedTime = 0;
-				m_endTitle = false;
-				Restart();
-			}
+			WaitingRestart();
 		}
 	}
 
@@ -462,23 +441,51 @@ public class MyTitleManager : MonoBehaviour
 	{
 		if (m_isSurfing)
 		{
+			//前のキャラクターが目を輝かせる
+			if (RightSurfingCharacter.transform.position.x < NEAR_CENTER_POS_X && !m_changeStarEye)
+			{
+				m_changeStarEye = true;
+				FrontNomalMask.SetActive(false);
+				FrontStarEyeMask.SetActive(true);
+				GameObject el = Instantiate(StarEyesEffect, FrontCharacter.transform);
+				el.transform.position = StarEyesPosition.transform.position;
+			}
+
+			//前のキャラクターが移動し始める
+			if (RightSurfingCharacter.transform.position.x < START_FRONT_POINT_X && !m_startFrontCoroutine)
+			{
+				//手前のキャラクターが動きを始める
+				StartCoroutine("LeaveCharacter");
+				m_startFrontCoroutine = true;
+			}
+
 			//中央からは上昇する
 			if (RightSurfingCharacter.transform.position.x < CENTER_POS_X)
 			{
 				if (!m_startRightJetWater)
-				{
 					//水しぶきの発射
 					StartRightSurfingJetWater();
-				}
-				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingSpeed * Time.deltaTime),
-				RightSurfingCharacter.transform.position.y + (1.5f * m_surfingSpeed * Time.deltaTime), RightSurfingCharacter.transform.position.z);
+				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingHorizontalSpeed * Time.deltaTime),
+				RightSurfingCharacter.transform.position.y + (m_surfingVerticalSpeed * m_surfingHorizontalSpeed * Time.deltaTime), RightSurfingCharacter.transform.position.z);
 
 				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
 			}
+			//中央までは横移動のみ
 			else
 			{
-				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingSpeed * Time.deltaTime),
+				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingHorizontalSpeed * Time.deltaTime),
 				RightSurfingCharacter.transform.position.y, RightSurfingCharacter.transform.position.z);
+			}
+
+			//移動終了
+			if (RightSurfingCharacter.transform.position.x < END_POINT_X)
+			{
+				//位置を初期位置に戻す
+				m_isSurfing = false;
+				RightSurfingCharacter.transform.position = m_rightSurfingStartPos;
+
+				//左のサーファーを動かす
+				m_endLeftSurfingMove = true;
 			}
 		}
 	}
@@ -501,13 +508,13 @@ public class MyTitleManager : MonoBehaviour
 					//目の位置の補正
 					ChangeStarEyesPosition(m_startLeftJetWater);
 				}
-				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingSpeed * Time.deltaTime),
-					LeftSurfingCharacter.transform.position.y + (1.5f * m_surfingSpeed * Time.deltaTime), LeftSurfingCharacter.transform.position.z);
+				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingHorizontalSpeed * Time.deltaTime),
+					LeftSurfingCharacter.transform.position.y + (m_surfingVerticalSpeed * m_surfingHorizontalSpeed * Time.deltaTime), LeftSurfingCharacter.transform.position.z);
 				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
 			}
 			else
 			{
-				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingSpeed * Time.deltaTime),
+				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingHorizontalSpeed * Time.deltaTime),
 					LeftSurfingCharacter.transform.position.y, LeftSurfingCharacter.transform.position.z);
 			}
 
@@ -585,6 +592,21 @@ public class MyTitleManager : MonoBehaviour
 		}
 		StartMessage.GetComponent<Text>().color =
 			new Color(StartMessage.color.r, StartMessage.color.g, StartMessage.color.b, m_messagAlphaColor);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// タイトルでの一連の動きが終了した後の動作
+	/// </summary>
+	void WaitingRestart()
+	{
+		m_elapsedTime += Time.deltaTime;
+		if (m_elapsedTime > m_waitingRestartTime)
+		{
+			m_elapsedTime = 0;
+			m_endTitle = false;
+			Restart();
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

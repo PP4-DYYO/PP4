@@ -72,12 +72,6 @@ public class MyAuraBall : MonoBehaviour
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
-	/// プレイヤー
-	/// </summary>
-	[SerializeField]
-	GameObject Player;
-
-	/// <summary>
 	/// 投手
 	/// </summary>
 	[SerializeField]
@@ -188,7 +182,7 @@ public class MyAuraBall : MonoBehaviour
 	void OnTriggerEnter(Collider other)
 	{
 		//プレイヤー
-		if (other.tag == PlayerInfo.TAG && other.gameObject != Player)
+		if (other.tag == PlayerInfo.TAG)
 			EraseAura();
 
 		//オーラ
@@ -218,7 +212,7 @@ public class MyAuraBall : MonoBehaviour
 	public void Throw(GameObject target, AuraAttribute aura)
 	{
 		//使用中
-		if (m_countTravelTime != -1 || target == null || aura == AuraAttribute.Non)
+		if (m_countTravelTime != -1)
 			return;
 
 		//オーラ
@@ -226,15 +220,12 @@ public class MyAuraBall : MonoBehaviour
 		{
 			case AuraAttribute.Heat:
 				HeatAuraBall.SetActive(true);
-				tag = AuraInfo.HEAT_TAG;
 				break;
 			case AuraAttribute.Elasticity:
 				ElasticityAuraBall.SetActive(true);
-				tag = AuraInfo.ELASTICITY_TAG;
 				break;
 			case AuraAttribute.Electrical:
 				ElectricalAuraBall.SetActive(true);
-				tag = AuraInfo.ELECTRICAL_TAG;
 				break;
 		}
 

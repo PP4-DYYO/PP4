@@ -32,7 +32,7 @@ public class MySpreadSplashe : MonoBehaviour
 	/// <summary>
 	/// スケールが変更される時間
 	/// </summary>
-	float m_scaleChangeTime;
+	const float SCALE_CHANGE_TIME = 0.1f;
 
 	/// <summary>
 	/// 自分のパーティクルシステム
@@ -60,8 +60,6 @@ public class MySpreadSplashe : MonoBehaviour
 	/// </summary>
 	void Start()
 	{
-		//消えるまでの時間より少し小さい数
-		m_scaleChangeTime = GetComponent<MyDestroySpreadSplashe>().LimitTime - HALF;
 		SpreadSplasheScale = transform.localScale;
 	}
 
@@ -76,7 +74,7 @@ public class MySpreadSplashe : MonoBehaviour
 		{
 			Effect.Stop();
 		}
-		m_changeScaleSize = Time.deltaTime * (m_magni / m_scaleChangeTime);
+		m_changeScaleSize = Time.deltaTime * (m_magni / SCALE_CHANGE_TIME);
 
 		SpreadSplasheScale.x = transform.localScale.x + m_changeScaleSize;
 		SpreadSplasheScale.y = transform.localScale.y + m_changeScaleSize;

@@ -1371,12 +1371,11 @@ public class MyPlayer : MonoBehaviour
 	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
 	{
 		//タンクが満タンでない
-		if (GetPercentageOfRemainingWater() < 1f)
+		if (GetPercentageOfRemainingSpGauge() < 1f)
 			return;
 
 		//投げる
 		AuraBall.Throw(target, aura);
-		m_countJetUseTime = m_jetUseTime;
 		m_countSpTime = m_spTime;
 		m_isUseSp = false;
 	}

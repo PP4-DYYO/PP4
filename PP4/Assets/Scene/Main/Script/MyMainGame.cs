@@ -1122,7 +1122,7 @@ public class MyMainGame : MyGame
 			(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
 
 		//オーラボールのリセット
-		if (!m_isResetAuraBall && OperatingPlayer.GetPercentageOfRemainingSpGauge() < m_spRatioToResetAuraBall)
+		if (!m_isResetAuraBall && OperatingPlayer.GetPercentageOfRemainingSpGauge() > m_spRatioToResetAuraBall)
 		{
 			m_isResetAuraBall = true;
 			OperatingNetPlayerSetting.ResetAuraBall();

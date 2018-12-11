@@ -241,10 +241,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	bool m_isAuraBallTarget;
 
 	/// <summary>
-	/// 隕石破壊フラグ
+	/// 隕石破壊数
 	/// </summary>
-	[SyncVar(hook = "SyncIsMeteoriteDestruction")]
-	bool m_isMeteoriteDestruction;
+	[SyncVar(hook = "SyncMeteoriteDestructionNum")]
+	int m_meteoriteDestructionNum;
 	#endregion
 
 	#region 名札
@@ -495,7 +495,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		{
 			//隕石破壊
 			Player.IsMeteoriteDestruction = false;
-			CmdIsMeteoriteDestruction(true);
+			CmdMeteoriteDestructionNum(m_meteoriteDestructionNum + 1);
 		}
 	}
 
@@ -526,11 +526,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// 隕石破壊フラグの通知
 	/// </summary>
-	/// <param name="isMeteoriteDestruction">隕石破壊フラグ</param>
+	/// <param name="isMeteoriteDestruction">隕石破壊数</param>
 	[Command]
-	void CmdIsMeteoriteDestruction(bool isMeteoriteDestruction)
+	void CmdMeteoriteDestructionNum(int meteoriteDestructionNum)
 	{
-		m_isMeteoriteDestruction = isMeteoriteDestruction;
+		m_meteoriteDestructionNum = meteoriteDestructionNum;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -539,16 +539,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	/// <param name="isMeteoriteDestruction">隕石破壊フラグ</param>
 	[Client]
-	void SyncIsMeteoriteDestruction(bool isMeteoriteDestruction)
+	void SyncMeteoriteDestructionNum(int meteoriteDestructionNum)
 	{
-		if (m_isMeteoriteDestruction != isMeteoriteDestruction)
-		{
-			m_isMeteoriteDestruction = isMeteoriteDestruction;
+		m_meteoriteDestructionNum = meteoriteDestructionNum;
 
-			//隕石破壊
-			Game.StageScript.CurrentFieldScript.DestructionOfMeteorite();
-			m_isMeteoriteDestruction = false;
-		}
+		//隕石破壊
+		Game.StageScript.CurrentFieldScript.DestructionOfMeteorite();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -873,7 +869,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	public void ResetAuraBall()
 	{
-		if(isLocalPlayer)
+		if (isLocalPlayer)
 		{
 			if (m_auraBall != AuraAttribute.Non)
 				CmdAuraBall(AuraAttribute.Non);
@@ -902,7 +898,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncAuraBall(AuraAttribute aura)
 	{
 		m_auraBall = aura;
-		m_isAuraBall = true;
+		m_isAuraBall = (aura != AuraAttribute.Non);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -925,7 +921,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncAuraBallTarget(GameObject target)
 	{
 		m_auraBallTarget = target;
-		m_isAuraBallTarget = true;
+		m_isAuraBallTarget = (target != null);
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -335,9 +335,14 @@ public class MyTitleManager : MonoBehaviour
 
 		if (Input.anyKeyDown)
 		{
-			if (Input.GetKeyDown(KeyCode.Backspace))
+			if (Input.GetKeyDown(KeyCode.Backspace)|| Input.GetButtonDown("BackButton"))
 			{
 				Application.Quit();
+			}
+			else if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
+			{
+				//MySceneManager.Instance.ChangeScene(MyScene.Credit);
+				Debug.Log("クレジットシーンに移動");
 			}
 			else
 			{

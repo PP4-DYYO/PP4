@@ -192,11 +192,15 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	void MakeSpreadSplashe()
 	{
-		//発生位置調整
-		m_spreadSplashePosition = makeSpreadSplasheObject.transform.position;
-		m_spreadSplashePosition.y = 0;
-		SpreadSplashe.SplasheEffect.transform.position = m_spreadSplashePosition;
-		SpreadSplashe.SplasheEffect.Play();
+		if (Body.transform.position.y > 0)
+		{
+			//発生位置調整
+			m_spreadSplashePosition = makeSpreadSplasheObject.transform.position;
+			m_spreadSplashePosition.y = 0;
+			SpreadSplashe.SplasheEffect.transform.localScale = Vector3.one;
+			SpreadSplashe.SplasheEffect.transform.position = m_spreadSplashePosition;
+			SpreadSplashe.SplasheEffect.Play();
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

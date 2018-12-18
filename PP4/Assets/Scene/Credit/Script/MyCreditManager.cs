@@ -399,7 +399,7 @@ public class MyCreditManager : MonoBehaviour
 			cloudDestroyCause = CloudDestroyCause.Meteorite;
 			cloudState = CloudState.Generate;
 		}
-		if (Input.GetKeyDown(KeyCode.Backspace) && !m_eventPlaying)
+		if (Input.GetKeyDown(KeyCode.T) && !m_eventPlaying)
 		{
 			cloudDestroyCause = CloudDestroyCause.Thunder;
 			cloudState = CloudState.Generate;

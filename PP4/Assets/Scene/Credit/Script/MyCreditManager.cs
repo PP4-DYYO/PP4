@@ -29,6 +29,12 @@ public class MyCreditManager : MonoBehaviour
 	GameObject CreditCharacter;
 
 	/// <summary>
+	/// 中央のキャラクター移動速度
+	/// </summary>
+	[SerializeField]
+	float m_creditCharacterSpeed;
+
+	/// <summary>
 	/// 中央のキャラクターの位置
 	/// </summary>
 	Vector3 CreditCharacterPosition;
@@ -38,6 +44,12 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Animator CreditCharacterAnim;
+
+	/// <summary>
+	/// 中央のキャラクターの回転軸のオブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject AxisObject;
 
 	/// <summary>
 	/// オブジェクトの移動速度
@@ -117,7 +129,12 @@ public class MyCreditManager : MonoBehaviour
 	/// テキストを配列で保持
 	/// </summary>
 	[SerializeField]
-	GameObject[] CreditText = new GameObject[13];
+	GameObject[] CreditText = new GameObject[14];
+
+	/// <summary>
+	/// テキストを配列で保持
+	/// </summary>
+	const int MAX_TEXT_NUM = 13;
 
 	/// <summary>
 	/// テキストの下側停止位置
@@ -356,7 +373,7 @@ public class MyCreditManager : MonoBehaviour
 		CameraMoving();
 
 		//中央のキャラクターの移動
-		//CreditCharacterMoving();
+		CreditCharacterMoving();
 
 		//状況の確認
 		CheckEventPlay();
@@ -386,6 +403,11 @@ public class MyCreditManager : MonoBehaviour
 		{
 			cloudDestroyCause = CloudDestroyCause.Thunder;
 			cloudState = CloudState.Generate;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Backspace) || Input.GetButtonDown("BackButton"))
+		{
+			MySceneManager.Instance.ChangeScene(MyScene.Title);
 		}
 	}
 
@@ -519,9 +541,16 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	void TextChange()
 	{
-		m_textNum++;
-		CreditText[m_textNum].transform.position = TextStartPositionObject.transform.position;
-		m_textChanged = true;
+		if (m_textNum < MAX_TEXT_NUM)
+		{
+			m_textNum++;
+			CreditText[m_textNum].transform.position = TextStartPositionObject.transform.position;
+			m_textChanged = true;
+		}
+		else
+		{
+			Debug.Log("クレジット表示終了");
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -658,10 +687,8 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	void CreditCharacterMoving()
 	{
-		CreditCharacterPosition = CreditCharacter.transform.position;
-		CreditCharacterPosition.y += Time.deltaTime * SPEED;
-
-		CreditCharacter.transform.position = CreditCharacterPosition;
+		CreditCharacter.transform.RotateAround(AxisObject.transform.position, -Vector3.up, m_creditCharacterSpeed);
+		CreditCharacter.transform.LookAt(AxisObject.transform.position);
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -31,9 +31,10 @@ public class MyTitleManager : MonoBehaviour
 	GameObject FrontStarEyeMask;
 
 	/// <summary>
-	/// 手前にいるキャラクターのスタート位置
+	/// 手前にいるキャラクターのスタート位置用のオブジェクト
 	/// </summary>
-	float FrontStartPos;
+	[SerializeField]
+	GameObject FrontStartPositionObject;
 
 	/// <summary>
 	/// 手前にいるキャラクターの止まる位置
@@ -118,7 +119,7 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 右のサーファーのx座標端
 	/// </summary>
-	const float END_POINT_X = -15.0f;
+	const float END_POINT_X = -25.0f;
 
 	/// <summary>
 	/// 手前のキャラクターが動き出す右のサーファーのx座標
@@ -295,7 +296,6 @@ public class MyTitleManager : MonoBehaviour
 		//手前のキャラクターの状態
 		m_rotationLimit = Mathf.Abs(MAX_ANGLE / m_frontRotationSpeed);
 		m_changeStarEye = false;
-		FrontStartPos = FrontCharacter.transform.position.x;
 		m_frontStartRotationY = FrontCharacter.transform.eulerAngles.y;
 		FrontNomalMask.SetActive(true);
 		FrontStarEyeMask.SetActive(false);
@@ -335,14 +335,13 @@ public class MyTitleManager : MonoBehaviour
 
 		if (Input.anyKeyDown)
 		{
-			if (Input.GetKeyDown(KeyCode.Backspace)|| Input.GetButtonDown("BackButton"))
+			if (Input.GetKeyDown(KeyCode.Backspace) || Input.GetButtonDown("BackButton"))
 			{
 				Application.Quit();
 			}
 			else if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
 			{
-				//MySceneManager.Instance.ChangeScene(MyScene.Credit);
-				Debug.Log("クレジットシーンに移動");
+				MySceneManager.Instance.ChangeScene(MyScene.Credit);
 			}
 			else
 			{
@@ -418,7 +417,7 @@ public class MyTitleManager : MonoBehaviour
 			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x - (m_frontMovingSpeed * Time.deltaTime),
 				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
 			//停止位置で止まる
-			if (FrontCharacter.transform.position.x < FrontStartPos)
+			if (FrontCharacter.transform.position.x < FrontStartPositionObject.transform.position.x)
 			{
 				m_frontLeave = false;
 			}

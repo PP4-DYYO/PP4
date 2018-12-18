@@ -132,7 +132,7 @@ public class MyTitleJetWater : MonoBehaviour
 		LeftJet.SetActive(isFire);
 		m_isSplasheFire = isFire;
 		if (isFire == true)
-			MySoundManager.Instance.Play(SeCollection.WaterInjection);
+			MySoundManager.Instance.Play(SeCollection.WaterInjection,true,false,transform.position);
 	}
 
 	//----------------------------------------------------------------------------------------------------

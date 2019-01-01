@@ -5,6 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +29,7 @@ public class MyTutorial : MyGame
 	/// プレイヤー
 	/// </summary>
 	[SerializeField]
-	GameObject PlayerObject;
+	MyPlayer MyPlayerScript;
 
 	/// <summary>
 	/// プレイヤー番号
@@ -86,6 +87,26 @@ public class MyTutorial : MyGame
 	float m_tutorialTime;
 
 	/// <summary>
+	/// チュートリアル内の時間(分)
+	/// </summary>
+	int m_tutorialMinute;
+
+	/// <summary>
+	/// チュートリアル内の時間(秒)
+	/// </summary>
+	int m_tutorialTimeSecond;
+
+	/// <summary>
+	/// 時間の単位変換用
+	/// </summary>
+	const int TIME_CONVERSION = 60;
+
+	/// <summary>
+	/// 10秒
+	/// </summary>
+	const int TEN_SECOND = 10;
+
+	/// <summary>
 	/// プレイヤーが落下
 	/// </summary>
 	bool m_playerFall;
@@ -130,7 +151,7 @@ public class MyTutorial : MyGame
 		m_height[4] = 300;
 		m_height[5] = 200;
 		m_height[6] = 100;
-		m_height[7] = (int)PlayerObject.transform.position.y;
+		m_height[7] = (int)MyPlayerScript.transform.position.y;
 
 		TutorialMission[0].m_text = "３００mに到達せよ";
 		TutorialMission[1].m_text = "タンクの水を空にせよ";
@@ -141,8 +162,6 @@ public class MyTutorial : MyGame
 		MissionText[2].text = TutorialMission[2].m_text;
 
 		TimerText.text = "" + m_tutorialTime;
-
-		MyJetWaterScript.JetFire(true);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -168,6 +187,41 @@ public class MyTutorial : MyGame
 
 		//水の残量による動き
 		CheckRemainingWater();
+
+		//ボタン入力確認
+		MyInputButtonCheck();
+
+		//ジェットの制御
+		JetControl();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ジェットのON/OFF切り替え
+	/// </summary>
+	void JetControl()
+	{
+		if (MyPlayerScript.State == PlayerBehaviorStatus.Idle || MyPlayerScript.State == PlayerBehaviorStatus.Falling)
+		{
+			MyJetWaterScript.JetFire(false);
+		}
+		if (MyPlayerScript.State == PlayerBehaviorStatus.IdleInTheAir || MyPlayerScript.State == PlayerBehaviorStatus.IdleInTheAir
+			|| MyPlayerScript.State == PlayerBehaviorStatus.JetRise || MyPlayerScript.State == PlayerBehaviorStatus.JetDescent)
+		{
+			MyJetWaterScript.JetFire(true);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ボタン入力
+	/// </summary>
+	void MyInputButtonCheck()
+	{
+		if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
+		{
+			MySceneManager.Instance.ChangeScene(MyScene.Matching);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -183,6 +237,7 @@ public class MyTutorial : MyGame
 			if (!m_playerFall)
 			{
 				m_playerFall = true;
+				MyJetWaterScript.JetFire(false);
 			}
 		}
 
@@ -190,6 +245,7 @@ public class MyTutorial : MyGame
 		if (m_playerFall && OperatingPlayer.GetPercentageOfRemainingWater() >= 0.99)
 		{
 			MainUi.StopOfFall();
+			MyJetWaterScript.JetFire(true);
 			m_playerFall = false;
 		}
 	}
@@ -209,9 +265,20 @@ public class MyTutorial : MyGame
 			m_tutorialTime = 0;
 			MySceneManager.Instance.ChangeScene(MyScene.Title);
 		}
-	
+
+		//残り時間を分と秒に分ける
+		m_tutorialMinute = (int)m_tutorialTime / TIME_CONVERSION;
+		m_tutorialTimeSecond = (int)m_tutorialTime - m_tutorialMinute * TIME_CONVERSION;
+
 		//残り時間のテキスト
-		TimerText.text = m_tutorialTime.ToString("f2");
+		if (m_tutorialTimeSecond < TEN_SECOND)
+		{
+			TimerText.text = m_tutorialMinute + ":0" + m_tutorialTimeSecond;
+		}
+		else
+		{
+			TimerText.text = m_tutorialMinute + ":" + m_tutorialTimeSecond;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -221,7 +288,7 @@ public class MyTutorial : MyGame
 	void CheckMission()
 	{
 		//300mに到達
-		if (PlayerObject.transform.position.y > 300)
+		if (MyPlayerScript.transform.position.y > 300)
 		{
 			TutorialMission[0].m_clear = true;
 			MissionText[0].color = Color.gray;
@@ -251,7 +318,7 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void CheckRanking()
 	{
-		if (PlayerObject.transform.position.y > m_height[6] && nowRank > 7)
+		if (MyPlayerScript.transform.position.y > m_height[6] && nowRank > 7)
 		{
 			m_ranking[6] = 7;
 			m_ranking[7] = 6;
@@ -262,7 +329,7 @@ public class MyTutorial : MyGame
 			}
 		}
 
-		if (PlayerObject.transform.position.y > m_height[5] && nowRank > 6)
+		if (MyPlayerScript.transform.position.y > m_height[5] && nowRank > 6)
 		{
 			m_ranking[5] = 7;
 			m_ranking[6] = 5;

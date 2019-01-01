@@ -1104,7 +1104,7 @@ public class MyMainGame : MyGame
 		}
 
 		//隕石の発生
-		if (Players.MaximumAltitude - Players.MinimumAltitude <= m_differenceInElevationOfPlayersFallingMeteorite)
+		if (Players.MaximumAltitude - Players.MinimumAltitude >= m_differenceInElevationOfPlayersFallingMeteorite)
 			Stage.CurrentFieldScript.StartOfFallingMeteorite(Players.MaximumAltitude + m_meteoriteGenerationRelativeHeight);
 	}
 

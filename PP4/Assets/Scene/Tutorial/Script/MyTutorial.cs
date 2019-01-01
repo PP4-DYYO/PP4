@@ -16,9 +16,9 @@ using UnityEngine.UI;
 public class MyTutorial : MyGame
 {
 	/// <summary>
-	///ランキング配列
+	///参加者配列
 	/// </summary>
-	int[] m_ranking = new int[8];
+	int[] m_players = new int[8];
 
 	/// <summary>
 	/// 現在置（高さ）配列
@@ -35,11 +35,6 @@ public class MyTutorial : MyGame
 	/// プレイヤー番号
 	/// </summary>
 	int m_playerNum;
-
-	/// <summary>
-	/// 現在の順位
-	/// </summary>
-	int nowRank;
 
 	/// <summary>
 	/// ミッション
@@ -117,6 +112,45 @@ public class MyTutorial : MyGame
 	[SerializeField]
 	MyJetWater MyJetWaterScript;
 
+	/// <summary>
+	/// 順位
+	/// </summary>
+	public enum Ranks
+	{
+		/// <summary>
+		/// 1位
+		/// </summary>
+		First,
+		/// <summary>
+		/// 2位
+		/// </summary>
+		Second,
+		/// <summary>
+		/// 3位
+		/// </summary>
+		Third,
+		/// <summary>
+		/// 4位
+		/// </summary>
+		Fourth,
+		/// <summary>
+		/// 5位
+		/// </summary>
+		Fifth,
+		/// <summary>
+		/// 6位
+		/// </summary>
+		Sixth,
+		/// <summary>
+		/// 7位
+		/// </summary>
+		Seventh,
+		/// <summary>
+		/// 8位
+		/// </summary>
+		Eighth
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	///スタート
@@ -127,21 +161,18 @@ public class MyTutorial : MyGame
 		MainUi.StopOfFall();
 
 		//ランキング設定	
-		m_ranking[0] = 0;
-		m_ranking[1] = 1;
-		m_ranking[2] = 2;
-		m_ranking[3] = 3;
-		m_ranking[4] = 4;
-		m_ranking[5] = 5;
-		m_ranking[6] = 6;
-		m_ranking[7] = 7;
-
-		//最初は８位
-		nowRank = 8;
+		m_players[0] = (int)Ranks.First;
+		m_players[1] = (int)Ranks.Second;
+		m_players[2] = (int)Ranks.Third;
+		m_players[3] = (int)Ranks.Fourth;
+		m_players[4] = (int)Ranks.Fifth;
+		m_players[5] = (int)Ranks.Sixth;
+		m_players[6] = (int)Ranks.Seventh;
+		m_players[7] = (int)Ranks.Eighth;
 
 		//プレイヤーは７番
 		m_playerNum = 7;
-		MainUi.SetRank(m_ranking, m_playerNum);
+		MainUi.SetRank(m_players, m_playerNum);
 
 		//現在の高さ配列
 		m_height[0] = 700;
@@ -318,27 +349,59 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void CheckRanking()
 	{
-		if (MyPlayerScript.transform.position.y > m_height[6] && nowRank > 7)
+		if (MyPlayerScript.transform.position.y < m_height[6])
 		{
-			m_ranking[6] = 7;
-			m_ranking[7] = 6;
-			nowRank = 7;
-			for (int i = 0; i < m_ranking.Length; i++)
-			{
-				Debug.Log(i + "位" + m_ranking[i]);
-			}
+			m_players[6] = (int)Ranks.Seventh;
+			m_players[7] = (int)Ranks.Eighth;
 		}
 
-		if (MyPlayerScript.transform.position.y > m_height[5] && nowRank > 6)
+		if (MyPlayerScript.transform.position.y > m_height[6])
 		{
-			m_ranking[5] = 7;
-			m_ranking[6] = 5;
-			nowRank = 6;
-			for (int i = 0; i < m_ranking.Length; i++)
-			{
-				Debug.Log(i + "位" + m_ranking[i]);
-			}
+			m_players[5] = (int)Ranks.Sixth;
+			m_players[6] = (int)Ranks.Eighth;
+			m_players[7] = (int)Ranks.Seventh;
 		}
-		MainUi.SetRank(m_ranking, m_playerNum);
+
+		if (MyPlayerScript.transform.position.y > m_height[5] )
+		{
+			m_players[4] = (int)Ranks.Fifth;
+			m_players[5] = (int)Ranks.Seventh;
+			m_players[7] = (int)Ranks.Sixth;
+		}
+
+		if (MyPlayerScript.transform.position.y > m_height[4] )
+		{
+			m_players[3] = (int)Ranks.Fourth;
+			m_players[4] = (int)Ranks.Sixth;
+			m_players[7] = (int)Ranks.Fifth;
+		}
+
+		if (MyPlayerScript.transform.position.y > m_height[3])
+		{
+			m_players[2] = (int)Ranks.Third;
+			m_players[3] = (int)Ranks.Fifth;
+			m_players[7] = (int)Ranks.Fourth;
+		}
+
+		if (MyPlayerScript.transform.position.y > m_height[2])
+		{
+			m_players[1] = (int)Ranks.Second;
+			m_players[2] = (int)Ranks.Fourth;
+			m_players[7] = (int)Ranks.Third;
+		}
+
+		if (MyPlayerScript.transform.position.y > m_height[1] )
+		{
+			m_players[0] = (int)Ranks.First;
+			m_players[1] = (int)Ranks.Third;
+			m_players[7] = (int)Ranks.Second;
+		}
+
+		if (MyPlayerScript.transform.position.y > m_height[0])
+		{
+			m_players[0] = (int)Ranks.Second;
+			m_players[7] = (int)Ranks.First;
+		}
+		MainUi.SetRank(m_players, m_playerNum);
 	}
 }

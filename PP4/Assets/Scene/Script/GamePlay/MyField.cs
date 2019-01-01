@@ -180,6 +180,12 @@ public class MyField : MonoBehaviour
 	float m_meteoriteRotateSpeed;
 
 	/// <summary>
+	/// 爆風範囲
+	/// </summary>
+	[SerializeField]
+	float m_blastRange;
+
+	/// <summary>
 	/// 隕石の時間を数える
 	/// </summary>
 	float m_countMeteoriteTime = -1;
@@ -239,6 +245,11 @@ public class MyField : MonoBehaviour
 	/// 作業用Vector3
 	/// </summary>
 	Vector3 m_workVector3;
+
+	/// <summary>
+	/// 作業用Float
+	/// </summary>
+	float m_workFloat;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -491,7 +502,9 @@ public class MyField : MonoBehaviour
 	/// <summary>
 	/// 隕石の破壊
 	/// </summary>
-	public void DestructionOfMeteorite()
+	/// <param name="targetPos">爆風のターゲット位置</param>
+	/// <returns>爆風の影響率</returns>
+	public float DestructionOfMeteorite(Vector3 targetPos)
 	{
 		//落下演出の停止
 		MeteoriteBody.SetActive(false);
@@ -503,6 +516,10 @@ public class MyField : MonoBehaviour
 		//爆発演出
 		MeteoriteDestructionEffect.Play();
 		MySoundManager.Instance.Play(SeCollection.MeteoriteDestroyed, true, true, Meteorite.transform.position);
+
+		//爆風影響率
+		m_workFloat = 1 - ((MeteoriteBody.transform.position - targetPos).sqrMagnitude / (m_blastRange * m_blastRange));
+		return (m_workFloat < 0) ? 0 : m_workFloat;
 	}
 
 	//----------------------------------------------------------------------------------------------------

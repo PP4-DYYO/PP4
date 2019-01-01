@@ -277,6 +277,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// 作業用Int
 	/// </summary>
 	int m_workInt;
+
+	/// <summary>
+	/// 作業用Float
+	/// </summary>
+	float m_workFloat;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -544,7 +549,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		m_meteoriteDestructionNum = meteoriteDestructionNum;
 
 		//隕石破壊
-		Game.StageScript.CurrentFieldScript.DestructionOfMeteorite();
+		m_workFloat = Game.StageScript.CurrentFieldScript.DestructionOfMeteorite(Game.OperatingPlayerScript.transform.position);
+
+		//隕石の影響
+		Game.OperatingPlayerScript.ReceiveBlastOfMeteorite(m_workFloat);
 	}
 
 	//----------------------------------------------------------------------------------------------------

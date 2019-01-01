@@ -442,6 +442,12 @@ public class MyPlayer : MonoBehaviour
 	float m_spRecoveryRate;
 
 	/// <summary>
+	/// スペシャル消費率
+	/// </summary>
+	[SerializeField]
+	float m_spConsumptionRate;
+
+	/// <summary>
 	/// オーラによる変数倍率
 	/// </summary>
 	[SerializeField]
@@ -1212,8 +1218,6 @@ public class MyPlayer : MonoBehaviour
 				else
 				{
 					//隕石の破壊
-					m_countSpTime = m_spTime;
-					m_isUseSp = false;
 					m_isMeteoriteDestruction = true;
 				}
 				break;
@@ -1376,8 +1380,23 @@ public class MyPlayer : MonoBehaviour
 
 		//投げる
 		AuraBall.Throw(target, aura);
-		m_countSpTime = m_spTime;
+		m_countSpTime += m_spTime * m_spConsumptionRate;
+		m_countSpTime = (m_countSpTime > m_spTime ? m_spTime : m_countSpTime);
 		m_isUseSp = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石の爆風を受ける
+	/// </summary>
+	/// <param name="influenceRate">影響率</param>
+	public void ReceiveBlastOfMeteorite(float influenceRate)
+	{
+		m_countSpTime += m_spTime * influenceRate * m_spConsumptionRate;
+		m_countSpTime = (m_countSpTime > m_spTime ? m_spTime : m_countSpTime);
+
+		if (influenceRate > 0)
+			m_isUseSp = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ using UnityEngine.UI;
 public class MyTutorial : MyGame
 {
 	/// <summary>
-	///参加者配列
+	///参加者番号配列
 	/// </summary>
 	int[] m_players = new int[8];
 
@@ -354,50 +354,43 @@ public class MyTutorial : MyGame
 			m_players[6] = (int)Ranks.Seventh;
 			m_players[7] = (int)Ranks.Eighth;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[6])
+		else if (MyPlayerScript.transform.position.y < m_height[5])
 		{
 			m_players[5] = (int)Ranks.Sixth;
 			m_players[6] = (int)Ranks.Eighth;
 			m_players[7] = (int)Ranks.Seventh;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[5] )
+		else if (MyPlayerScript.transform.position.y < m_height[4])
 		{
 			m_players[4] = (int)Ranks.Fifth;
 			m_players[5] = (int)Ranks.Seventh;
 			m_players[7] = (int)Ranks.Sixth;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[4] )
+		else if (MyPlayerScript.transform.position.y < m_height[3])
 		{
 			m_players[3] = (int)Ranks.Fourth;
 			m_players[4] = (int)Ranks.Sixth;
 			m_players[7] = (int)Ranks.Fifth;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[3])
+		else if (MyPlayerScript.transform.position.y < m_height[2])
 		{
 			m_players[2] = (int)Ranks.Third;
 			m_players[3] = (int)Ranks.Fifth;
 			m_players[7] = (int)Ranks.Fourth;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[2])
+		else if (MyPlayerScript.transform.position.y < m_height[1])
 		{
 			m_players[1] = (int)Ranks.Second;
 			m_players[2] = (int)Ranks.Fourth;
 			m_players[7] = (int)Ranks.Third;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[1] )
+		else if (MyPlayerScript.transform.position.y < m_height[0])
 		{
 			m_players[0] = (int)Ranks.First;
 			m_players[1] = (int)Ranks.Third;
 			m_players[7] = (int)Ranks.Second;
 		}
-
-		if (MyPlayerScript.transform.position.y > m_height[0])
+		else
 		{
 			m_players[0] = (int)Ranks.Second;
 			m_players[7] = (int)Ranks.First;

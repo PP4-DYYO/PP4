@@ -61,6 +61,11 @@ public class MyFieldFoam : MonoBehaviour
 	/// </summary>
 	int m_workInt;
 
+	/// <summary>
+	/// 作業用のInt２
+	/// </summary>
+	int m_workInt2;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 初期
@@ -78,7 +83,9 @@ public class MyFieldFoam : MonoBehaviour
 		//泡発生位置の初期化
 		for (m_workInt = 0; m_workInt < m_bubbleGenerationPos.Length; m_workInt++)
 		{
+			m_isBubbleGenerations[m_workInt] = false;
 			m_bubbleGenerationPos[m_workInt] = -Vector3.one;
+			m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt, -Vector4.one);
 		}
 	}
 
@@ -96,7 +103,7 @@ public class MyFieldFoam : MonoBehaviour
 				//泡の位置の通知
 				m_isBubbleGenerations[m_workInt] = false;
 				m_bubbleGenerationPos[m_workInt] = -Vector3.one;
-				m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt, new Vector4(-1, -1, -1, -1));
+				m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt, -Vector4.one);
 			}
 		}
 
@@ -106,7 +113,7 @@ public class MyFieldFoam : MonoBehaviour
 			if (m_bubbleGenerationPos[m_workInt] != -Vector3.one)
 				GenerateBubbles(m_bubbleGenerationPos[m_workInt]);
 		}
-		
+
 		//テクスチャの更新
 		UpdateTexture();
 	}
@@ -119,13 +126,13 @@ public class MyFieldFoam : MonoBehaviour
 	void GenerateBubbles(Vector3 pos)
 	{
 		//使用されていない泡の検索
-		for (m_workInt = 0; m_workInt < m_isBubbleGenerations.Length; m_workInt++)
+		for (m_workInt2 = 0; m_workInt2 < m_isBubbleGenerations.Length; m_workInt2++)
 		{
-			if (!m_isBubbleGenerations[m_workInt])
+			if (!m_isBubbleGenerations[m_workInt2])
 			{
 				//泡の位置の通知
-				m_isBubbleGenerations[m_workInt] = true;
-				m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt, pos);
+				m_isBubbleGenerations[m_workInt2] = true;
+				m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt2, pos);
 				return;
 			}
 		}
@@ -170,7 +177,10 @@ public class MyFieldFoam : MonoBehaviour
 		for (m_workInt = 0; m_workInt < m_bubbleGenerationPos.Length; m_workInt++)
 		{
 			if (m_bubbleGenerationPos[m_workInt] == -Vector3.one)
+			{
 				m_bubbleGenerationPos[m_workInt] = Vector3.Scale(other.transform.position, Vector3.right + Vector3.forward);
+				return;
+			}
 		}
 	}
 }

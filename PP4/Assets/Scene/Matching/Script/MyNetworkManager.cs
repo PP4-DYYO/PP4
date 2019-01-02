@@ -191,6 +191,12 @@ public class MyNetworkManager : NetworkManager
 	public override void OnServerDisconnect(NetworkConnection connectionInfo)
 	{
 		NetworkServer.DestroyPlayersForConnection(connectionInfo);
+
+		//使えないネットワークID
+		m_unusableNetworkId.Add(m_networkIdInUse);
+
+		//マッチングのリセット
+		ResetMatching();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -236,6 +242,10 @@ public class MyNetworkManager : NetworkManager
 	{
 		//ホストの終了
 		StopHost();
+
+		//使えないネットワークID
+		if (m_isCreateRoom)
+			m_unusableNetworkId.Add(m_networkIdInUse);
 
 		//マッチングのリセット
 		ResetMatching();

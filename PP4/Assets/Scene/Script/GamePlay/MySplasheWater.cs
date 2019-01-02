@@ -66,12 +66,6 @@ public class MySplasheWater : MonoBehaviour
 	float m_splasheSmallerTime;
 
 	/// <summary>
-	/// 水しぶきの泡オブジェクト
-	/// </summary>
-	[SerializeField]
-	MySpreadSplashe SpreadSplashe;
-
-	/// <summary>
 	/// 水しぶきの本体
 	/// </summary>
 	[SerializeField]
@@ -94,17 +88,6 @@ public class MySplasheWater : MonoBehaviour
 	{
 		get { return m_isDisplay; }
 	}
-
-	/// <summary>
-	/// 水しぶきの泡の発生位置
-	/// </summary>
-	Vector3 m_spreadSplashePosition;
-
-	/// <summary>
-	/// 水しぶきの泡発生位置用オブジェクト
-	/// </summary>
-	[SerializeField]
-	GameObject makeSpreadSplasheObject;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -182,24 +165,6 @@ public class MySplasheWater : MonoBehaviour
 		if (other.tag == StageInfo.GROUND_TAG)
 		{
 			m_isfallen = true;
-			MakeSpreadSplashe();
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 水しぶきの広がりのオブジェクト生成
-	/// </summary>
-	void MakeSpreadSplashe()
-	{
-		if (Body.transform.position.y > 0)
-		{
-			//発生位置調整
-			m_spreadSplashePosition = makeSpreadSplasheObject.transform.position;
-			m_spreadSplashePosition.y = 0;
-			SpreadSplashe.SplasheEffect.transform.localScale = Vector3.one;
-			SpreadSplashe.SplasheEffect.transform.position = m_spreadSplashePosition;
-			SpreadSplashe.SplasheEffect.Play();
 		}
 	}
 

@@ -114,28 +114,6 @@ public class MyJetWater : MonoBehaviour
 	int m_splasheIndex;
 
 	/// <summary>
-	/// 水しぶきの泡オブジェクトクラス
-	/// </summary>
-	[SerializeField]
-	MySpreadSplashe SpreadSplashe;
-
-	/// <summary>
-	/// ジェットが水面に当たっている時間
-	/// </summary>
-	float m_jetStayTime;
-
-	/// <summary>
-	/// ジェットが水しぶきを出す周期
-	/// </summary>
-	[SerializeField]
-	float m_jetMakeSpreadTime;
-
-	/// <summary>
-	/// 水しぶきの出現場所
-	/// </summary>
-	Vector3 m_splashePosition;
-
-	/// <summary>
 	/// 水しぶきの最小サイズ(3)
 	/// </summary>
 	[SerializeField]
@@ -146,38 +124,6 @@ public class MyJetWater : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_splasheSmollerAmount;
-
-	/// <summary>
-	/// ジェットの出す水しぶきの泡の高さ
-	/// </summary>
-	const float JET_SPREAD_SPLASHE_HEIGHT = 0;
-
-	/// <summary>
-	/// ジェットの出す水しぶきの位置用ゲームオブジェクト(1段階目)
-	/// </summary>
-	[SerializeField]
-	GameObject Effectpos;
-
-	/// <summary>
-	/// ジェットの出す水しぶきの位置用ゲームオブジェクト(2段階目)
-	/// </summary>
-	[SerializeField]
-	GameObject Effectpos2;
-
-	/// <summary>
-	/// 水しぶきの位置が変わる高さ(1段階目)
-	/// </summary>
-	const float PLAYER_HEIGHT_ONE = 1.5f;
-
-	/// <summary>
-	/// 水しぶきの位置が変わる高さ(2段階目)
-	/// </summary>
-	const float PLAYER_HEIGHT_TWO = 3.5f;
-
-	/// <summary>
-	/// 水しぶきの位置が変わる高さは(3段階目)
-	/// </summary>
-	const float PLAYER_HEIGHT_THREE = 5.5f;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -290,47 +236,7 @@ public class MyJetWater : MonoBehaviour
 			}
 		}
 	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// ジェットの当たり判定
-	/// </summary>
-	void OnTriggerStay(Collider other)
-	{
-		if (other.tag == StageInfo.GROUND_TAG && m_isSplasheFire)
-		{
-			m_jetStayTime += Time.deltaTime;
-			if (m_jetStayTime > m_jetMakeSpreadTime)
-			{
-				MySpreadSplashe ss = Instantiate(SpreadSplashe, Player.transform);
-				m_splashePosition.y = JET_SPREAD_SPLASHE_HEIGHT;
-				//プレイヤーの高さで水しぶきの泡の出現場所を変える
-				if (Player.transform.position.y > PLAYER_HEIGHT_THREE)
-				{
-					m_splashePosition.x = JetCenter.transform.position.x;
-					m_splashePosition.z = JetCenter.transform.position.z;
-				}
-				else if (Player.transform.position.y > PLAYER_HEIGHT_TWO)
-				{
-					m_splashePosition.x = Effectpos2.transform.position.x;
-					m_splashePosition.z = Effectpos2.transform.position.z;
-				}
-				else if (Player.transform.position.y > PLAYER_HEIGHT_ONE)
-				{
-					m_splashePosition.x = Effectpos.transform.position.x;
-					m_splashePosition.z = Effectpos.transform.position.z;
-				}
-				else
-				{
-					m_splashePosition.x = transform.position.x;
-					m_splashePosition.z = transform.position.z;
-				}
-				ss.transform.position = m_splashePosition;
-				m_jetStayTime = 0;
-			}
-		}
-	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきを全て非表示にする

@@ -181,6 +181,7 @@ public class MyMatching : MonoBehaviour
 
 		//処理
 		StateProcess[(int)m_state]();
+		MatchingUi.DisplayConnectionStatus(m_netManager.IsConnection());
 
 		//入力のリセット
 		ResetInput();

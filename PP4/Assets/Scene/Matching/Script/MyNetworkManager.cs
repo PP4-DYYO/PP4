@@ -44,6 +44,11 @@ public class MyNetworkManager : NetworkManager
 	const string ROOM_NAME = "Fountain";
 
 	/// <summary>
+	/// 部屋参加中フラグ
+	/// </summary>
+	bool m_isJoinRoom;
+
+	/// <summary>
 	/// 部屋作成中フラグ
 	/// </summary>
 	bool m_isCreateRoom;
@@ -131,6 +136,7 @@ public class MyNetworkManager : NetworkManager
 		{
 			//ルームに参加
 			m_match.JoinMatch((UnityEngine.Networking.Types.NetworkID)m_networkIdInUse, "", "", "", 0, 0, OnMatchJoined);
+			m_isJoinRoom = true;
 			m_isStandbyState = true;
 		}
 		else
@@ -165,6 +171,16 @@ public class MyNetworkManager : NetworkManager
 		}
 
 		return false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 接続状態
+	/// </summary>
+	/// <returns>接続しているか</returns>
+	public bool IsConnection()
+	{
+		return m_isCreateRoom || m_isJoinRoom || !m_isStandbyState;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -207,6 +223,7 @@ public class MyNetworkManager : NetworkManager
 		matches = null;
 
 		m_isStandbyState = true;
+		m_isJoinRoom = false;
 		m_isCreateRoom = false;
 		m_isConnectionWithServerIsBroken = true;
 	}

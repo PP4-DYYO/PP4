@@ -63,6 +63,12 @@ public class MyMatchingUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Button MatchEndButton;
+
+	/// <summary>
+	/// 接続
+	/// </summary>
+	[SerializeField]
+	MyImageAnimation Connection;
 	#endregion
 
 	#region 送付される処理
@@ -100,6 +106,19 @@ public class MyMatchingUi : MonoBehaviour
 	[SerializeField]
 	Color m_nonSelectColor;
 	#endregion
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 接続状態を表示
+	/// </summary>
+	/// <param name="isConnecting">接続中か</param>
+	public void DisplayConnectionStatus(bool isConnecting)
+	{
+		if (isConnecting)
+			Connection.StartAnimation(false);
+		else
+			Connection.StopAnimation();
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>

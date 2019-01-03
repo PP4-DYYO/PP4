@@ -31,6 +31,26 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	static int m_numOfDisconnections;
 
+	/// <summary>
+	/// 切断されたプレイヤー番号
+	/// </summary>
+	static int m_numOfPlayerWithDisconnected;
+	public int NumOfPlayerWithDisconnected
+	{
+		get { return m_numOfPlayerWithDisconnected; }
+		set { m_numOfPlayerWithDisconnected = value; }
+	}
+
+	/// <summary>
+	/// 整列フラグ
+	/// </summary>
+	static bool m_isAlignment;
+	public bool IsAlignment
+	{
+		get { return m_isAlignment; }
+		set { m_isAlignment = value; }
+	}
+
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
@@ -417,7 +437,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// Transformのリセット
 	/// </summary>
-	/// <param name="trans"></param>
+	/// <param name="trans">Transform</param>
 	void ResetTransform(Transform trans)
 	{
 		trans.localPosition = Vector3.zero;
@@ -1068,13 +1088,29 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void ConfirmationOfPlayersWhoAreDisconnected()
 	{
+		if (!m_isAlignment)
+			m_numOfPlayerWithDisconnected = m_netPlayerSettings.Count;
+
+		//全プレイヤー
 		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count;)
 		{
 			//存在していない
 			if (!m_netPlayerSettings[m_workInt])
+			{
 				m_netPlayerSettings.RemoveAt(m_workInt);
+				m_numOfPlayerWithDisconnected = Mathf.Min(m_workInt, m_numOfPlayerWithDisconnected);
+			}
 			else
+			{
 				m_workInt++;
+			}
+		}
+
+		//切断された
+		if (m_numOfPlayerWithDisconnected < m_netPlayerSettings.Count)
+		{
+			m_isAlignment = true;
+			CmdNotifyOfIsReady(false);
 		}
 	}
 

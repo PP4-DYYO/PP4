@@ -122,6 +122,12 @@ public class MyMainGame : MyGame
 	float m_timeWhenPeopleGatherAndChangeState;
 
 	/// <summary>
+	/// 整列時間
+	/// </summary>
+	[SerializeField]
+	float m_alignmentTime;
+
+	/// <summary>
 	/// 人を待つ時のプレイヤー位置
 	/// </summary>
 	[SerializeField]
@@ -159,6 +165,16 @@ public class MyMainGame : MyGame
 	/// 人が集まった時間
 	/// </summary>
 	float m_timeWhenPeopleGathered;
+
+	/// <summary>
+	/// 整列するプレイヤーの初期位置
+	/// </summary>
+	Vector3 m_initialPosOfPlayerToBeAligned;
+
+	/// <summary>
+	/// 整列を開始する時間
+	/// </summary>
+	float m_timeToStartAligning;
 	#endregion
 
 	#region 人が集まった状態
@@ -779,8 +795,8 @@ public class MyMainGame : MyGame
 		}
 		else
 		{
-			//解放時間を更新
-			MainUi.SetTimeToWaitWorPeople(m_timeToWaitForPeople - m_countTheTimeOfTheState);
+			//状態の更新
+			UpdatingStateToRecruitPeople();
 		}
 	}
 
@@ -808,6 +824,85 @@ public class MyMainGame : MyGame
 		//状態遷移する時間
 		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGathered + m_timeWhenPeopleGatherAndChangeState)
 			m_state = GameStatus.PeopleGathered;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人を集めるための状態を更新
+	/// </summary>
+	void UpdatingStateToRecruitPeople()
+	{
+		//人が集まっていない
+		m_timeWhenPeopleGathered = -1;
+
+		//整列中
+		if (!OperatingNetPlayerSetting.IsReady)
+			AlignmentWhenPeopleGather();
+
+		//解放時間を更新
+		MainUi.SetTimeToWaitWorPeople(m_timeToWaitForPeople - m_countTheTimeOfTheState);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人が集まる時の整列
+	/// </summary>
+	void AlignmentWhenPeopleGather()
+	{
+		//初期
+		if (OperatingNetPlayerSetting.IsAlignment)
+		{
+			OperatingNetPlayerSetting.IsAlignment = false;
+
+			//設定
+			m_initialPosOfPlayerToBeAligned = OperatingNetPlayerSetting.transform.position;
+			m_timeToStartAligning = m_countTheTimeOfTheState;
+
+			//整列対象
+			if (OperatingNetPlayerSetting.GetNetPlayerNum() <= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
+				OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Run);
+		}
+
+		//整列対象
+		if(OperatingNetPlayerSetting.GetNetPlayerNum() <= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
+		{
+			//整列経過時間とプレイヤーネット番号
+			m_workFloat = m_countChargingTimeOfPlayer - m_timeToStartAligning;
+			m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
+
+			//時間によるプレイヤーの位置
+			OperatingPlayer.transform.position =
+				Vector3.Lerp(m_initialPosOfPlayerToBeAligned, m_playerPosWhenWaitingForPeople[m_workInt], m_workFloat / m_alignmentTime);
+
+			//向きたい角度
+			m_workFloat =
+				Vector3.Cross(OperatingPlayer.transform.forward, m_playerPosWhenWaitingForPeople[m_workInt] - m_initialPosOfPlayerToBeAligned).y;
+			m_workFloat = Vector3.Angle(OperatingPlayer.transform.forward,
+				Vector3.Scale((m_playerPosWhenWaitingForPeople[m_workInt] - m_initialPosOfPlayerToBeAligned), Vector3.right + Vector3.forward))
+				* (m_workFloat < 0 ? -1 : 1);
+
+			//向ける角度が向きたい角度より大きい
+			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
+				OperatingPlayer.transform.Rotate(Vector3.up, m_workFloat);
+			else if (m_workFloat > 0)
+				OperatingPlayer.transform.Rotate(Vector3.up, m_playerRotationSpeed * Time.deltaTime);
+			else
+				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
+		}
+
+		//終了
+		if(m_countChargingTimeOfPlayer - m_timeToStartAligning >= m_alignmentTime)
+		{
+			//プレイヤーネット番号
+			m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
+
+			//整列後の位置
+			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
+
+			//設定
+			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
+			OperatingNetPlayerSetting.NumOfPlayerWithDisconnected = MyNetPlayerSetting.NetPlayerSettings.Count;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

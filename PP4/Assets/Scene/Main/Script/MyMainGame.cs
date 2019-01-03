@@ -116,6 +116,12 @@ public class MyMainGame : MyGame
 	float m_timeToWaitForPeople;
 
 	/// <summary>
+	/// 人が集まり状態遷移する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeWhenPeopleGatherAndChangeState;
+
+	/// <summary>
 	/// 人を待つ時のプレイヤー位置
 	/// </summary>
 	[SerializeField]
@@ -148,6 +154,11 @@ public class MyMainGame : MyGame
 	{
 		get { return m_numOfPlayers; }
 	}
+
+	/// <summary>
+	/// 人が集まった時間
+	/// </summary>
+	float m_timeWhenPeopleGathered;
 	#endregion
 
 	#region 人が集まった状態
@@ -748,6 +759,9 @@ public class MyMainGame : MyGame
 			OperatingNetPlayerSetting.CmdLevel(MyGameInfo.Instance.Level);
 			OperatingNetPlayerSetting.CmdPower(MyGameInfo.Instance.Power);
 
+			//変数
+			m_timeWhenPeopleGathered = -1;
+
 			//BGM
 			MySoundManager.Instance.Play(BgmCollection.Matching);
 		}
@@ -755,8 +769,8 @@ public class MyMainGame : MyGame
 		//ゲームが開始できるか
 		if (OperatingNetPlayerSetting.IsBattleStart())
 		{
-			//バトルの開始設定
-			m_state = GameStatus.PeopleGathered;
+			//次の状態への準備
+			GetReadyForPeopleGathered();
 		}
 		else if (m_countTheTimeOfTheState > m_timeToWaitForPeople)
 		{
@@ -779,6 +793,21 @@ public class MyMainGame : MyGame
 	{
 		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Stand);
 		OperatingPlayer.StandAtSpecifiedPos(m_playerPosWhenWaitingForPeople[playerNum], m_playerDirectionWhenWaitingForPeople[playerNum]);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人が集まった状態の準備
+	/// </summary>
+	void GetReadyForPeopleGathered()
+	{
+		//人が集まった時間
+		if (m_timeWhenPeopleGathered == -1)
+			m_timeWhenPeopleGathered = m_countTheTimeOfTheState;
+
+		//状態遷移する時間
+		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGathered + m_timeWhenPeopleGatherAndChangeState)
+			m_state = GameStatus.PeopleGathered;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -47,11 +47,6 @@ public class MyFieldFoam : MonoBehaviour
 	int m_prev2TexIdx;
 
 	/// <summary>
-	/// 泡発生フラグ達
-	/// </summary>
-	bool[] m_isBubbleGenerations = new bool[10];
-
-	/// <summary>
 	/// 泡発生位置たち
 	/// </summary>
 	Vector3[] m_bubbleGenerationPos = new Vector3[10];
@@ -62,9 +57,9 @@ public class MyFieldFoam : MonoBehaviour
 	int m_workInt;
 
 	/// <summary>
-	/// 作業用のInt２
+	/// 作業用のVector3
 	/// </summary>
-	int m_workInt2;
+	Vector3 m_workVector3;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -83,7 +78,6 @@ public class MyFieldFoam : MonoBehaviour
 		//泡発生位置の初期化
 		for (m_workInt = 0; m_workInt < m_bubbleGenerationPos.Length; m_workInt++)
 		{
-			m_isBubbleGenerations[m_workInt] = false;
 			m_bubbleGenerationPos[m_workInt] = -Vector3.one;
 			m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt, -Vector4.one);
 		}
@@ -95,23 +89,26 @@ public class MyFieldFoam : MonoBehaviour
 	/// </summary>
 	void FixedUpdate()
 	{
-		//使用されている泡の初期化
-		for (m_workInt = 0; m_workInt < m_isBubbleGenerations.Length; m_workInt++)
+		//全ての泡
+		for (m_workInt = 0; m_workInt < m_bubbleGenerationPos.Length; m_workInt++)
 		{
-			if (m_isBubbleGenerations[m_workInt])
+			m_workVector3 = m_waveMaterial.GetVector("_bubbleGenerationPos" + m_workInt);
+
+			//未使用
+			if (m_bubbleGenerationPos[m_workInt] == -Vector3.one)
+				continue;
+
+			//泡が反映されている
+			if (m_bubbleGenerationPos[m_workInt] == m_workVector3)
 			{
 				//泡の位置の通知
-				m_isBubbleGenerations[m_workInt] = false;
 				m_bubbleGenerationPos[m_workInt] = -Vector3.one;
 				m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt, -Vector4.one);
 			}
-		}
-
-		//泡発生位置の通知
-		for (m_workInt = 0; m_workInt < m_bubbleGenerationPos.Length; m_workInt++)
-		{
-			if (m_bubbleGenerationPos[m_workInt] != -Vector3.one)
-				GenerateBubbles(m_bubbleGenerationPos[m_workInt]);
+			else
+			{
+				GenerateBubbles(m_bubbleGenerationPos[m_workInt], m_workInt);
+			}
 		}
 
 		//テクスチャの更新
@@ -123,19 +120,10 @@ public class MyFieldFoam : MonoBehaviour
 	/// 泡の発生
 	/// </summary>
 	/// <param name="pos">位置</param>
-	void GenerateBubbles(Vector3 pos)
+	/// <param name="bubbleNum">泡番号</param>
+	void GenerateBubbles(Vector3 pos, int bubbleNum = 0)
 	{
-		//使用されていない泡の検索
-		for (m_workInt2 = 0; m_workInt2 < m_isBubbleGenerations.Length; m_workInt2++)
-		{
-			if (!m_isBubbleGenerations[m_workInt2])
-			{
-				//泡の位置の通知
-				m_isBubbleGenerations[m_workInt2] = true;
-				m_waveMaterial.SetVector("_bubbleGenerationPos" + m_workInt2, pos);
-				return;
-			}
-		}
+		m_waveMaterial.SetVector("_bubbleGenerationPos" + bubbleNum, pos);
 	}
 
 	//----------------------------------------------------------------------------------------------------

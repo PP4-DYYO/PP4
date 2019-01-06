@@ -37,6 +37,10 @@ enum CameraMode
 	/// </summary>
 	Fixed,
 	/// <summary>
+	/// 固定注目
+	/// </summary>
+	FixedFocus,
+	/// <summary>
 	/// 指定位置をたどる
 	/// </summary>
 	FollowSpecifiedPos,
@@ -146,6 +150,7 @@ public class MyCamera : MonoBehaviour
 	/// <summary>
 	/// カメラ対象
 	/// </summary>
+	[SerializeField]
 	MonoBehaviour m_target;
 	#endregion
 
@@ -331,8 +336,12 @@ public class MyCamera : MonoBehaviour
 	/// </summary>
 	void Awake()
 	{
-		//対象の設定
-		SearchTarget();
+		//ターゲットなし
+		if (!m_target)
+		{
+			//ターゲットを探す
+			SearchTarget();
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -361,6 +370,9 @@ public class MyCamera : MonoBehaviour
 					break;
 				case CameraMode.Fixed:
 					BecomeFixedCamera(transform.position, m_target.transform.position - transform.position);
+					break;
+				case CameraMode.FixedFocus:
+					BecomeFixedFocusCamera(transform.position, m_target);
 					break;
 				case CameraMode.FollowSpecifiedPos:
 					break;
@@ -399,6 +411,9 @@ public class MyCamera : MonoBehaviour
 				break;
 			case CameraMode.Fixed:
 				FixedProcess();
+				break;
+			case CameraMode.FixedFocus:
+				FixedFocusProcess();
 				break;
 			case CameraMode.FollowSpecifiedPos:
 				FollowSpecifiedPosProcess();
@@ -542,6 +557,15 @@ public class MyCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 固定注目カメラ処理
+	/// </summary>
+	void FixedFocusProcess()
+	{
+		transform.LookAt(m_target.transform);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 指定位置をたどる処理
 	/// </summary>
 	void FollowSpecifiedPosProcess()
@@ -624,6 +648,33 @@ public class MyCamera : MonoBehaviour
 		m_mode = CameraMode.Fixed;
 		transform.position = pos;
 		transform.LookAt(transform.position + direction);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 固定注目カメラになる
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <param name="target">ターゲット</param>
+	/// <param name="isMoveModeSwitch">モード切替の移動フラグ</param>
+	public void BecomeFixedFocusCamera(Vector3 pos, MonoBehaviour target, bool isMoveModeSwitch = false)
+	{
+		//モード切替の移動フラグ
+		if (isMoveModeSwitch)
+		{
+			m_isMoveModeSwitch = true;
+			m_currentRelativePos = transform.position - m_target.transform.position;
+			m_targetRelativePos = pos - m_target.transform.position;
+			m_currentRotation = transform.eulerAngles;
+			m_targetRotation = m_currentRotation;
+			m_countModeSwithingTime = 0;
+		}
+
+		m_mode = CameraMode.FixedFocus;
+		transform.position = pos;
+		transform.LookAt(target.transform);
+
+		m_target = target;
 	}
 
 	//----------------------------------------------------------------------------------------------------

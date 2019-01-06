@@ -1731,7 +1731,7 @@ public class MyMainGame : MyGame
 	public override void LeaveBattle()
 	{
 		m_netManager.StopConnection();
-		MySceneManager.Instance.ChangeScene(MyScene.Armed);
+		MySceneManager.Instance.ChangeScene(MyScene.Armed, true);
 	}
 
 	//----------------------------------------------------------------------------------------------------

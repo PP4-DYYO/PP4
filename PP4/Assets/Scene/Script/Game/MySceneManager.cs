@@ -198,8 +198,9 @@ public class MySceneManager : MySingletonMonoBehaviour<MySceneManager>
 	/// シーンのチェンジ
 	/// </summary>
 	/// <param name="scene">シーン</param>
+	/// <param name="isHideScreenQuickly">スクリーンを早く隠す</param>
 	/// <param name="maskNum">マスク番号</param>
-	public void ChangeScene(MyScene scene, int maskNum = 0)
+	public void ChangeScene(MyScene scene, bool isHideScreenQuickly = false, int maskNum = 0)
 	{
 		//遷移中
 		if (m_isChangeScene)
@@ -213,6 +214,6 @@ public class MySceneManager : MySingletonMonoBehaviour<MySceneManager>
 		m_currentScene = scene;
 		m_pastScene = (m_pastScene == m_currentScene) ? MyScene.Non : m_pastScene;
 		m_sceneState = SceneStatus.PastScene;
-		m_countMaskTime = 0;
+		m_countMaskTime = isHideScreenQuickly ? m_maskTime : 0;
 	}
 }

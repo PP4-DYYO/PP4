@@ -113,6 +113,82 @@ public class MyTutorial : MyGame
 	MyJetWater MyJetWaterScript;
 
 	/// <summary>
+	/// 紙吹雪の親オブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject Papers;
+
+	/// <summary>
+	/// 赤の紙吹雪
+	/// </summary>
+	[SerializeField]
+	GameObject RedPaper;
+
+	/// <summary>
+	/// 赤の紙吹雪のパーティクルシステム
+	/// </summary>
+	[SerializeField]
+	ParticleSystem ParticleRedPaper;
+
+	/// <summary>
+	/// 青の紙吹雪
+	/// </summary>
+	[SerializeField]
+	GameObject BluePaper;
+
+	/// <summary>
+	/// 青の紙吹雪のパーティクルシステム
+	/// </summary>
+	[SerializeField]
+	ParticleSystem ParticleBluePaper;
+
+	/// <summary>
+	/// 黄の紙吹雪
+	/// </summary>
+	[SerializeField]
+	GameObject YellowPaper;
+
+	/// <summary>
+	/// 黄の紙吹雪のパーティクルシステム
+	/// </summary>
+	[SerializeField]
+	ParticleSystem ParticleYellowPaper;
+
+	/// <summary>
+	/// 緑の紙吹雪
+	/// </summary>
+	[SerializeField]
+	GameObject GreenPaper;
+
+	/// <summary>
+	/// 緑の紙吹雪のパーティクルシステム
+	/// </summary>
+	[SerializeField]
+	ParticleSystem ParticleGreenPaper;
+
+	/// <summary>
+	/// 紙吹雪の出現場所
+	/// </summary>
+	[SerializeField]
+	GameObject PaperPositionObject;
+
+	/// <summary>
+	/// 紙吹雪を出現させる
+	/// </summary>
+	bool m_appearingPaper;
+
+	/// <summary>
+	/// 紙吹雪の生存時間(Duration + StartLifeTime)
+	/// </summary>
+	[SerializeField]
+	float m_paperLifeTime;
+
+	/// <summary>
+	/// 紙吹雪の出現後の経過時間
+	/// </summary>
+	float m_paperProgressTime;
+
+	/// <summary>
 	/// 順位
 	/// </summary>
 	public enum Ranks
@@ -297,6 +373,16 @@ public class MyTutorial : MyGame
 			MySceneManager.Instance.ChangeScene(MyScene.Title);
 		}
 
+		if (m_appearingPaper)
+		{
+			m_paperProgressTime += Time.deltaTime;
+			if (m_paperProgressTime > m_paperLifeTime)
+			{
+				m_paperProgressTime = 0;
+				Paper(false);
+			}
+		}
+
 		//残り時間を分と秒に分ける
 		m_tutorialMinute = (int)m_tutorialTime / TIME_CONVERSION;
 		m_tutorialTimeSecond = (int)m_tutorialTime - m_tutorialMinute * TIME_CONVERSION;
@@ -319,28 +405,60 @@ public class MyTutorial : MyGame
 	void CheckMission()
 	{
 		//300mに到達
-		if (MyPlayerScript.transform.position.y > 300)
+		if (MyPlayerScript.transform.position.y > 300 && TutorialMission[0].m_clear == false)
 		{
 			TutorialMission[0].m_clear = true;
 			MissionText[0].color = Color.gray;
 			ClearObject[0].SetActive(true);
+			Paper(true);
 		}
 
 		//水の残量0
-		if (OperatingPlayer.GetPercentageOfRemainingWater() == 0)
+		if (OperatingPlayer.GetPercentageOfRemainingWater() == 0 && TutorialMission[1].m_clear == false)
 		{
 			TutorialMission[1].m_clear = true;
 			MissionText[1].color = Color.gray;
 			ClearObject[1].SetActive(true);
+			Paper(true);
 		}
 
 		//コイン10枚取得
-		if (OperatingPlayer.NumOfCoins >= 10)
+		if (OperatingPlayer.NumOfCoins >= 10 && TutorialMission[2].m_clear == false)
 		{
 			TutorialMission[2].m_clear = true;
 			MissionText[2].color = Color.gray;
 			ClearObject[2].SetActive(true);
+			Paper(true);
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 紙吹雪の切り替え
+	/// </summary>
+	/// <param name="ActiveState">true or false</param>
+	void Paper(bool ActiveState)
+	{
+		//すでに発生していたら一度消す
+		if (m_appearingPaper)
+		{
+			RedPaper.SetActive(false);
+			BluePaper.SetActive(false);
+			YellowPaper.SetActive(false);
+			GreenPaper.SetActive(false);
+			m_paperProgressTime = 0;
+		}
+
+		m_appearingPaper = ActiveState;
+
+		if (ActiveState)
+		{
+			Papers.transform.position = PaperPositionObject.transform.position;
+		}
+		RedPaper.SetActive(ActiveState);
+		BluePaper.SetActive(ActiveState);
+		YellowPaper.SetActive(ActiveState);
+		GreenPaper.SetActive(ActiveState);
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -1046,7 +1046,7 @@ public class MyMainGame : MyGame
 		OperatingPlayer.transform.position = Stage.CurrentFieldScript.StartPositions[OperatingNetPlayerSetting.GetNetPlayerNum()];
 
 		//中心を見る
-		OperatingPlayer.transform.LookAt(Vector3.zero);
+		OperatingPlayer.transform.LookAt(Vector3.right + Vector3.forward);
 
 		//アニメーション
 		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Select);

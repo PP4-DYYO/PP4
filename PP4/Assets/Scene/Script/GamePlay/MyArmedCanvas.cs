@@ -236,6 +236,11 @@ public class MyArmedCanvas : MonoBehaviour
 	bool m_isDpadXBecameNegativePrev;
 	#endregion
 
+	/// <summary>
+	/// 作業用のInt
+	/// </summary>
+	int m_workInt;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 起動
@@ -568,9 +573,9 @@ public class MyArmedCanvas : MonoBehaviour
 	/// </summary>
 	public void OnClickButtonToDisplayPrev()
 	{
-		m_characterNumBeingDisplayed =
-			((m_characterNumBeingDisplayed - 1) + Characters.transform.childCount) % Characters.transform.childCount;
-		Characters.DisplayCharacters(m_characterNumBeingDisplayed, true, (m_mode == ArmedMode.SelectCharacter));
+		m_workInt = ((m_characterNumBeingDisplayed - 1) + Characters.transform.childCount) % Characters.transform.childCount;
+		if (Characters.DisplayCharacters(m_workInt, true, (m_mode == ArmedMode.SelectCharacter)))
+			m_characterNumBeingDisplayed = m_workInt;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -579,9 +584,9 @@ public class MyArmedCanvas : MonoBehaviour
 	/// </summary>
 	public void OnClickButtonToDisplayNext()
 	{
-		m_characterNumBeingDisplayed =
-			((m_characterNumBeingDisplayed + 1) + Characters.transform.childCount) % Characters.transform.childCount;
-		Characters.DisplayCharacters(m_characterNumBeingDisplayed, false, (m_mode == ArmedMode.SelectCharacter));
+		m_workInt = ((m_characterNumBeingDisplayed + 1) + Characters.transform.childCount) % Characters.transform.childCount;
+		if (Characters.DisplayCharacters(m_workInt, false, (m_mode == ArmedMode.SelectCharacter)))
+			m_characterNumBeingDisplayed = m_workInt;
 	}
 
 	//----------------------------------------------------------------------------------------------------

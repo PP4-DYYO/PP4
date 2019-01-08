@@ -169,6 +169,12 @@ public class MyCamera : MonoBehaviour
 	float m_modeSwitchingTime;
 
 	/// <summary>
+	/// カメラ回りの半径
+	/// </summary>
+	[SerializeField]
+	float m_radiusAroundCamera;
+
+	/// <summary>
 	/// モード切替の移動フラグ
 	/// </summary>
 	bool m_isMoveModeSwitch;
@@ -455,11 +461,11 @@ public class MyCamera : MonoBehaviour
 		m_ray = new Ray(m_playerCenterPos, m_rayDirection);
 
 		// Rayが衝突したかどうか
-		if (Physics.Raycast(m_ray, out m_hit, m_distanceToPlayer))
+		if (Physics.SphereCast(m_ray, m_radiusAroundCamera, out m_hit, m_distanceToPlayer))
 		{
 			//触れることが可
 			if (!m_hit.collider.isTrigger)
-				transform.position = m_hit.point;
+				transform.position = transform.position + transform.forward * Vector3.Dot((m_hit.point - transform.position), transform.forward);
 		}
 	}
 

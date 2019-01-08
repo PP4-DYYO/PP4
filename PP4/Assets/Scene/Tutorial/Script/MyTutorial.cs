@@ -32,6 +32,18 @@ public class MyTutorial : MyGame
 	GameObject PlayerSkinOne;
 
 	/// <summary>
+	/// プレイヤーのオーラ
+	/// </summary>
+	[SerializeField]
+	GameObject AuraObject;
+
+	/// <summary>
+	/// 敵のゲームオブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject[] EnemyObject;
+
+	/// <summary>
 	/// プレイヤーのスクリプト
 	/// </summary>
 	public MyPlayer MyPlayerScript;
@@ -40,6 +52,11 @@ public class MyTutorial : MyGame
 	/// プレイヤー番号
 	/// </summary>
 	int m_playerNum;
+
+	/// <summary>
+	/// 今の順位
+	/// </summary>
+	int m_nowRank;
 
 	/// <summary>
 	/// ミッション
@@ -337,6 +354,19 @@ public class MyTutorial : MyGame
 		{
 			MySceneManager.Instance.ChangeScene(MyScene.Matching);
 		}
+
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			AuraObject.SetActive(true);
+			if (m_nowRank != 0)
+			{
+				OperatingPlayer.ThrowAuraBall(EnemyObject[m_nowRank - 1], AuraAttribute.Elasticity);
+			}
+			else
+			{
+				OperatingPlayer.ThrowAuraBall(EnemyObject[0], AuraAttribute.Elasticity);
+			}
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -521,6 +551,7 @@ public class MyTutorial : MyGame
 			m_players[0] = (int)Ranks.Second;
 			m_players[7] = (int)Ranks.First;
 		}
+		m_nowRank = m_players[7];
 		MainUi.SetRank(m_players, m_playerNum);
 	}
 }

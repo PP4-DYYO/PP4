@@ -168,7 +168,7 @@ public class MyTitleManager : MonoBehaviour
 	/// スタートメッセージのテキスト
 	/// </summary>
 	[SerializeField]
-	Text StartMessage;
+	Image StartMessage;
 
 	/// <summary>
 	/// スタートメッセージのテキストのa値
@@ -594,7 +594,7 @@ public class MyTitleManager : MonoBehaviour
 		{
 			m_messagAlphaColorPlus = true;
 		}
-		StartMessage.GetComponent<Text>().color =
+		StartMessage.color =
 			new Color(StartMessage.color.r, StartMessage.color.g, StartMessage.color.b, m_messagAlphaColor);
 	}
 

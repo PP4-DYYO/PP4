@@ -24,11 +24,6 @@ public class MyTitleJetWater : MonoBehaviour
 	GameObject LeftJet;
 
 	/// <summary>
-	/// 水を発射するかどうか
-	/// </summary>
-	bool m_isSplasheFire;
-
-	/// <summary>
 	/// 水しぶきのSEの再生状態
 	/// </summary>
 	bool m_playJetSE;
@@ -42,7 +37,6 @@ public class MyTitleJetWater : MonoBehaviour
 	{
 		RightJet.SetActive(isFire);
 		LeftJet.SetActive(isFire);
-		m_isSplasheFire = isFire;
 		if (isFire == true)
 			MySoundManager.Instance.Play(SeCollection.WaterInjection,true,false,transform.position);
 	}

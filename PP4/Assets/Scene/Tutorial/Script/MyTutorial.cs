@@ -26,10 +26,15 @@ public class MyTutorial : MyGame
 	int[] m_height = new int[8];
 
 	/// <summary>
-	/// プレイヤー
+	/// プレイヤー(スキン1)
 	/// </summary>
 	[SerializeField]
-	MyPlayer MyPlayerScript;
+	GameObject PlayerSkinOne;
+
+	/// <summary>
+	/// プレイヤーのスクリプト
+	/// </summary>
+	public MyPlayer MyPlayerScript;
 
 	/// <summary>
 	/// プレイヤー番号
@@ -279,6 +284,9 @@ public class MyTutorial : MyGame
 	{
 		//水の残量表示
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
+
+		//スペシャルゲージの割合表示
+		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingSpGauge());
 
 		//コイン所持数表示
 		MainUi.SetNumOfCoins(OperatingPlayer.NumOfCoins);

@@ -350,12 +350,14 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void MyInputButtonCheck()
 	{
+		//シーン移動
 		if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
 		{
 			MySceneManager.Instance.ChangeScene(MyScene.Matching);
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space))
+		//オーラ発動
+		if (Mathf.Abs(Input.GetAxis("DpadX")) > 0.1 || Mathf.Abs(Input.GetAxis("DpadY")) > 0.1)
 		{
 			AuraObject.SetActive(true);
 			if (m_nowRank != 0)

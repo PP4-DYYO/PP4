@@ -479,7 +479,7 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	void MyInputChecker()
 	{
-		if (Input.GetKeyDown(KeyCode.Backspace) || Input.GetButtonDown("BackButton"))
+		if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
 		{
 			m_ending = true;
 			Time.timeScale = 1;
@@ -487,11 +487,11 @@ public class MyCreditManager : MonoBehaviour
 
 		if (!m_ending)
 		{
-			if (Input.GetKey(KeyCode.Space))
+			if (Input.GetKey(KeyCode.Space) || Input.GetButton("AButton"))
 				Time.timeScale = 5;
 		}
 
-		if (Input.GetKeyUp(KeyCode.Space))
+		if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonUp("AButton"))
 		{
 			Time.timeScale = 1;
 		}

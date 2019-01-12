@@ -108,6 +108,12 @@ public class MyArmedCanvas : MonoBehaviour
 	Button CharacterGenerator;
 
 	/// <summary>
+	/// キャラクターの削除
+	/// </summary>
+	[SerializeField]
+	Button CharacterDelete;
+
+	/// <summary>
 	/// ゲームをスタートするボタン
 	/// </summary>
 	[SerializeField]
@@ -206,16 +212,6 @@ public class MyArmedCanvas : MonoBehaviour
 	bool m_isHomeButtonDown;
 
 	/// <summary>
-	/// Mキーを押した
-	/// </summary>
-	bool m_isMKeyDown;
-
-	/// <summary>
-	/// 左コントロールキーを押し続ける
-	/// </summary>
-	bool m_isKeepressingLCtrlKey;
-
-	/// <summary>
 	/// DパッドXがポジティブになった
 	/// </summary>
 	bool m_isDpadXBecamePositive;
@@ -266,18 +262,16 @@ public class MyArmedCanvas : MonoBehaviour
 	void InputProcess()
 	{
 		//押したタイミングの取得
-		if (Input.GetButtonDown("AButton"))
+		if (Input.GetButtonDown("AButton") && !Input.GetKeyDown(KeyCode.Space) && !Input.GetKeyDown(KeyCode.Return))
 			m_isAButtonDown = true;
-		if (Input.GetButtonDown("BButton"))
+		if (Input.GetButtonDown("BButton") && !Input.GetKeyDown(KeyCode.E) && !Input.GetKeyDown(KeyCode.Backspace))
 			m_isBButtonDown = true;
-		if (Input.GetButtonDown("XButton"))
+		if (Input.GetButtonDown("XButton") && !Input.GetKeyDown(KeyCode.Q) && !Input.GetKeyDown(KeyCode.X))
 			m_isXButtonDown = true;
-		if (Input.GetButtonDown("BackButton"))
+		if (Input.GetButtonDown("BackButton") && !Input.GetKeyDown(KeyCode.N))
 			m_isBackButtonDown = true;
-		if (Input.GetButtonDown("HomeButton"))
+		if (Input.GetButtonDown("HomeButton") && !Input.GetKeyDown(KeyCode.M))
 			m_isHomeButtonDown = true;
-		if (Input.GetKeyDown(KeyCode.M))
-			m_isMKeyDown = true;
 		if (Input.GetAxis("DpadX") > 0 && !m_isDpadXBecamePositivePrev)
 			m_isDpadXBecamePositive = true;
 		m_isDpadXBecamePositivePrev = (Input.GetAxis("DpadX") > 0);
@@ -286,8 +280,7 @@ public class MyArmedCanvas : MonoBehaviour
 		m_isDpadXBecameNegativePrev = (Input.GetAxis("DpadX") < 0);
 
 		//押し続けている
-		m_isKeepressingXButton = (Input.GetButton("XButton"));
-		m_isKeepressingLCtrlKey = (Input.GetKey(KeyCode.LeftControl));
+		m_isKeepressingXButton = (Input.GetButton("XButton") && !Input.GetKey(KeyCode.Q) && !Input.GetKey(KeyCode.X));
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -455,6 +448,8 @@ public class MyArmedCanvas : MonoBehaviour
 			//削除用Transform
 			Characters.transform.GetChild(i).parent = GarbageCan;
 		}
+
+		Characters.Initialize();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -476,7 +471,7 @@ public class MyArmedCanvas : MonoBehaviour
 			OnClickButtonToDisplayNext();
 
 		//名前が入力されているandホームボタンでゲームスタート
-		if (!(System.String.IsNullOrEmpty(PlayerName.text)) && ((m_isHomeButtonDown && !m_isMKeyDown) || (m_isMKeyDown && m_isKeepressingLCtrlKey)))
+		if (!(System.String.IsNullOrEmpty(PlayerName.text)) && (m_isHomeButtonDown))
 			OnClickButtonToStartGame();
 
 		//キャラクターは常にSelect状態
@@ -498,7 +493,7 @@ public class MyArmedCanvas : MonoBehaviour
 	{
 		//Bボタンでタイトルへ
 		if (m_isBButtonDown)
-			MySceneManager.Instance.ChangeScene(MyScene.Title);
+			OnClickToTitle();
 
 		//ゴミ箱のリセット
 		ResetGarbageCan();
@@ -528,7 +523,6 @@ public class MyArmedCanvas : MonoBehaviour
 		m_isXButtonDown = false;
 		m_isBackButtonDown = false;
 		m_isHomeButtonDown = false;
-		m_isMKeyDown = false;
 		m_isDpadXBecamePositive = false;
 		m_isDpadXBecameNegative = false;
 	}
@@ -541,6 +535,26 @@ public class MyArmedCanvas : MonoBehaviour
 	{
 		ArmedCamera.enabled = true;
 		DisplayOfCharacterSelectionScreen();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// タイトルへをクリック
+	/// </summary>
+	public void OnClickToTitle()
+	{
+		MySceneManager.Instance.ChangeScene(MyScene.Title);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// キャラクターの削除をクリック
+	/// </summary>
+	public void OnClickDeleteCharacter()
+	{
+		//選択モードand
+		if (m_mode == ArmedMode.SelectCharacter)
+			DeleteCharacter();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -573,6 +587,10 @@ public class MyArmedCanvas : MonoBehaviour
 	/// </summary>
 	public void OnClickButtonToDisplayPrev()
 	{
+		//選択できる数でない
+		if (Characters.transform.childCount < m_numNeededToSelectCharacter)
+			return;
+
 		m_workInt = ((m_characterNumBeingDisplayed - 1) + Characters.transform.childCount) % Characters.transform.childCount;
 		if (Characters.DisplayCharacters(m_workInt, true, (m_mode == ArmedMode.SelectCharacter)))
 			m_characterNumBeingDisplayed = m_workInt;
@@ -584,6 +602,10 @@ public class MyArmedCanvas : MonoBehaviour
 	/// </summary>
 	public void OnClickButtonToDisplayNext()
 	{
+		//選択できる数でない
+		if (Characters.transform.childCount < m_numNeededToSelectCharacter)
+			return;
+
 		m_workInt = ((m_characterNumBeingDisplayed + 1) + Characters.transform.childCount) % Characters.transform.childCount;
 		if (Characters.DisplayCharacters(m_workInt, false, (m_mode == ArmedMode.SelectCharacter)))
 			m_characterNumBeingDisplayed = m_workInt;
@@ -610,6 +632,7 @@ public class MyArmedCanvas : MonoBehaviour
 		//非表示オブジェクト
 		CharacterSelectionTitle.SetActive(false);
 		CharacterGenerator.gameObject.SetActive(false);
+		CharacterDelete.gameObject.SetActive(false);
 
 		//表示オブジェクト
 		TitleOfCharacterCreation.SetActive(true);

@@ -59,10 +59,34 @@ public class MyMatchingUi : MonoBehaviour
 	Button StartRematchButton;
 
 	/// <summary>
+	/// 選択された再マッチング開始
+	/// </summary>
+	[SerializeField]
+	Sprite SelectedStartRematch;
+
+	/// <summary>
+	/// 選択されていない再マッチング開始
+	/// </summary>
+	[SerializeField]
+	Sprite NonSelectedStartRematch;
+
+	/// <summary>
 	/// マッチング終了ボタン
 	/// </summary>
 	[SerializeField]
 	Button MatchEndButton;
+
+	/// <summary>
+	/// 選択されたマッチング終了
+	/// </summary>
+	[SerializeField]
+	Sprite SelectedMatchEnd;
+
+	/// <summary>
+	/// 選択されていないマッチング終了
+	/// </summary>
+	[SerializeField]
+	Sprite NonSelectedMatchEnd;
 
 	/// <summary>
 	/// 接続
@@ -92,21 +116,6 @@ public class MyMatchingUi : MonoBehaviour
 	}
 	#endregion
 	
-	#region 色
-	[Header("色")]
-	/// <summary>
-	/// 選択中の色
-	/// </summary>
-	[SerializeField]
-	Color m_selectColor;
-
-	/// <summary>
-	/// 選択していない色
-	/// </summary>
-	[SerializeField]
-	Color m_nonSelectColor;
-	#endregion
-
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 接続状態を表示
@@ -162,8 +171,8 @@ public class MyMatchingUi : MonoBehaviour
 	/// </summary>
 	public void SelectRematchButton()
 	{
-		StartRematchButton.image.color = m_selectColor;
-		MatchEndButton.image.color = m_nonSelectColor;
+		StartRematchButton.image.sprite = SelectedStartRematch;
+		MatchEndButton.image.sprite = NonSelectedMatchEnd;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -172,7 +181,7 @@ public class MyMatchingUi : MonoBehaviour
 	/// </summary>
 	public void SelectFinishMatchingButton()
 	{
-		MatchEndButton.image.color = m_selectColor;
-		StartRematchButton.image.color = m_nonSelectColor;
+		MatchEndButton.image.sprite = SelectedMatchEnd;
+		StartRematchButton.image.sprite = NonSelectedStartRematch;
 	}
 }

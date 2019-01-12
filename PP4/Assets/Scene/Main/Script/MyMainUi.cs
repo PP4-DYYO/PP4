@@ -86,10 +86,16 @@ public class MyMainUi : MonoBehaviour
 	GameObject RecruitPeopleScreen;
 
 	/// <summary>
-	/// 人を待つ時間
+	/// 数字
 	/// </summary>
 	[SerializeField]
-	Text TimeToWaitWorPeople;
+	Sprite[] Number;
+
+	/// <summary>
+	/// 人を待つ時間たち
+	/// </summary>
+	[SerializeField]
+	Image[] TimeToWaitForPeople;
 
 	/// <summary>
 	/// 自分情報のランク
@@ -158,10 +164,10 @@ public class MyMainUi : MonoBehaviour
 	Image RemainingAmountOfAcceleration;
 
 	/// <summary>
-	/// 加速できる印
+	/// 加速できない印
 	/// </summary>
 	[SerializeField]
-	Image MarkThatCanBeAccelerated;
+	Image MarkThatCanNotAccelerated;
 
 	/// <summary>
 	/// マップ上の順位
@@ -212,10 +218,16 @@ public class MyMainUi : MonoBehaviour
 	GameObject Falling;
 
 	/// <summary>
-	/// 落下理由の文
+	/// 落下理由たち
 	/// </summary>
 	[SerializeField]
-	Text StatementOfFallReason;
+	Sprite[] ReasonForFallings;
+
+	/// <summary>
+	/// 落下理由の画像
+	/// </summary>
+	[SerializeField]
+	Image ReasonForFallingImage;
 
 	/// <summary>
 	/// 被雷
@@ -338,10 +350,34 @@ public class MyMainUi : MonoBehaviour
 	Button ContinueBattle;
 
 	/// <summary>
+	/// 選ばれたバトル継続
+	/// </summary>
+	[SerializeField]
+	Sprite SelectedContinueBattle;
+
+	/// <summary>
+	/// 選ばれなかったバトル継続
+	/// </summary>
+	[SerializeField]
+	Sprite NonSelectedContinueBattle;
+
+	/// <summary>
 	/// バトルをやめる
 	/// </summary>
 	[SerializeField]
 	Button LeaveBattle;
+
+	/// <summary>
+	/// 選ばれたバトル中止
+	/// </summary>
+	[SerializeField]
+	Sprite SelectedLeaveBattle;
+
+	/// <summary>
+	/// 選ばれなかったバトル中止
+	/// </summary>
+	[SerializeField]
+	Sprite NonSelectedLeaveBattle;
 	#endregion
 
 	#region フェードインアウト
@@ -404,12 +440,6 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	float m_alphaValueWhenWearingWater;
-
-	/// <summary>
-	/// 落下理由の文たち
-	/// </summary>
-	[SerializeField]
-	string[] m_statementsOfFallReason;
 
 	/// <summary>
 	/// 雷の点滅開始時間
@@ -515,18 +545,6 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	string m_expBreak;
-
-	/// <summary>
-	/// 選択の色
-	/// </summary>
-	[SerializeField]
-	Color m_selectColor;
-
-	/// <summary>
-	/// 選択していない色
-	/// </summary>
-	[SerializeField]
-	Color m_nonSelectColor;
 
 	/// <summary>
 	/// 勝敗が移動しているフラグ
@@ -787,7 +805,12 @@ public class MyMainUi : MonoBehaviour
 	/// <param name="time">時間</param>
 	public void SetTimeToWaitWorPeople(float time)
 	{
-		TimeToWaitWorPeople.text = ((int)time).ToString();
+		//桁ごとに時間の代入
+		for(m_workInt = 0; m_workInt < TimeToWaitForPeople.Length; m_workInt++)
+		{
+			TimeToWaitForPeople[m_workInt].sprite = (time >= 0 ? Number[(int)time % Number.Length] : null);
+			time /= Number.Length;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -850,7 +873,7 @@ public class MyMainUi : MonoBehaviour
 		SetTimer(battleTime);
 		SetRemainingAmountOfWater();
 		SetRemainingAmountOfAcceleration();
-		SetMarkThatCanBeAccelerated();
+		SetMarkThatCanNotAccelerated();
 		WritePlayerNamesOnTheMap();
 		ShowRankOnMap();
 		SetNumOfCoins();
@@ -913,12 +936,12 @@ public class MyMainUi : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 加速できる印を設定
+	/// 加速できない印を設定
 	/// </summary>
 	/// <param name="isCanAccelerate">加速できる</param>
-	public void SetMarkThatCanBeAccelerated(bool isCanAccelerate = true)
+	public void SetMarkThatCanNotAccelerated(bool isCanAccelerate = true)
 	{
-		MarkThatCanBeAccelerated.enabled = isCanAccelerate;
+		MarkThatCanNotAccelerated.enabled = !isCanAccelerate;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -934,9 +957,9 @@ public class MyMainUi : MonoBehaviour
 			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
 				return;
 
-			//プレイヤー名とチーム画像
+			//プレイヤー名と自分のランキング
 			PlayerNamesOnTheMap[i].text = MyNetPlayerSetting.NetPlayerSettings[i].PlayerName;
-			ForegroundOfPlayerOnMap[i].color = Color.clear;
+			ForegroundOfPlayerOnMap[i].enabled = (i == MyNetPlayerSetting.NetPlayerSettings[i].GetNetPlayerNum());
 		}
 	}
 
@@ -1058,20 +1081,20 @@ public class MyMainUi : MonoBehaviour
 		switch(reason)
 		{
 			case ReasonForFalling.WaterRunsOut:
-				StatementOfFallReason.text = m_statementsOfFallReason[0];
+				ReasonForFallingImage.sprite = ReasonForFallings[0];
 				break;
 			case ReasonForFalling.CollisionWithPlayers:
-				StatementOfFallReason.text = m_statementsOfFallReason[1];
-				break;
-			case ReasonForFalling.CollisionWithBirds:
-				StatementOfFallReason.text = m_statementsOfFallReason[2];
+				ReasonForFallingImage.sprite = ReasonForFallings[1];
 				break;
 			case ReasonForFalling.Thunderbolt:
-				StatementOfFallReason.text = m_statementsOfFallReason[3];
+				ReasonForFallingImage.sprite = ReasonForFallings[2];
 				StartThunder();
 				break;
 			case ReasonForFalling.Meteorite:
-				StatementOfFallReason.text = m_statementsOfFallReason[4];
+				ReasonForFallingImage.sprite = ReasonForFallings[3];
+				break;
+			case ReasonForFalling.AuraBall:
+				ReasonForFallingImage.sprite = ReasonForFallings[4];
 				break;
 		}
 
@@ -1096,25 +1119,6 @@ public class MyMainUi : MonoBehaviour
 	public void StopOfFall()
 	{
 		Falling.SetActive(false);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// マップ上のプレイヤーを隠す
-	/// </summary>
-	/// <param name="operatingPlayerNum">操作プレイヤー番号</param>
-	public void HidePlayerOnMap(int operatingPlayerNum)
-	{
-		for (var i = 0; i < ForegroundOfPlayerOnMap.Length; i++)
-		{
-			//ネットプレイヤー設定がない
-			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
-				return;
-
-			//操作プレイヤーじゃない前景画像
-			if (i != operatingPlayerNum)
-				ForegroundOfPlayerOnMap[i].color = Color.black;
-		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1239,8 +1243,8 @@ public class MyMainUi : MonoBehaviour
 	/// <param name="isContinue">続けるか</param>
 	public void SelectionOfRematch(bool isContinue)
 	{
-		ContinueBattle.image.color = isContinue ? m_selectColor : m_nonSelectColor;
-		LeaveBattle.image.color = !isContinue ? m_selectColor : m_nonSelectColor;
+		ContinueBattle.image.sprite = isContinue ? SelectedContinueBattle : NonSelectedContinueBattle;
+		LeaveBattle.image.sprite = !isContinue ? SelectedLeaveBattle : NonSelectedLeaveBattle;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -84,6 +84,11 @@ public class MyMatching : MonoBehaviour
 	/// 状態の処理
 	/// </summary>
 	StateProcessing[] StateProcess = new StateProcessing[(int)MatchingStatus.Count];
+
+	/// <summary>
+	/// シーンチェンジフラグ
+	/// </summary>
+	bool m_isChangeScene;
 	#endregion
 
 	#region マッチング状態
@@ -244,8 +249,15 @@ public class MyMatching : MonoBehaviour
 		{
 			//再マッチングの確認
 			MatchingUi.StartConfirmRematch();
-			m_state = m_statePrev;
+			m_selectedNum = 0;
+			MatchingUi.SelectRematchButton();
+			m_isChangeScene = false;
+			m_statePrev = m_state;
 		}
+
+		//シーンチェンジ中
+		if (m_isChangeScene)
+			return;
 
 		//横方向の入力
 		if(m_isDpadXBecamePositive || m_isDpadXBecameNegative || m_isHorizontalBecamePositive || m_isHorizontalBecameNegative)
@@ -299,7 +311,7 @@ public class MyMatching : MonoBehaviour
 	void FinishMatching()
 	{
 		//初期状態
-		m_state = MatchingStatus.Matching;
+		m_isChangeScene = true;
 		m_netManager.IsStandbyState = true;
 		m_netManager.IsConnectionWithServerIsBroken = false;
 		MatchingUi.HideRematch();

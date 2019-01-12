@@ -153,6 +153,17 @@ public class MyArmedCharacters : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	public void Initialize()
+	{
+		m_countCharacterMovementTime = -1;
+		m_selectedCharacterNum = 0;
+		m_selectedCharacterNumPrev = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// キャラクターの表示
 	/// </summary>
 	/// <param name="characterNum">キャラクター番号</param>

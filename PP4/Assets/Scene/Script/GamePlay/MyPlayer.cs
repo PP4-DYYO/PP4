@@ -140,10 +140,6 @@ public enum ReasonForFalling
 	/// </summary>
 	CollisionWithPlayers,
 	/// <summary>
-	/// 鳥との衝突
-	/// </summary>
-	CollisionWithBirds,
-	/// <summary>
 	/// 落雷
 	/// </summary>
 	Thunderbolt,
@@ -151,6 +147,10 @@ public enum ReasonForFalling
 	/// 隕石
 	/// </summary>
 	Meteorite,
+	/// <summary>
+	/// オーラボール
+	/// </summary>
+	AuraBall,
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -1119,7 +1119,7 @@ public class MyPlayer : MonoBehaviour
 				if (m_aura == AuraAttribute.Elasticity || m_aura == AuraAttribute.Non)
 				{
 					m_isFalling = true;
-					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+					m_reasonForFalling = ReasonForFalling.AuraBall;
 				}
 				break;
 			case AuraInfo.ELASTICITY_TAG:
@@ -1127,7 +1127,7 @@ public class MyPlayer : MonoBehaviour
 				if (m_aura == AuraAttribute.Electrical || m_aura == AuraAttribute.Non)
 				{
 					m_isFalling = true;
-					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+					m_reasonForFalling = ReasonForFalling.AuraBall;
 				}
 				break;
 			case AuraInfo.ELECTRICAL_TAG:
@@ -1135,7 +1135,7 @@ public class MyPlayer : MonoBehaviour
 				if (m_aura == AuraAttribute.Heat || m_aura == AuraAttribute.Non)
 				{
 					m_isFalling = true;
-					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+					m_reasonForFalling = ReasonForFalling.AuraBall;
 				}
 				break;
 		}

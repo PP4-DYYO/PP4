@@ -310,12 +310,6 @@ public class MyMainGame : MyGame
 	}
 
 	/// <summary>
-	/// マップ上にプレイヤー名を表示する時間
-	/// </summary>
-	[SerializeField]
-	float m_timeToDisplayPlayerNameOnMap;
-
-	/// <summary>
 	/// １ｍ毎のサポート率
 	/// </summary>
 	[SerializeField]
@@ -360,11 +354,6 @@ public class MyMainGame : MyGame
 	/// 操作プレイヤーが落下フラグ
 	/// </summary>
 	bool m_isOperatingPlayerFall;
-
-	/// <summary>
-	/// マップ上にプレイヤー名を表示する時間が過ぎたフラグ
-	/// </summary>
-	bool m_isTimeToDisplayPlayerNameOnMapHasPassed;
 
 	/// <summary>
 	/// プレイヤーの帯電時間を数える
@@ -1164,7 +1153,6 @@ public class MyMainGame : MyGame
 			OperatingPlayer.MakeItBattleState();
 			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomeOperablePursuitCamera();
-			m_isTimeToDisplayPlayerNameOnMapHasPassed = false;
 
 			//BGM
 			MySoundManager.Instance.Play(BgmCollection.Battle);
@@ -1175,14 +1163,6 @@ public class MyMainGame : MyGame
 		BattleStatePlayer();
 		BattleStateCamera();
 		BattleStateUi();
-
-		//時間が過ぎていないフラグandマップ上にプレイヤー名を表示する時間が過ぎた
-		if (!m_isTimeToDisplayPlayerNameOnMapHasPassed && m_countTheTimeOfTheState >= m_timeToDisplayPlayerNameOnMap)
-		{
-			m_isTimeToDisplayPlayerNameOnMapHasPassed = true;
-
-			MainUi.HidePlayerOnMap(OperatingNetPlayerSetting.GetNetPlayerNum());
-		}
 
 		//バトル時間が過ぎた
 		if (m_countTheTimeOfTheState >= m_battleTime)
@@ -1306,7 +1286,7 @@ public class MyMainGame : MyGame
 		//タンクの残量
 		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
 		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingSpGauge());
-		MainUi.SetMarkThatCanBeAccelerated(OperatingPlayer.IsUseSp);
+		MainUi.SetMarkThatCanNotAccelerated(OperatingPlayer.IsUseSp);
 
 		//順位の反映
 		MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetNetPlayerNum());

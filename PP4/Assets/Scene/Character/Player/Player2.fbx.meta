@@ -1,0 +1,2827 @@
+fileFormatVersion: 2
+guid: f94d6edc2b4772e4ab4672bf2bfb2a42
+timeCreated: 1547288643
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: board
+    100002: body
+    100004: Chest
+    100006: glass
+    100008: glass 1
+    100010: hairA
+    100012: hairB
+    100014: Head
+    100016: Hips
+    100018: L_Foot
+    100020: L_Hand
+    100022: L_IndexA
+    100024: L_IndexB
+    100026: L_IndexC
+    100028: L_LittleA
+    100030: L_LittleB
+    100032: L_LittleC
+    100034: L_LowerArm
+    100036: L_LowerLeg
+    100038: L_MiddleA
+    100040: L_MiddleB
+    100042: L_MiddleC
+    100044: L_RingA
+    100046: L_RingB
+    100048: L_RingC
+    100050: L_Shoulder
+    100052: L_ThumA
+    100054: L_ThumbB
+    100056: L_ThumbC
+    100058: L_Toes
+    100060: L_UpperArm
+    100062: L_UpperLeg
+    100064: L_watar
+    100066: metal
+    100068: Neck
+    100070: //RootNode
+    100072: R_Foot
+    100074: R_Hand
+    100076: R_IndexA
+    100078: R_IndexB
+    100080: R_IndexC
+    100082: R_LittleA
+    100084: R_LittleB
+    100086: R_LittleC
+    100088: R_LowerArm
+    100090: R_LowerLeg
+    100092: R_MiddleA
+    100094: R_MiddleB
+    100096: R_MiddleC
+    100098: R_RingA
+    100100: R_RingB
+    100102: R_RingC
+    100104: R_Shoulder
+    100106: R_ThumA
+    100108: R_ThumbB
+    100110: R_ThumbC
+    100112: R_Toes
+    100114: R_UpperArm
+    100116: R_UpperLeg
+    100118: R_water
+    100120: Spine
+    100122: surfboard
+    400000: board
+    400002: body
+    400004: Chest
+    400006: glass
+    400008: glass 1
+    400010: hairA
+    400012: hairB
+    400014: Head
+    400016: Hips
+    400018: L_Foot
+    400020: L_Hand
+    400022: L_IndexA
+    400024: L_IndexB
+    400026: L_IndexC
+    400028: L_LittleA
+    400030: L_LittleB
+    400032: L_LittleC
+    400034: L_LowerArm
+    400036: L_LowerLeg
+    400038: L_MiddleA
+    400040: L_MiddleB
+    400042: L_MiddleC
+    400044: L_RingA
+    400046: L_RingB
+    400048: L_RingC
+    400050: L_Shoulder
+    400052: L_ThumA
+    400054: L_ThumbB
+    400056: L_ThumbC
+    400058: L_Toes
+    400060: L_UpperArm
+    400062: L_UpperLeg
+    400064: L_watar
+    400066: metal
+    400068: Neck
+    400070: //RootNode
+    400072: R_Foot
+    400074: R_Hand
+    400076: R_IndexA
+    400078: R_IndexB
+    400080: R_IndexC
+    400082: R_LittleA
+    400084: R_LittleB
+    400086: R_LittleC
+    400088: R_LowerArm
+    400090: R_LowerLeg
+    400092: R_MiddleA
+    400094: R_MiddleB
+    400096: R_MiddleC
+    400098: R_RingA
+    400100: R_RingB
+    400102: R_RingC
+    400104: R_Shoulder
+    400106: R_ThumA
+    400108: R_ThumbB
+    400110: R_ThumbC
+    400112: R_Toes
+    400114: R_UpperArm
+    400116: R_UpperLeg
+    400118: R_water
+    400120: Spine
+    400122: surfboard
+    2300000: board
+    2300002: glass
+    2300004: glass 1
+    2300006: hairA
+    2300008: hairB
+    2300010: L_watar
+    2300012: metal
+    2300014: R_water
+    3300000: board
+    3300002: glass
+    3300004: glass 1
+    3300006: hairA
+    3300008: hairB
+    3300010: L_watar
+    3300012: metal
+    3300014: R_water
+    4300000: body
+    4300002: glass
+    4300004: hairA
+    4300006: hairB
+    4300008: board
+    4300010: L_watar
+    4300012: R_water
+    4300014: glass
+    4300016: metal
+    7400000: P2_HoldBoardInHand
+    7400002: P2_HoldBoardInHand2
+    7400004: P2_Idle
+    7400006: P2_HorizontalMovement
+    7400008: P2_HorizontalMovementL
+    7400010: P2_HorizontalMovementR
+    7400012: P2_JetRise
+    7400014: P2_JetDescent
+    7400016: P2_JetAccelerationRise
+    7400018: P2_HorizontalAccelerationMovement
+    7400020: P2_IdleInTheAir
+    7400022: P2_Falling
+    7400024: P2_FallingRoll
+    7400026: P2_Result
+    7400028: P2_SuccessfulLanding
+    7400030: P2_LandingFailed
+    7400032: P2_Defeat
+    9500000: //RootNode
+    13700000: body
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: P2_HoldBoardInHand2
+      takeName: Take 001
+      firstFrame: 200
+      lastFrame: 210
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_HoldBoardInHand
+      takeName: Take 001
+      firstFrame: 215
+      lastFrame: 225
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_Idle
+      takeName: Take 001
+      firstFrame: 230
+      lastFrame: 260
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_HorizontalMovement
+      takeName: Take 001
+      firstFrame: 265
+      lastFrame: 295
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_HorizontalMovementL
+      takeName: Take 001
+      firstFrame: 300
+      lastFrame: 330
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_HorizontalMovementR
+      takeName: Take 001
+      firstFrame: 335
+      lastFrame: 365
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_JetRise
+      takeName: Take 001
+      firstFrame: 370
+      lastFrame: 400
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_JetDescent
+      takeName: Take 001
+      firstFrame: 405
+      lastFrame: 435
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_JetAccelerationRise
+      takeName: Take 001
+      firstFrame: 440
+      lastFrame: 450
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_HorizontalAccelerationMovement
+      takeName: Take 001
+      firstFrame: 455
+      lastFrame: 465
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_IdleInTheAir
+      takeName: Take 001
+      firstFrame: 470
+      lastFrame: 500
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_Falling
+      takeName: Take 001
+      firstFrame: 505
+      lastFrame: 515
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_FallingRoll
+      takeName: Take 001
+      firstFrame: 520
+      lastFrame: 530
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_Result
+      takeName: Take 001
+      firstFrame: 520
+      lastFrame: 530
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_SuccessfulLanding
+      takeName: Take 001
+      firstFrame: 535
+      lastFrame: 565
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_LandingFailed
+      takeName: Take 001
+      firstFrame: 570
+      lastFrame: 600
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    - serializedVersion: 16
+      name: P2_Defeat
+      takeName: Take 001
+      firstFrame: 570
+      lastFrame: 600
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: body
+        weight: 1
+      - path: Hips
+        weight: 1
+      - path: Hips/L_UpperLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot
+        weight: 1
+      - path: Hips/L_UpperLeg/L_LowerLeg/L_Foot/L_Toes
+        weight: 1
+      - path: Hips/R_UpperLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot
+        weight: 1
+      - path: Hips/R_UpperLeg/R_LowerLeg/R_Foot/R_Toes
+        weight: 1
+      - path: Hips/Spine
+        weight: 1
+      - path: Hips/Spine/Chest
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_IndexA/L_IndexB/L_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_LittleA/L_LittleB/L_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_MiddleA/L_MiddleB/L_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_RingA/L_RingB/L_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/L_Shoulder/L_UpperArm/L_LowerArm/L_Hand/L_ThumA/L_ThumbB/L_ThumbC
+        weight: 1
+      - path: Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/glass 1
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairA
+        weight: 1
+      - path: Hips/Spine/Chest/Neck/Head/hairB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_IndexA/R_IndexB/R_IndexC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_LittleA/R_LittleB/R_LittleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_MiddleA/R_MiddleB/R_MiddleC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_RingA/R_RingB/R_RingC
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB
+        weight: 1
+      - path: Hips/Spine/Chest/R_Shoulder/R_UpperArm/R_LowerArm/R_Hand/R_ThumA/R_ThumbB/R_ThumbC
+        weight: 1
+      - path: surfboard
+        weight: 1
+      - path: surfboard/board
+        weight: 1
+      - path: surfboard/glass
+        weight: 1
+      - path: surfboard/L_watar
+        weight: 1
+      - path: surfboard/metal
+        weight: 1
+      - path: surfboard/R_water
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 200
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

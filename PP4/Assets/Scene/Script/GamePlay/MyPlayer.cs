@@ -534,6 +534,12 @@ public class MyPlayer : MonoBehaviour
 	float m_rainCloudRecoveryRate;
 
 	/// <summary>
+	/// 帯電時間
+	/// </summary>
+	[SerializeField]
+	float m_chargingTime;
+
+	/// <summary>
 	/// 風が吹く間隔を数える
 	/// </summary>
 	float m_countWindBlowingInterval;
@@ -557,6 +563,11 @@ public class MyPlayer : MonoBehaviour
 		get { return m_isMeteoriteDestruction; }
 		set { m_isMeteoriteDestruction = value; }
 	}
+
+	/// <summary>
+	/// 帯電時間を数える
+	/// </summary>
+	float m_countChargingTime;
 	#endregion
 
 	#region キーボード関係
@@ -826,12 +837,15 @@ public class MyPlayer : MonoBehaviour
 			{
 				case AuraAttribute.Heat:
 					HeatAura.SetActive(true);
+					MySoundManager.Instance.Play(SeCollection.FlameAura, true, false, transform.position);
 					break;
 				case AuraAttribute.Elasticity:
 					ElasticityAura.SetActive(true);
+					MySoundManager.Instance.Play(SeCollection.LightningAura, true, false, transform.position);
 					break;
 				case AuraAttribute.Electrical:
 					ElectricalAura.SetActive(true);
+					MySoundManager.Instance.Play(SeCollection.EarthAura, true, false, transform.position);
 					break;
 			}
 
@@ -1155,7 +1169,7 @@ public class MyPlayer : MonoBehaviour
 				JetWaterTriggerStay(other);
 				break;
 			case StageInfo.THUNDER_NOTICE_TAG:
-				StaticElectricity.Emit(1);
+				ThunderNoticeTriggerStay();
 				break;
 			case CloudInfo.RAIN_TAG:
 				m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime
@@ -1184,6 +1198,27 @@ public class MyPlayer : MonoBehaviour
 		m_countJetUseTime = Mathf.Max(0f, m_countJetUseTime - (Time.deltaTime * m_jetRecoveryRate));
 
 		m_isWearWater = true;
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.WearWater, true, false, transform.position);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 雷通知の重なり続ける判定
+	/// </summary>
+	void ThunderNoticeTriggerStay()
+	{
+		m_countChargingTime += Time.deltaTime;
+
+		if (m_countChargingTime >= m_chargingTime)
+		{
+			m_countChargingTime = 0;
+			StaticElectricity.Emit(1);
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Charging, true, false, transform.position);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -324,6 +324,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			m_netPlayerSettings.Clear();
 
 		m_netPlayerSettings.Add(this);
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.PlayerEnters);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -642,11 +645,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void ProcessAffectedByAnim()
 	{
-		//水噴射SE
-		if (m_state == PlayerBehaviorStatus.HorizontalMovement || m_state == PlayerBehaviorStatus.IdleInTheAir
-			|| m_state == PlayerBehaviorStatus.JetDescent || m_state == PlayerBehaviorStatus.JetRise)
-			MySoundManager.Instance.Play(SeCollection.WaterInjection, true, false, transform.position);
-
 		//ジェットウォータ処理
 		JetWaterProcess();
 	}
@@ -1111,6 +1109,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		{
 			m_isAlignment = true;
 			CmdNotifyOfIsReady(false);
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.PlayerLeaves);
 		}
 	}
 

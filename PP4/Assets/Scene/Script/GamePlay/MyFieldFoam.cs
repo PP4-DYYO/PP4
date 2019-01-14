@@ -124,6 +124,9 @@ public class MyFieldFoam : MonoBehaviour
 	void GenerateBubbles(Vector3 pos, int bubbleNum = 0)
 	{
 		m_waveMaterial.SetVector("_bubbleGenerationPos" + bubbleNum, pos);
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.SplashedFoam, true, false, pos);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -167,7 +170,7 @@ public class MyFieldFoam : MonoBehaviour
 			if (m_bubbleGenerationPos[m_workInt] == -Vector3.one)
 			{
 				m_bubbleGenerationPos[m_workInt] = Vector3.Scale(other.transform.position, Vector3.right + Vector3.forward);
-				return;
+				break;
 			}
 		}
 	}

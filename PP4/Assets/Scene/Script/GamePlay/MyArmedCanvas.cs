@@ -245,7 +245,16 @@ public class MyArmedCanvas : MonoBehaviour
 	{
 		ArmedCamera.enabled = false;
 	}
-	
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 初期
+	/// </summary>
+	void Start()
+	{
+		MySoundManager.Instance.Play(BgmCollection.Armed);
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// フレーム
@@ -382,6 +391,9 @@ public class MyArmedCanvas : MonoBehaviour
 
 		//選択画面を再読み込み
 		DisplayOfCharacterSelectionScreen();
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.CharacterDisappears);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -506,7 +518,7 @@ public class MyArmedCanvas : MonoBehaviour
 	void ResetGarbageCan()
 	{
 		//全子供を削除
-		foreach(Transform child in GarbageCan)
+		foreach (Transform child in GarbageCan)
 		{
 			Destroy(child.gameObject);
 		}
@@ -544,6 +556,9 @@ public class MyArmedCanvas : MonoBehaviour
 	public void OnClickToTitle()
 	{
 		MySceneManager.Instance.ChangeScene(MyScene.Title);
+
+		//Se
+		MySoundManager.Instance.Play(SeCollection.Cancel);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -569,6 +584,9 @@ public class MyArmedCanvas : MonoBehaviour
 
 		//名前の代入
 		PlayerName.text = m_samplePlayerNames[m_nameGeneratorNum++];
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Decide);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -593,7 +611,12 @@ public class MyArmedCanvas : MonoBehaviour
 
 		m_workInt = ((m_characterNumBeingDisplayed - 1) + Characters.transform.childCount) % Characters.transform.childCount;
 		if (Characters.DisplayCharacters(m_workInt, true, (m_mode == ArmedMode.SelectCharacter)))
+		{
 			m_characterNumBeingDisplayed = m_workInt;
+
+			//Se
+			MySoundManager.Instance.Play(SeCollection.Select);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -608,7 +631,12 @@ public class MyArmedCanvas : MonoBehaviour
 
 		m_workInt = ((m_characterNumBeingDisplayed + 1) + Characters.transform.childCount) % Characters.transform.childCount;
 		if (Characters.DisplayCharacters(m_workInt, false, (m_mode == ArmedMode.SelectCharacter)))
+		{
 			m_characterNumBeingDisplayed = m_workInt;
+
+			//Se
+			MySoundManager.Instance.Play(SeCollection.Select);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -619,6 +647,9 @@ public class MyArmedCanvas : MonoBehaviour
 	{
 		//キャラクター生成画面の表示
 		DisplayOfCharacterGenerationScreen();
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Decide);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -687,6 +718,7 @@ public class MyArmedCanvas : MonoBehaviour
 
 		//共通処理
 		MySceneManager.Instance.ChangeScene(MyScene.Matching);
+		MySoundManager.Instance.Play(SeCollection.Decide);
 	}
 
 	//----------------------------------------------------------------------------------------------------

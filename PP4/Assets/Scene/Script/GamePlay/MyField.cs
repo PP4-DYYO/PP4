@@ -333,6 +333,9 @@ public class MyField : MonoBehaviour
 		//隕石が消滅する時間
 		if (m_countMeteoriteTime >= m_timeOfMeteoriteFall)
 			StopMeteorit();
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Meteorite, true, true, Meteorite.transform.position);
 	}
 
 	//----------------------------------------------------------------------------------------------------

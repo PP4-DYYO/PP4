@@ -910,6 +910,9 @@ public class MyMainGame : MyGame
 			OperatingCamera.BecomeFollowSpecifiedPosCamera(
 				m_cameraPosWhenPeopleGather, m_cameraDirectionWhenPeopleGather, m_cameraMovingTimeWhenPeopleGather);
 			MainUi.PeopleGathered();
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.PeopleGathered);
 		}
 
 		//人が集まった状態のプレイヤー
@@ -1338,8 +1341,9 @@ public class MyMainGame : MyGame
 			MainUi.EndBattle();
 			m_isFadeOutAfterBattleEnds = false;
 
-			//BGM
+			//Sound
 			MySoundManager.Instance.StopBGM();
+			MySoundManager.Instance.Play(SeCollection.BattleEnd);
 		}
 
 		//フェードアウトしていないandフェードアウト時間
@@ -1509,6 +1513,9 @@ public class MyMainGame : MyGame
 
 			//バトル結果表示
 			BattleResultDisplay();
+
+			//BGM
+			MySoundManager.Instance.Play(m_isWin ? BgmCollection.Win : BgmCollection.Defeat);
 		}
 
 		//経験値を表示していないand経験値を表示する時間
@@ -1674,7 +1681,12 @@ public class MyMainGame : MyGame
 	{
 		//Dパッドか左スティックの横方向の入力あり
 		if (m_isDpadXBecamePositive || m_isDpadXBecameNegative || m_isHorizontalBecamePositive || m_isHorizontalBecameNegative)
+		{
 			m_isContinueBattle = !m_isContinueBattle;
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Select);
+		}
 
 		//ボタンの色変更
 		MainUi.SelectionOfRematch(m_isContinueBattle);
@@ -1702,6 +1714,7 @@ public class MyMainGame : MyGame
 	{
 		m_state = GameStatus.RecruitPeople;
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
+		MySoundManager.Instance.Play(SeCollection.Decide);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1712,6 +1725,7 @@ public class MyMainGame : MyGame
 	{
 		m_netManager.StopConnection();
 		MySceneManager.Instance.ChangeScene(MyScene.Armed, true);
+		MySoundManager.Instance.Play(SeCollection.PlayerLeaves);
 	}
 
 	//----------------------------------------------------------------------------------------------------

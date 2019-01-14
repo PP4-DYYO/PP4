@@ -32,10 +32,6 @@ public enum BgmCollection
 	/// </summary>
 	Matching,
 	/// <summary>
-	/// バトルの始まり
-	/// </summary>
-	BeginningOfBattle,
-	/// <summary>
 	/// バトル
 	/// </summary>
 	Battle,
@@ -112,11 +108,11 @@ public enum SeCollection
 	/// </summary>
 	PeopleGathered,
 	/// <summary>
-	/// 準備
+	/// レディー
 	/// </summary>
 	Ready,
 	/// <summary>
-	/// ゲーム開始
+	/// ゴー
 	/// </summary>
 	Go,
 	/// <summary>
@@ -211,6 +207,10 @@ public enum SeCollection
 	/// プレイヤーが横切る
 	/// </summary>
 	PlayerCrosses,
+	/// <summary>
+	/// 船が横切る
+	/// </summary>
+	CrossShip,
 }
 
 //----------------------------------------------------------------------------------------------------

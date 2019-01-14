@@ -31,6 +31,11 @@ public class MyFlashObj : MonoBehaviour
 	/// </summary>
 	float m_countLightningTime;
 
+	/// <summary>
+	///	アクティブフラグ
+	/// </summary>
+	bool m_isActive;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -44,7 +49,12 @@ public class MyFlashObj : MonoBehaviour
 		{
 			foreach(var obj in FlashObj)
 			{
-				obj.SetActive(!obj.activeInHierarchy);
+				m_isActive = obj.activeInHierarchy;
+				obj.SetActive(!m_isActive);
+
+				//SE
+				if (!m_isActive)
+					MySoundManager.Instance.Play(SeCollection.SplashedFoam, true, false, obj.transform.position);
 			}
 			m_countLightningTime = 0;
 		}

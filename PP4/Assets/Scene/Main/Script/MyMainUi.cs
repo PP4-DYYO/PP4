@@ -875,7 +875,7 @@ public class MyMainUi : MonoBehaviour
 		SetRemainingAmountOfAcceleration();
 		SetMarkThatCanNotAccelerated();
 		WritePlayerNamesOnTheMap();
-		ShowRankOnMap();
+		ShowRankOnMap(true, false);
 		SetNumOfCoins();
 		m_isRemainingTimeNotification = false;
 		m_isCountdownOfBattleFinish = false;
@@ -970,6 +970,9 @@ public class MyMainUi : MonoBehaviour
 	public void StartReadyAnimation()
 	{
 		ReadyMessage.StartAnimation();
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Ready);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -980,6 +983,9 @@ public class MyMainUi : MonoBehaviour
 	{
 		ReadyMessage.StopAnimation();
 		GoMessage.StartAnimation();
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Go);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1033,9 +1039,14 @@ public class MyMainUi : MonoBehaviour
 	/// マップ上の順位を表示する
 	/// </summary>
 	/// <param name="isDisplay">表示するか</param>
-	public void ShowRankOnMap(bool isDisplay = true)
+	/// <param name="isSe">SEを鳴らすか</param>
+	public void ShowRankOnMap(bool isDisplay = true, bool isSe = true)
 	{
 		RankOnMap.SetActive(isDisplay);
+
+		//SE
+		if (isSe)
+			MySoundManager.Instance.Play(isDisplay ? SeCollection.Select : SeCollection.Cancel);
 	}
 
 	//----------------------------------------------------------------------------------------------------

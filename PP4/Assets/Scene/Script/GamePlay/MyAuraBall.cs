@@ -220,12 +220,15 @@ public class MyAuraBall : MonoBehaviour
 		{
 			case AuraAttribute.Heat:
 				HeatAuraBall.SetActive(true);
+				MySoundManager.Instance.Play(SeCollection.FlameAura, true, false, transform.position);
 				break;
 			case AuraAttribute.Elasticity:
 				ElasticityAuraBall.SetActive(true);
+				MySoundManager.Instance.Play(SeCollection.LightningAura, true, false, transform.position);
 				break;
 			case AuraAttribute.Electrical:
 				ElectricalAuraBall.SetActive(true);
+				MySoundManager.Instance.Play(SeCollection.EarthAura, true, false, transform.position);
 				break;
 		}
 

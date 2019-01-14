@@ -253,6 +253,9 @@ public class MyMatching : MonoBehaviour
 			MatchingUi.SelectRematchButton();
 			m_isChangeScene = false;
 			m_statePrev = m_state;
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Note);
 		}
 
 		//シーンチェンジ中
@@ -274,6 +277,9 @@ public class MyMatching : MonoBehaviour
 					MatchingUi.SelectRematchButton();
 					break;
 			}
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Select);
 		}
 
 		//Aボタンの入力
@@ -289,6 +295,9 @@ public class MyMatching : MonoBehaviour
 					FinishMatching();
 					break;
 			}
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Decide);
 		}
 	}
 

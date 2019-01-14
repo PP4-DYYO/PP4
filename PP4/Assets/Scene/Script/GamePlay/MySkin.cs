@@ -261,7 +261,37 @@ public class MySkin : MonoBehaviour
 			r.material.color = teamColor;
 		}
 	}
-	
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 足音を鳴らす
+	/// </summary>
+	public void SoundFootsteps()
+	{
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Footsteps, true, false, transform.position);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下の始まりを鳴らす
+	/// </summary>
+	public void SoundBeginningOfFall()
+	{
+		//SE
+		MySoundManager.Instance.Play(SeCollection.BeginningOfFall, true, false, transform.position);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 落下中を鳴らす
+	/// </summary>
+	public void SoundFalling()
+	{
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Falling, true, false, transform.position);
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 着地エフェクトフラグをTrueにすることを試みる

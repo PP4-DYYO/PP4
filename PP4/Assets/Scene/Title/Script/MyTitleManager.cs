@@ -479,7 +479,7 @@ public class MyTitleManager : MonoBehaviour
 				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingHorizontalSpeed * Time.deltaTime),
 				RightSurfingCharacter.transform.position.y + (m_surfingVerticalSpeed * m_surfingHorizontalSpeed * Time.deltaTime), RightSurfingCharacter.transform.position.z);
 
-				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
+				SetAnimation(PlayerBehaviorStatus.JetRise, 1);
 			}
 			//中央までは横移動のみ
 			else
@@ -519,7 +519,7 @@ public class MyTitleManager : MonoBehaviour
 
 				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingHorizontalSpeed * Time.deltaTime),
 					LeftSurfingCharacter.transform.position.y + (m_surfingVerticalSpeed * m_surfingHorizontalSpeed * Time.deltaTime), LeftSurfingCharacter.transform.position.z);
-				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
+				SetAnimation(PlayerBehaviorStatus.JetRise, 2);
 			}
 			else
 			{

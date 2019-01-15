@@ -269,6 +269,10 @@ public class MyTutorial : MyGame
 		MainUi.SetNumOfCoins();
 		MainUi.StopOfFall();
 
+		//音の再生
+		MySoundManager.Instance.Play(BgmCollection.Battle);
+
+
 		//ランキング設定	
 		m_players[0] = (int)Ranks.First;
 		m_players[1] = (int)Ranks.Second;

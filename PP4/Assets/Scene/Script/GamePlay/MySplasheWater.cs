@@ -11,6 +11,23 @@ using UnityEngine;
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
+/// 水しぶき情報
+/// </summary>
+public struct SplasheInfo
+{
+	/// <summary>
+	/// タグ
+	/// </summary>
+	public const string TAG = "Splashe";
+
+	/// <summary>
+	/// プレイヤーと当たらない水しぶきのタグ
+	/// </summary>
+	public const string TRANS_TAG = "TransSplashe";
+}
+
+//----------------------------------------------------------------------------------------------------
+/// <summary>
 /// 水しぶきの水
 /// </summary>
 public class MySplasheWater : MonoBehaviour
@@ -89,6 +106,17 @@ public class MySplasheWater : MonoBehaviour
 		get { return m_isDisplay; }
 	}
 
+	/// <summary>
+	/// 生成されてからプレイヤーと接触しないフレーム数
+	/// </summary>
+	[SerializeField]
+	int m_nonTouchFrame;
+
+	/// <summary>
+	/// 生成されてからのフレーム数
+	/// </summary>
+	int m_SplasheWaterFrame;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの動き
@@ -96,6 +124,7 @@ public class MySplasheWater : MonoBehaviour
 	void Start()
 	{
 		m_splasheScaleZ = Body.transform.localScale.z;
+		tag = SplasheInfo.TAG;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -111,6 +140,9 @@ public class MySplasheWater : MonoBehaviour
 			{
 				MySplasheDestroy();
 			}
+
+			//タグの調整
+			TagControl();
 
 			//着地後
 			if (m_isfallen)
@@ -174,10 +206,13 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	public void MySplasheDestroy()
 	{
+		MySoundManager.Instance.Play(SeCollection.SplashFallsOnSurfaceOfWater, true, false, Body.transform.position);
 		Body.SetActive(false);
 		m_isfallen = false;
 		m_isDisplay = false;
 		m_splasheLivingTime = 0;
+		m_SplasheWaterFrame = 0;
+		tag = tag = SplasheInfo.TAG;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -189,6 +224,8 @@ public class MySplasheWater : MonoBehaviour
 		Body.SetActive(choosing);
 		m_isDisplay = choosing;
 		m_splasheLivingTime = 0;
+		m_SplasheWaterFrame = 0;
+		tag = tag = SplasheInfo.TAG;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -199,5 +236,22 @@ public class MySplasheWater : MonoBehaviour
 	{
 		Rb.velocity = Vector3.zero;
 		Rb.AddForce(v);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// タグの調整
+	/// </summary>
+	void TagControl()
+	{
+		if (tag != SplasheInfo.TRANS_TAG)
+		{
+			m_SplasheWaterFrame++;
+		}
+
+		if (m_SplasheWaterFrame > m_nonTouchFrame)
+		{
+			tag = SplasheInfo.TRANS_TAG;
+		}
 	}
 }

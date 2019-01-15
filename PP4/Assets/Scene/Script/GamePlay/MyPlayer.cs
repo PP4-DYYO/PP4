@@ -1165,7 +1165,7 @@ public class MyPlayer : MonoBehaviour
 		//重なったもののタグ
 		switch (other.transform.tag)
 		{
-			case JetWaterInfo.TAG:
+			case SplasheInfo.TAG:
 				JetWaterTriggerStay(other);
 				break;
 			case StageInfo.THUNDER_NOTICE_TAG:

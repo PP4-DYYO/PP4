@@ -11,18 +11,6 @@ using UnityEngine;
 
 //----------------------------------------------------------------------------------------------------
 /// <summary>
-/// ジェットウォーター情報
-/// </summary>
-public struct JetWaterInfo
-{
-	/// <summary>
-	/// タグ
-	/// </summary>
-	public const string TAG = "JetWater";
-}
-
-//----------------------------------------------------------------------------------------------------
-/// <summary>
 /// ジェットウォーター
 /// </summary>
 public class MyJetWater : MonoBehaviour
@@ -175,6 +163,9 @@ public class MyJetWater : MonoBehaviour
 
 				//水しぶきに力を加える
 				Splashes[m_splasheNum].SplasheWaterScript.AddingForce(-transform.forward * m_waterPower);
+
+				//音の再生
+				MySoundManager.Instance.Play(SeCollection.WaterInjection, true, false, Splashes[m_splasheNum].SplasheWaterScript.transform.position);
 
 				m_splasheNum++;
 

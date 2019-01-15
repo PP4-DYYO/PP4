@@ -171,8 +171,9 @@ public class MyMatching : MonoBehaviour
 		m_netManager = FindObjectOfType<MyNetworkManager>();
 		m_netManager.IsStandbyState = false;
 
-		//BGM
+		//Sound
 		MySoundManager.Instance.Play(BgmCollection.Matching);
+		MySoundManager.Instance.Play(SeCollection.CrossShip, true, true, Vector3.zero);
 	}
 
 	//----------------------------------------------------------------------------------------------------

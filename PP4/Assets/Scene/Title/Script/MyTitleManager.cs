@@ -114,12 +114,17 @@ public class MyTitleManager : MonoBehaviour
 	/// <summary>
 	/// 右のサーファーが移動しているか
 	/// </summary>
-	bool m_isSurfing;
+	bool m_isRightSurfing;
 
 	/// <summary>
 	/// 右のサーファーのx座標端
 	/// </summary>
-	const float END_POINT_X = -25.0f;
+	const float LEFT_START_MOVING_POINT_X = -25.0f;
+
+	/// <summary>
+	/// 右のサーファーのx座標端
+	/// </summary>
+	const float END_RIGHT_SURFING_POINT_X = -45.0f;
 
 	/// <summary>
 	/// 手前のキャラクターが動き出す右のサーファーのx座標
@@ -132,9 +137,14 @@ public class MyTitleManager : MonoBehaviour
 	Vector3 m_rightSurfingStartPos;
 
 	/// <summary>
-	/// 左のサーフィン開始位置
+	/// 左のサーファー開始位置
 	/// </summary>
 	Vector3 m_leftSurfingStartPos;
+
+	/// <summary>
+	/// 左のサーファーの終了位置
+	/// </summary>
+	const float END_LEFT_SURFING_POINT_X = 45.0f;
 
 	/// <summary>
 	/// サーフィンの横移動速度
@@ -149,9 +159,9 @@ public class MyTitleManager : MonoBehaviour
 	float m_surfingVerticalSpeed;
 
 	/// <summary>
-	/// 左からのサーファーの移動を始める
+	/// 左からのサーファーの移動状態
 	/// </summary>
-	bool m_leftSufingStart;
+	bool m_isLeftSurfing;
 
 	/// <summary>
 	/// 左からサーブボードで移動するキャラクターのアニメーション
@@ -160,9 +170,9 @@ public class MyTitleManager : MonoBehaviour
 	Animator LeftSufingAnim;
 
 	/// <summary>
-	/// 左からのサーファーの移動が終わったか
+	/// 前のキャラクターの移動が終わったか
 	/// </summary>
-	bool m_endLeftSurfingMove;
+	bool m_endFrontMove;
 
 	/// <summary>
 	/// スタートメッセージのテキスト
@@ -256,9 +266,9 @@ public class MyTitleManager : MonoBehaviour
 	MyTitleJetWater RightMyJetWater;
 
 	/// <summary>
-	/// 右のサーファーのジェットウォータークラスの起動状態
+	/// 右のサーファーのジェットの起動状態
 	/// </summary>
-	bool m_startRightJetWater;
+	bool m_rightJetWaterState;
 
 	/// <summary>
 	/// 左のサーファーのジェットウォータークラス
@@ -267,9 +277,9 @@ public class MyTitleManager : MonoBehaviour
 	MyTitleJetWater LeftMyJetWater;
 
 	/// <summary>
-	/// 左のサーファーのジェットウォータークラスの起動状態
+	/// 左のサーファーのジェットの起動状態
 	/// </summary>
-	bool m_startLeftJetWater;
+	bool m_leftJetWaterState;
 
 	/// <summary>
 	/// タイトルの動きが全て終わった
@@ -303,13 +313,13 @@ public class MyTitleManager : MonoBehaviour
 
 		//右のサーファーの状態
 		m_rightSurfingStartPos = RightSurfingCharacter.transform.position;
-		m_isSurfing = true;
-		SetAnimation(PlayerBehaviorStatus.Idle, 1);
-		SetAnimation(PlayerBehaviorStatus.Idle, 2);
+		m_isRightSurfing = true;
+		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
+		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
 
 		//左のサーファーの状態
 		m_leftSurfingStartPos = LeftSurfingCharacter.transform.position;
-		m_endLeftSurfingMove = false;
+		m_endFrontMove = false;
 
 		//BGM
 		MySoundManager.Instance.Play(BgmCollection.Title);
@@ -390,8 +400,8 @@ public class MyTitleManager : MonoBehaviour
 		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_THREE);
 		//状態リセット
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.StandStill);
-		m_leftSufingStart = true;
 		m_startFrontCoroutine = false;
+		m_endFrontMove = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -401,7 +411,7 @@ public class MyTitleManager : MonoBehaviour
 	void FrontCharacterMove()
 	{
 		//スタート直後である場合、島の端へ向かって歩く
-		if (FrontCharacter.transform.position.x < FrontStopPosObj.transform.position.x && !m_frontLeave && !m_endLeftSurfingMove)
+		if (FrontCharacter.transform.position.x < FrontStopPosObj.transform.position.x && !m_frontLeave && !m_endFrontMove)
 		{
 			FrontCharacter.transform.position = new Vector3(FrontCharacter.transform.position.x + (m_frontMovingSpeed * Time.deltaTime),
 				FrontCharacter.transform.position.y, FrontCharacter.transform.position.z);
@@ -443,7 +453,7 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	void RightSurfingCharacterMove()
 	{
-		if (m_isSurfing)
+		if (m_isRightSurfing)
 		{
 			//前のキャラクターが目を輝かせる
 			if (RightSurfingCharacter.transform.position.x < NEAR_CENTER_POS_X && !m_changeStarEye)
@@ -466,9 +476,6 @@ public class MyTitleManager : MonoBehaviour
 			//中央からは上昇する
 			if (RightSurfingCharacter.transform.position.x < CENTER_POS_X)
 			{
-				if (!m_startRightJetWater)
-					//水しぶきの発射
-					StartRightSurfingJetWater();
 				RightSurfingCharacter.transform.position = new Vector3(RightSurfingCharacter.transform.position.x - (m_surfingHorizontalSpeed * Time.deltaTime),
 				RightSurfingCharacter.transform.position.y + (m_surfingVerticalSpeed * m_surfingHorizontalSpeed * Time.deltaTime), RightSurfingCharacter.transform.position.z);
 
@@ -482,16 +489,18 @@ public class MyTitleManager : MonoBehaviour
 			}
 
 			//移動終了
-			if (RightSurfingCharacter.transform.position.x < END_POINT_X)
+			if (RightSurfingCharacter.transform.position.x < END_RIGHT_SURFING_POINT_X)
 			{
-				//位置を初期位置に戻す
-				m_isSurfing = false;
-				RightSurfingCharacter.transform.position = m_rightSurfingStartPos;
+				//左のサーファー移動開始
+				m_isLeftSurfing = true;
 
-				//左のサーファーを動かす
-				m_endLeftSurfingMove = true;
+				//位置を初期位置に戻す
+				m_isRightSurfing = false;
+				RightSurfingCharacter.transform.position = m_rightSurfingStartPos;
+				RightSurfingJetWater(false);
 			}
 		}
+		RightSurfingJetWater(m_isRightSurfing);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -500,18 +509,14 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	void LeftSufingCharacterMove()
 	{
-		if (m_leftSufingStart)
+		if (m_isLeftSurfing)
 		{
 			//中央からは上昇する
 			if (LeftSurfingCharacter.transform.position.x > CENTER_POS_X)
 			{
-				if (!m_startLeftJetWater)
-				{
-					//水しぶきの発射
-					StartLeftSurfingJetWater();
-					//目の位置の補正
-					ChangeStarEyesPosition(m_startLeftJetWater);
-				}
+				//目の位置の補正
+				ChangeStarEyesPosition(true);
+
 				LeftSurfingCharacter.transform.position = new Vector3(LeftSurfingCharacter.transform.position.x + (m_surfingHorizontalSpeed * Time.deltaTime),
 					LeftSurfingCharacter.transform.position.y + (m_surfingVerticalSpeed * m_surfingHorizontalSpeed * Time.deltaTime), LeftSurfingCharacter.transform.position.z);
 				SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
@@ -522,34 +527,42 @@ public class MyTitleManager : MonoBehaviour
 					LeftSurfingCharacter.transform.position.y, LeftSurfingCharacter.transform.position.z);
 			}
 
-			if (LeftSurfingCharacter.transform.position.x > m_rightSurfingStartPos.x)
+			if (LeftSurfingCharacter.transform.position.x > END_LEFT_SURFING_POINT_X)
 			{
 				LeftSurfingCharacter.transform.position = m_leftSurfingStartPos;
-				m_startLeftJetWater = false;
-				m_leftSufingStart = false;
+				m_isLeftSurfing = false;
 				m_endTitle = true;
 			}
 		}
+		LeftSurfingJetWater(m_isLeftSurfing);
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 右のサーファーのジェットの起動
 	/// </summary>
-	void StartRightSurfingJetWater()
+	/// <param name="jetState">起動か停止か</param>
+	void RightSurfingJetWater(bool jetState)
 	{
-		RightMyJetWater.JetFire(true);
-		m_startRightJetWater = true;
+		if (jetState != m_rightJetWaterState)
+		{
+			RightMyJetWater.JetFire(jetState);
+			m_rightJetWaterState = jetState;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 左のサーファーのジェットの起動
 	/// </summary>
-	void StartLeftSurfingJetWater()
+	/// <param name="jetState">起動か停止か</param>
+	void LeftSurfingJetWater(bool jetState)
 	{
-		LeftMyJetWater.JetFire(true);
-		m_startLeftJetWater = true;
+		if (jetState != m_leftJetWaterState)
+		{
+			LeftMyJetWater.JetFire(jetState);
+			m_leftJetWaterState = jetState;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -628,12 +641,12 @@ public class MyTitleManager : MonoBehaviour
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
 
 		//右のサーファーの状態
-		m_isSurfing = true;
-		SetAnimation(PlayerBehaviorStatus.Idle, 1);
+		m_isRightSurfing = true;
+		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
 
 		//左のサーファーの状態
-		m_endLeftSurfingMove = false;
-		SetAnimation(PlayerBehaviorStatus.Idle, 2);
-		ChangeStarEyesPosition(m_startLeftJetWater);
+		m_endFrontMove = false;
+		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
+		ChangeStarEyesPosition(false);
 	}
 }

@@ -1,10 +1,21 @@
-﻿using System.Collections;
+﻿////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//2018/1/15～
+//作成者　京都コンピュータ学院京都駅前校　ゲーム学科　4回生　吉田純基
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MyTutorialPlayer : MonoBehaviour
 {
 
+	/// <summary>
+	/// UIのスクリプト
+	/// </summary>
 	[SerializeField]
 	MyMainUi MainUiScript;
 

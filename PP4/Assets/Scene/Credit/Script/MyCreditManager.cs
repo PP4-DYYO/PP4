@@ -432,6 +432,9 @@ public class MyCreditManager : MonoBehaviour
 		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
 		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
 
+		//音の再生
+		MySoundManager.Instance.Play(BgmCollection.Credit);
+
 		//開始前を設定
 		m_textNum = -1;
 

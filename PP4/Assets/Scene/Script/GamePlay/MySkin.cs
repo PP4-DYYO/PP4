@@ -21,7 +21,7 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Collider FallCollider;
-	
+
 	/// <summary>
 	/// アニメータ
 	/// </summary>
@@ -106,6 +106,20 @@ public class MySkin : MonoBehaviour
 	Color m_defaultColor;
 	#endregion
 
+	#region 落下
+	[Header("落下")]
+	/// <summary>
+	/// SEあたりの回転数
+	/// </summary>
+	[SerializeField]
+	int m_numOfRotationsPerSe;
+
+	/// <summary>
+	/// 回転数を数える
+	/// </summary>
+	int m_countNumOfRotations;
+	#endregion
+
 	#region 着地
 	[Header("着地")]
 	/// <summary>
@@ -184,7 +198,7 @@ public class MySkin : MonoBehaviour
 				FallCollider.enabled = true;
 				break;
 		}
-		
+
 		m_state = Target.State;
 	}
 
@@ -288,8 +302,16 @@ public class MySkin : MonoBehaviour
 	/// </summary>
 	public void SoundFalling()
 	{
-		//SE
-		MySoundManager.Instance.Play(SeCollection.Falling, true, false, transform.position);
+		m_countNumOfRotations++;
+
+		//回転数に応じたSE
+		if (m_countNumOfRotations >= m_numOfRotationsPerSe)
+		{
+			m_countNumOfRotations = 0;
+
+			//SE
+			MySoundManager.Instance.Play(SeCollection.Falling, true, false, transform.position);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -327,6 +349,7 @@ public class MySkin : MonoBehaviour
 			//着地成功エフェクト
 			m_isLandingSuccessEffect = true;
 			LandingSuccessEffect.Play();
+			MySoundManager.Instance.Play(SeCollection.SuccessfulLanding, true, false, transform.position);
 		}
 	}
 
@@ -341,6 +364,7 @@ public class MySkin : MonoBehaviour
 			//着地失敗エフェクト
 			m_isLandingFailedEffect = true;
 			LandingFailedEffect.Play();
+			MySoundManager.Instance.Play(SeCollection.LandingFailed, true, false, transform.position);
 		}
 	}
 }

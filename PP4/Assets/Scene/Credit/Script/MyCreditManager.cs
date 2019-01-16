@@ -12,6 +12,18 @@ using UnityEngine;
 
 public class MyCreditManager : MonoBehaviour
 {
+
+	/// <summary>
+	/// ジェットの音再生用時間
+	/// </summary>
+	float m_jetTime;
+
+	/// <summary>
+	/// ジェットの音再生の間隔
+	/// </summary>
+	[SerializeField]
+	float m_jetIntervalTime;
+
 	/// <summary>
 	/// 背景
 	/// </summary>
@@ -114,7 +126,7 @@ public class MyCreditManager : MonoBehaviour
 	/// <summary>
 	/// 角度の最大
 	/// </summary>
-	const float ANGLE_MAX= 360;
+	const float ANGLE_MAX = 360;
 
 	/// <summary>
 	/// オブジェクトの移動速度
@@ -432,6 +444,9 @@ public class MyCreditManager : MonoBehaviour
 		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
 		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
 
+		//音の再生
+		MySoundManager.Instance.Play(BgmCollection.Credit);
+
 		//開始前を設定
 		m_textNum = -1;
 
@@ -448,6 +463,9 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		//音の再生用
+		SEPlay();
+
 		//カメラの移動
 		CameraMoving();
 
@@ -471,6 +489,20 @@ public class MyCreditManager : MonoBehaviour
 
 		//キー入力判定
 		MyInputChecker();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 音の再生
+	/// </summary>
+	void SEPlay()
+	{
+		m_jetTime += Time.deltaTime;
+		if (m_jetTime > m_jetIntervalTime)
+		{
+			m_jetTime = 0;
+			MySoundManager.Instance.Play(SeCollection.WaterInjection);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

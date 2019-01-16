@@ -161,7 +161,7 @@ public class MyFieldFoam : MonoBehaviour
 	void OnTriggerEnter(Collider other)
 	{
 		//ジェットウォータ以外を破棄
-		if (!other.tag.Equals(JetWaterInfo.TAG))
+		if (!(other.tag.Equals(SplasheInfo.TAG) || other.tag.Equals(SplasheInfo.TRANS_TAG)))
 			return;
 
 		//泡発生位置の保存

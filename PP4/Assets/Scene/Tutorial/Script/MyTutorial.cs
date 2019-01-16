@@ -140,10 +140,10 @@ public class MyTutorial : MyGame
 	bool m_playerFall;
 
 	/// <summary>
-	/// MyJetWaterのscript
+	/// MyJetWaterのscript(0がプレイヤー)
 	/// </summary>
 	[SerializeField]
-	MyJetWater MyJetWaterScript;
+	MyJetWater[] MyJetWaterScript;
 
 	/// <summary>
 	/// 紙吹雪の親オブジェクト
@@ -222,6 +222,61 @@ public class MyTutorial : MyGame
 	float m_paperProgressTime;
 
 	/// <summary>
+	/// 敵キャラクターのアニメーション
+	/// </summary>
+	[SerializeField]
+	Animator[] EnemyAnim;
+
+	/// <summary>
+	/// 敵キャラクター移動速度
+	/// </summary>
+	[SerializeField]
+	float m_enemyMoveSpeed;
+
+	/// <summary>
+	/// 中央のキャラクターの回転軸のオブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject[] AxisObject;
+
+	/// <summary>
+	/// 楕円運動用度数
+	/// </summary>
+	float m_degree;
+
+	/// <summary>
+	/// m_degreeの値をラジアンに変換するための定数
+	/// </summary>
+	const float DEGREE_TO_RADIAN = Mathf.PI / 180.0f;
+
+	/// <summary>
+	/// m_degreeの値をラジアンに変換した値
+	/// </summary>
+	float m_radian;
+
+	/// <summary>
+	/// 楕円運動のX方向の半径
+	/// </summary>
+	[SerializeField]
+	float m_radiusX;
+
+	/// <summary>
+	/// 楕円運動のZ方向の半径
+	/// </summary>
+	[SerializeField]
+	float m_radiusZ;
+
+	/// <summary>
+	/// 角度の最大
+	/// </summary>
+	const float ANGLE_MAX = 360;
+
+	/// <summary>
+	/// オブジェクトの移動速度
+	/// </summary>
+	const float SPEED = 20f;
+
+	/// <summary>
 	/// 順位
 	/// </summary>
 	public enum Ranks
@@ -268,6 +323,16 @@ public class MyTutorial : MyGame
 	{
 		MainUi.SetNumOfCoins();
 		MainUi.StopOfFall();
+
+		//音の再生
+		MySoundManager.Instance.Play(BgmCollection.Battle);
+
+		//敵の設定
+		for (int i = 1; i < MyJetWaterScript.Length; i++)
+		{
+			SetAnimation(PlayerBehaviorStatus.JetRise, i);
+			MyJetWaterScript[i].JetFire(true);
+		}
 
 		//ランキング設定	
 		m_players[0] = (int)Ranks.First;
@@ -330,6 +395,9 @@ public class MyTutorial : MyGame
 		//時間関係の動き
 		TutorialTimer();
 
+		//敵を動かす
+		EnemyMoving();
+
 		//水の残量による動き
 		CheckRemainingWater();
 
@@ -348,12 +416,12 @@ public class MyTutorial : MyGame
 	{
 		if (MyPlayerScript.State == PlayerBehaviorStatus.Idle || MyPlayerScript.State == PlayerBehaviorStatus.Falling)
 		{
-			MyJetWaterScript.JetFire(false);
+			MyJetWaterScript[0].JetFire(false);
 		}
 		if (MyPlayerScript.State == PlayerBehaviorStatus.IdleInTheAir || MyPlayerScript.State == PlayerBehaviorStatus.IdleInTheAir
 			|| MyPlayerScript.State == PlayerBehaviorStatus.JetRise || MyPlayerScript.State == PlayerBehaviorStatus.JetDescent)
 		{
-			MyJetWaterScript.JetFire(true);
+			MyJetWaterScript[0].JetFire(true);
 		}
 	}
 
@@ -411,7 +479,7 @@ public class MyTutorial : MyGame
 			if (!m_playerFall)
 			{
 				m_playerFall = true;
-				MyJetWaterScript.JetFire(false);
+				MyJetWaterScript[0].JetFire(false);
 			}
 		}
 
@@ -419,7 +487,7 @@ public class MyTutorial : MyGame
 		if (m_playerFall && OperatingPlayer.GetPercentageOfRemainingWater() >= 0.99)
 		{
 			MainUi.StopOfFall();
-			MyJetWaterScript.JetFire(true);
+			MyJetWaterScript[0].JetFire(true);
 			m_playerFall = false;
 		}
 	}
@@ -584,6 +652,69 @@ public class MyTutorial : MyGame
 			}
 			m_nowRank = m_players[7];
 			MainUi.SetRank(m_players, m_playerNum);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// アニメーションの変更
+	/// </summary>
+	/// <param name="state">状態</param>
+	/// <param name="num">キャラクター番号(1:右 2:左)</param>
+	public void SetAnimation(PlayerBehaviorStatus state, int num)
+	{
+		switch (num)
+		{
+			case 1:
+				EnemyAnim[0].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+			case 2:
+				EnemyAnim[1].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+			case 3:
+				EnemyAnim[2].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+			case 4:
+				EnemyAnim[3].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+			case 5:
+				EnemyAnim[4].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+			case 6:
+				EnemyAnim[5].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+			case 7:
+				EnemyAnim[6].SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 敵キャラクターの移動(楕円運動)
+	/// </summary>
+	void EnemyMoving()
+	{
+		// 移動する分の値をm_degreeに入れる
+		m_degree += m_enemyMoveSpeed * Time.deltaTime;
+
+		// m_degreeの値を0から360までの間の数値に変換する
+		m_degree = (m_degree % ANGLE_MAX + ANGLE_MAX) % ANGLE_MAX;
+
+		// m_degreeの値をラジアンに変換した値をm_radianに入れる
+		m_radian = m_degree * DEGREE_TO_RADIAN;
+
+		for (int i = 0; i < EnemyObject.Length; i++)
+		{
+			if (i % 2 == 0)
+			{
+				EnemyObject[i].transform.position = new Vector3(AxisObject[i].transform.position.x + Mathf.Cos(m_radian) * m_radiusX, AxisObject[i].transform.position.y, AxisObject[i].transform.position.z + Mathf.Sin(m_radian) * m_radiusZ);
+			}
+			else
+			{
+				EnemyObject[i].transform.position = new Vector3(AxisObject[i].transform.position.x - Mathf.Cos(m_radian) * m_radiusX, AxisObject[i].transform.position.y, AxisObject[i].transform.position.z + Mathf.Sin(m_radian) * m_radiusZ);
+			}
+			EnemyObject[i].transform.LookAt(AxisObject[i].transform.position);
 		}
 	}
 }

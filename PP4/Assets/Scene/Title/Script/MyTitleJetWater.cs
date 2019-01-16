@@ -59,7 +59,7 @@ public class MyTitleJetWater : MonoBehaviour
 	/// <summary>
 	/// 水しぶきのオブジェクトの配列(100個用意する)
 	/// </summary>
-	MySplashe[] Splashes = new MySplashe[100];
+	MySplashe[] Splashes = new MySplashe[120];
 
 	/// <summary>
 	/// 水しぶきの番号
@@ -209,18 +209,6 @@ public class MyTitleJetWater : MonoBehaviour
 			{
 				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
 					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
-			}
-			//空中にあればサイズ変更
-			if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
-			{
-				m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
-
-				m_splasheIndex = m_index - m_splasheNum;
-				if (m_splasheIndex < 0)
-					m_splasheIndex += Splashes.Length;
-				m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
-
-				Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
 			}
 		}
 	}

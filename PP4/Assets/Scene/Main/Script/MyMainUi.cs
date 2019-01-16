@@ -547,6 +547,18 @@ public class MyMainUi : MonoBehaviour
 	string m_expBreak;
 
 	/// <summary>
+	/// 経験値加算時間
+	/// </summary>
+	[SerializeField]
+	float m_expAddedTime;
+
+	/// <summary>
+	/// 経験値音の時間
+	/// </summary>
+	[SerializeField]
+	float m_expSoundTime;
+
+	/// <summary>
 	/// 勝敗が移動しているフラグ
 	/// </summary>
 	bool m_isWinningOrLosingMoves;
@@ -555,12 +567,37 @@ public class MyMainUi : MonoBehaviour
 	/// 勝敗の移動時間を数える
 	/// </summary>
 	float m_countTravelTimeOfWinOrLose;
-	#endregion
-	
+
 	/// <summary>
-	/// 対象の番号
+	/// 経験値加算時間を数える
 	/// </summary>
-	int m_targetNum;
+	float m_countExpAddedTime = -1;
+
+	/// <summary>
+	/// 経験値音の時間を数える
+	/// </summary>
+	float m_countExpSoundTime;
+
+	/// <summary>
+	/// 元の経験値
+	/// </summary>
+	int m_originalExp;
+
+	/// <summary>
+	/// 増える経験値
+	/// </summary>
+	int m_increasingExp;
+
+	/// <summary>
+	/// 目標経験値たち
+	/// </summary>
+	int[] m_targetExp;
+
+	/// <summary>
+	/// 前の目標経験値
+	/// </summary>
+	int m_targetExpPrev;
+	#endregion
 
 	#region 作業用
 	/// <summary>
@@ -608,6 +645,10 @@ public class MyMainUi : MonoBehaviour
 		//勝敗の移動
 		if (m_isWinningOrLosingMoves)
 			MovementOfWinOrLosingProcess();
+
+		//経験値の加算
+		if (m_countExpAddedTime != -1)
+			AddExp();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -763,6 +804,59 @@ public class MyMainUi : MonoBehaviour
 		{
 			WinningOrLosing.transform.localPosition = m_initPosOfWinOrLose + m_movementAmountOfWinOrLose;
 			m_isWinningOrLosingMoves = false;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 経験値の加算
+	/// </summary>
+	void AddExp()
+	{
+		m_countExpAddedTime += Time.deltaTime;
+		m_countExpSoundTime += Time.deltaTime;
+
+		//経験値
+		m_workFloat = m_originalExp + (m_increasingExp * m_countExpAddedTime / m_expAddedTime);
+
+		//目標経験値と増加中経験値の探索
+		foreach (var targetExp in m_targetExp)
+		{
+			if(m_workFloat <= targetExp)
+			{
+				//経験値の反映
+				PercentageOfExp.fillAmount = m_workFloat / targetExp;
+				ExpNum.text = (int)m_workFloat + m_expBreak + targetExp;
+
+				//レベルアップ
+				if(m_targetExpPrev != targetExp)
+				{
+					m_targetExpPrev = targetExp;
+					MySoundManager.Instance.Play(SeCollection.UpLv);
+				}
+
+				break;
+			}
+		}
+
+		//経験値音
+		if(m_countExpSoundTime >= m_expSoundTime)
+		{
+			m_countExpSoundTime = 0;
+			MySoundManager.Instance.Play(SeCollection.UpExp, true, false, Camera.main.transform.position);
+		}
+
+		//終了
+		if (m_countExpAddedTime >= m_expAddedTime)
+		{
+			m_countExpAddedTime = -1;
+
+			//全経験値
+			m_workInt = m_originalExp + m_increasingExp;
+
+			//経験値の反映
+			PercentageOfExp.fillAmount = (float)m_workInt / m_targetExp[m_targetExp.Length - 1];
+			ExpNum.text = m_workInt + m_expBreak + m_targetExp[m_targetExp.Length - 1];
 		}
 	}
 
@@ -1026,11 +1120,11 @@ public class MyMainUi : MonoBehaviour
 	void RearrangeRankOnMap(int[] heightRanks)
 	{
 		//全プレイヤーにアクセス
-		for (m_targetNum = 0; m_targetNum < heightRanks.Length; m_targetNum++)
+		for (m_workInt = 0; m_workInt < heightRanks.Length; m_workInt++)
 		{
 			//順位に合った親と位置
-			PlayersOnMap[m_targetNum].transform.SetParent(ParentsOfRank[heightRanks[m_targetNum]]);
-			PlayersOnMap[m_targetNum].transform.localPosition = Vector3.zero;
+			PlayersOnMap[m_workInt].transform.SetParent(ParentsOfRank[heightRanks[m_workInt]]);
+			PlayersOnMap[m_workInt].transform.localPosition = Vector3.zero;
 		}
 	}
 
@@ -1220,12 +1314,17 @@ public class MyMainUi : MonoBehaviour
 	{
 		Exp.SetActive(true);
 
-		//経験値の合算
-		m_workInt = originalExp + increasingExp;
+		//初期設定
+		m_countExpAddedTime = 0;
+		m_countExpSoundTime = 0;
+		m_targetExp = targetExp;
+		m_originalExp = originalExp;
+		m_increasingExp = increasingExp;
+		m_targetExpPrev = targetExp[0];
 
-		//経験値の反映
-		PercentageOfExp.fillAmount = (float)m_workInt / targetExp[targetExp.Length - 1];
-		ExpNum.text = m_workInt + m_expBreak + targetExp[targetExp.Length - 1];
+		//元の経験値の反映
+		PercentageOfExp.fillAmount = (float)originalExp / targetExp[0];
+		ExpNum.text = originalExp + m_expBreak + targetExp[0];
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -220,6 +220,18 @@ public enum SeCollection
 public enum SpecialSeCollection
 {
 	/// <summary>
+	/// 泡
+	/// </summary>
+	Bubble,
+	/// <summary>
+	/// 水落下
+	/// </summary>
+	WaterFall,
+	/// <summary>
+	/// 船の横切り
+	/// </summary>
+	CrossShip,
+	/// <summary>
 	/// 嵐
 	/// </summary>
 	Storm,
@@ -235,6 +247,14 @@ public enum SpecialSeCollection
 	/// 雷雲
 	/// </summary>
 	Thundercloud,
+	/// <summary>
+	/// 隕石
+	/// </summary>
+	Meteorite,
+	/// <summary>
+	/// 隕石爆発
+	/// </summary>
+	MeteoriteExplosion,
 
 	/// <summary>
 	/// 数
@@ -286,6 +306,12 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 	/// </summary>
 	[SerializeField]
 	AudioClip[] Bgms;
+
+	/// <summary>
+	/// 基本的なBGMの音量
+	/// </summary>
+	[SerializeField]
+	float m_bgmBaseVolume;
 
 	/// <summary>
 	/// BGMの小音量
@@ -427,7 +453,7 @@ public class MySoundManager : MySingletonMonoBehaviour<MySoundManager>
 		{
 			BgmAudioSource.Stop();
 			BgmAudioSource.pitch = 1f;
-			BgmAudioSource.volume = 1f;
+			BgmAudioSource.volume = m_bgmBaseVolume;
 		}
 	}
 

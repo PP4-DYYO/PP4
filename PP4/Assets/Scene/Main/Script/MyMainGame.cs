@@ -932,15 +932,15 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void PlayersWithPeopleGathered()
 	{
-		//走るアニメーション
-		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Run);
-
 		//プレイヤーネット番号
 		m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
 
 		//プレイヤーが船の端に行く時間
 		if (m_countTheTimeOfTheState <= m_timeWhenPlayerGoesToEdgeOfShip)
 		{
+			//走るアニメーション
+			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Run);
+
 			//プレイヤーの初期位置
 			m_workVector3 = m_playerPosWhenWaitingForPeople[m_workInt];
 
@@ -967,6 +967,9 @@ public class MyMainGame : MyGame
 		//プレイヤーが飛び降りる時間
 		if (m_countTheTimeOfTheState <= m_timeWhenPlayerGoesToEdgeOfShip + m_timePlayerJumpsOffShip)
 		{
+			//アイドルアニメーション
+			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
+
 			//プレイヤーの初期位置
 			m_workVector3 = m_posOfEndOfShip[m_workInt];
 

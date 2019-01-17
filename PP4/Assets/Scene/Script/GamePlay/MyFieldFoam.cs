@@ -126,7 +126,7 @@ public class MyFieldFoam : MonoBehaviour
 		m_waveMaterial.SetVector("_bubbleGenerationPos" + bubbleNum, pos);
 
 		//SE
-		MySoundManager.Instance.Play(SeCollection.SplashedFoam, true, false, pos);
+		MySoundManager.Instance.Play(SeCollection.SplashedFoam, true, true, pos);
 	}
 
 	//----------------------------------------------------------------------------------------------------

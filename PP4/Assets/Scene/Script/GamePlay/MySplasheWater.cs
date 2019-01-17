@@ -206,7 +206,7 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	public void MySplasheDestroy()
 	{
-		MySoundManager.Instance.Play(SeCollection.SplashFallsOnSurfaceOfWater, true, false, Body.transform.position);
+		MySoundManager.Instance.Play(SeCollection.SplashFallsOnSurfaceOfWater, true, true, Body.transform.position);
 		Body.SetActive(false);
 		m_isfallen = false;
 		m_isDisplay = false;

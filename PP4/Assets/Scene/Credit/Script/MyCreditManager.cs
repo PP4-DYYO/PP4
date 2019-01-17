@@ -759,6 +759,9 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	void CloudMeteoriteDestroy()
 	{
+		//隕石の回転
+		Meteorite.transform.Rotate(Vector3.up);
+
 		//表示するテキストを変更
 		if (!m_textChanged)
 		{
@@ -772,7 +775,7 @@ public class MyCreditManager : MonoBehaviour
 			MeteoritePosition.y -= SPEED * Time.deltaTime;
 			Meteorite.transform.position = MeteoritePosition;
 
-			//隕石が雲の位置に着くと雲が分裂（現在は消える）
+			//隕石が雲の位置に着くと雲が消える
 			if (Meteorite.transform.position.y <= CloudObject.transform.position.y)
 			{
 				m_cloudState = CloudState.Play;

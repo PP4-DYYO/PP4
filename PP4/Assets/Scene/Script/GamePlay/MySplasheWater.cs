@@ -47,7 +47,7 @@ public class MySplasheWater : MonoBehaviour
 	/// <summary>
 	/// 水しぶきが発生してからの経過時間
 	/// </summary>
-	float m_splasheLivingTime;
+	public float m_splasheLivingTime;
 
 	/// <summary>
 	/// 水しぶきを大きくする値(Z方向)
@@ -107,15 +107,10 @@ public class MySplasheWater : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 生成されてからプレイヤーと接触しないフレーム数
+	/// 生成されてからプレイヤーと接触しない時間
 	/// </summary>
 	[SerializeField]
-	int m_nonTouchFrame;
-
-	/// <summary>
-	/// 生成されてからのフレーム数
-	/// </summary>
-	int m_SplasheWaterFrame;
+	float m_nonTouchTime;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -124,7 +119,7 @@ public class MySplasheWater : MonoBehaviour
 	void Start()
 	{
 		m_splasheScaleZ = Body.transform.localScale.z;
-		tag = SplasheInfo.TAG;
+		tag = SplasheInfo.TRANS_TAG;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -211,8 +206,7 @@ public class MySplasheWater : MonoBehaviour
 		m_isfallen = false;
 		m_isDisplay = false;
 		m_splasheLivingTime = 0;
-		m_SplasheWaterFrame = 0;
-		tag = tag = SplasheInfo.TAG;
+		tag = SplasheInfo.TRANS_TAG;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -224,8 +218,7 @@ public class MySplasheWater : MonoBehaviour
 		Body.SetActive(choosing);
 		m_isDisplay = choosing;
 		m_splasheLivingTime = 0;
-		m_SplasheWaterFrame = 0;
-		tag = tag = SplasheInfo.TAG;
+		tag = SplasheInfo.TRANS_TAG;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -244,14 +237,12 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	void TagControl()
 	{
-		if (tag != SplasheInfo.TRANS_TAG)
+		if (tag == SplasheInfo.TRANS_TAG)
 		{
-			m_SplasheWaterFrame++;
-		}
-
-		if (m_SplasheWaterFrame > m_nonTouchFrame)
-		{
-			tag = SplasheInfo.TRANS_TAG;
+			if (m_splasheLivingTime >= m_nonTouchTime)
+			{
+				tag = SplasheInfo.TAG;
+			}
 		}
 	}
 }

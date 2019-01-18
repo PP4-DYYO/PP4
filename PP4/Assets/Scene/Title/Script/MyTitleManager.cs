@@ -297,6 +297,11 @@ public class MyTitleManager : MonoBehaviour
 	/// </summary>
 	float m_elapsedTime;
 
+	/// <summary>
+	/// コルーチン
+	/// </summary>
+	IEnumerator Coroutine;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// スタート
@@ -309,7 +314,7 @@ public class MyTitleManager : MonoBehaviour
 		m_frontStartRotationY = FrontCharacter.transform.eulerAngles.y;
 		FrontNomalMask.SetActive(true);
 		FrontStarEyeMask.SetActive(false);
-		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
+		SetAnimation(PlayerBehaviorStatus.Walk, 0);
 
 		//右のサーファーの状態
 		m_rightSurfingStartPos = RightSurfingCharacter.transform.position;
@@ -375,6 +380,9 @@ public class MyTitleManager : MonoBehaviour
 	{
 		switch (num)
 		{
+			case 0:
+				Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
+				break;
 			case 1:
 				RightSufingAnim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
 				break;
@@ -396,12 +404,12 @@ public class MyTitleManager : MonoBehaviour
 		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_TWO);
 		//歩き始める
 		m_frontLeave = true;
-		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
+		SetAnimation(PlayerBehaviorStatus.Walk, 0);
 		yield return new WaitForSeconds(LEAVE_CHARACTER_TIME_THREE);
 		//状態リセット
-		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.StandStill);
-		m_startFrontCoroutine = false;
+		SetAnimation(PlayerBehaviorStatus.StandStill, 0);
 		m_endFrontMove = true;
+		yield break;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -419,7 +427,7 @@ public class MyTitleManager : MonoBehaviour
 		//島の端に着いた時
 		if (FrontCharacter.transform.position.x >= FrontStopPosObj.transform.position.x && !m_frontLeave)
 		{
-			Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.StandStill);
+			SetAnimation(PlayerBehaviorStatus.StandStill, 0);
 		}
 		//画面外へ向かって歩く
 		if (m_frontLeave)
@@ -430,6 +438,7 @@ public class MyTitleManager : MonoBehaviour
 			if (FrontCharacter.transform.position.x < FrontStartPositionObject.transform.position.x)
 			{
 				m_frontLeave = false;
+				SetAnimation(PlayerBehaviorStatus.Stand, 0);
 			}
 		}
 		//回転
@@ -469,7 +478,8 @@ public class MyTitleManager : MonoBehaviour
 			if (RightSurfingCharacter.transform.position.x < START_FRONT_POINT_X && !m_startFrontCoroutine)
 			{
 				//手前のキャラクターが動きを始める
-				StartCoroutine("LeaveCharacter");
+				Coroutine = LeaveCharacter();
+				StartCoroutine(Coroutine);
 				m_startFrontCoroutine = true;
 			}
 
@@ -638,7 +648,8 @@ public class MyTitleManager : MonoBehaviour
 		FrontNomalMask.SetActive(true);
 		FrontStarEyeMask.SetActive(false);
 		FrontCharacter.transform.eulerAngles = new Vector3(0, m_frontStartRotationY, 0);
-		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)PlayerBehaviorStatus.Walk);
+		SetAnimation(PlayerBehaviorStatus.Walk, 0);
+		m_startFrontCoroutine = false;
 
 		//右のサーファーの状態
 		m_isRightSurfing = true;

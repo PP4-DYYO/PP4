@@ -219,8 +219,8 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// 水のゲージ
 	/// </summary>
-	[SerializeField]
-	Transform WaterGauge;
+	[SerializeField, Tooltip("必要であれば代入")]
+	Transform[] WaterGauges;
 
 	/// <summary>
 	/// ボードの方向
@@ -768,8 +768,11 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		//水の残量
-		WaterGauge.localScale = Vector3.Scale(WaterGauge.localScale, Vector3.up + Vector3.forward)
-			+ Vector3.right * ((m_jetUseTime - m_countJetUseTime) / m_jetUseTime);
+		foreach(var gauge in WaterGauges)
+		{
+			gauge.localScale = Vector3.Scale(gauge.localScale, Vector3.right + Vector3.up)
+				+ Vector3.forward * ((m_jetUseTime - m_countJetUseTime) / m_jetUseTime);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1276,13 +1279,13 @@ public class MyPlayer : MonoBehaviour
 	/// スキンを設定
 	/// </summary>
 	/// <param name="anim">アニメータ</param>
-	/// <param name="boardWaterGauge">ボードのウォータゲージ</param>
+	/// <param name="boardWaterGauges">ボードのウォータゲージ</param>
 	/// <param name="boardDirection">ボードの方向</param>
 	/// <param name="boardJetWater">ボードのジェットウォータ</param>
-	public void SetSkin(Animator anim, Transform boardWaterGauge, Transform boardDirection, MyJetWater boardJetWater)
+	public void SetSkin(Animator anim, Transform[] boardWaterGauges, Transform boardDirection, MyJetWater boardJetWater)
 	{
 		Anim = anim;
-		WaterGauge = boardWaterGauge;
+		WaterGauges = boardWaterGauges;
 		BoardDirection = boardDirection;
 		JetWater = boardJetWater;
 	}
@@ -1371,7 +1374,7 @@ public class MyPlayer : MonoBehaviour
 	/// <returns></returns>
 	public float GetPercentageOfRemainingWater()
 	{
-		return WaterGauge.localScale.x;
+		return WaterGauges[0].localScale.z;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1444,7 +1447,10 @@ public class MyPlayer : MonoBehaviour
 		Rb.constraints = RigidbodyConstraints.FreezeAll;
 
 		//水を満タンにする
-		WaterGauge.localScale = Vector3.one;
+		foreach(var gauge in WaterGauges)
+		{
+			gauge.localScale = Vector3.one;
+		}
 
 		//オーラの終了
 		WrappingUpAura(AuraAttribute.Non);

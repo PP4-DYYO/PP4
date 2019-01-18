@@ -32,7 +32,7 @@ public class MySkin : MonoBehaviour
 	/// ウォーターゲージ
 	/// </summary>
 	[SerializeField]
-	Transform WaterGauge;
+	Transform[] WaterGauges;
 
 	/// <summary>
 	/// ボードの方向
@@ -237,7 +237,7 @@ public class MySkin : MonoBehaviour
 	{
 		//プレイヤー
 		Target = target;
-		target.SetSkin(Anim, WaterGauge, BoardDirection, JetWater);
+		target.SetSkin(Anim, WaterGauges, BoardDirection, JetWater);
 
 		//ネットプレイヤー設定
 		if (netTarget != null)

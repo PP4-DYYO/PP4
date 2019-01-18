@@ -24,7 +24,9 @@ public enum MyScene
 	Title,
 	Credit,
 	Armed,
+	Tutorial,
 	Matching,
+	Main,
 	Non,
 }
 

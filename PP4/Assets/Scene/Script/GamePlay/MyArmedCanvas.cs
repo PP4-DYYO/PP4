@@ -708,16 +708,16 @@ public class MyArmedCanvas : MonoBehaviour
 		switch (m_mode)
 		{
 			case ArmedMode.SelectCharacter:
-				MyGameInfo.Instance.SetCharacter(m_characterNumBeingDisplayed);
+				MyGameInfo.Instance.SetData(m_characterNumBeingDisplayed);
 				break;
 			case ArmedMode.CreateCharacter:
 				SaveCharacter();
-				MyGameInfo.Instance.SetCharacter();
+				MyGameInfo.Instance.SetData();
 				break;
 		}
 
 		//共通処理
-		MySceneManager.Instance.ChangeScene(MyScene.Matching);
+		MySceneManager.Instance.ChangeScene(MyGameInfo.Instance.IsPlayTutorial() ? MyScene.Matching : MyScene.Tutorial);
 		MySoundManager.Instance.Play(SeCollection.Decide);
 	}
 

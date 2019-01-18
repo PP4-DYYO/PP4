@@ -30,6 +30,11 @@ public struct PlayerPrefsKeys
 	public const int FALSE = 0;
 
 	/// <summary>
+	/// チュートリアルをプレイ
+	/// </summary>
+	public const string IS_PLAY_TUTORIAL = "IsPlayTutorial";
+
+	/// <summary>
 	/// キャラクターの人数
 	/// </summary>
 	public const string NUM_OF_CHARACTERS = "NumOfCharacters";
@@ -87,6 +92,11 @@ public struct DisclosedCharacterInfo
 /// </summary>
 public class MyGameInfo : MySingleton<MyGameInfo>
 {
+	/// <summary>
+	/// チュートリアルをプレイしたか
+	/// </summary>
+	int m_isPlayTutorial;
+
 	/// <summary>
 	/// キャラクター番号
 	/// </summary>
@@ -152,6 +162,9 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 	/// </summary>
 	public void ResetData()
 	{
+		//チュートリアル
+		PlayerPrefs.SetInt(PlayerPrefsKeys.IS_PLAY_TUTORIAL, PlayerPrefsKeys.FALSE);
+
 		//PlayerPrefsに保存されているプレイヤーのリセット
 		for (var i = 0; i < PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS); i++)
 		{
@@ -194,11 +207,14 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// キャラクターを設定
+	/// データを設定
 	/// </summary>
 	/// <param name="characterNum">キャラクター番号</param>
-	public void SetCharacter(int characterNum = int.MaxValue)
+	public void SetData(int characterNum = int.MaxValue)
 	{
+		//チュートリアル
+		m_isPlayTutorial = PlayerPrefs.GetInt(PlayerPrefsKeys.IS_PLAY_TUTORIAL);
+
 		//最後のプレイヤー
 		if (characterNum == int.MaxValue)
 			characterNum = PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS) - 1;
@@ -275,6 +291,26 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 
 		//保存人数を減らす
 		PlayerPrefs.SetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS, PlayerPrefs.GetInt(PlayerPrefsKeys.NUM_OF_CHARACTERS) - 1);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// チュートリアルをプレイしたか
+	/// </summary>
+	/// <returns>プレイ済み</returns>
+	public bool IsPlayTutorial()
+	{
+		return m_isPlayTutorial == PlayerPrefsKeys.TRUE;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// チュートリアルをプレイ状況を保存
+	/// </summary>
+	/// <param name="isPlayTutorial">チュートリアルをプレイした</param>
+	public void SaveIsPlayTutorial(bool isPlayTutorial)
+	{
+		PlayerPrefs.SetInt(PlayerPrefsKeys.IS_PLAY_TUTORIAL, isPlayTutorial ? PlayerPrefsKeys.TRUE : PlayerPrefsKeys.TRUE);
 	}
 
 	//----------------------------------------------------------------------------------------------------

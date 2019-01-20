@@ -194,6 +194,12 @@ public class MyMainUi : MonoBehaviour
 	Text[] PlayerNamesOnTheMap;
 
 	/// <summary>
+	/// ランキングのSPゲージ達
+	/// </summary>
+	[SerializeField]
+	Image[] RankingSpGauges;
+
+	/// <summary>
 	/// マップ上のプレイヤーの前景たち
 	/// </summary>
 	[SerializeField]
@@ -1086,6 +1092,17 @@ public class MyMainUi : MonoBehaviour
 
 		//SE
 		MySoundManager.Instance.Play(SeCollection.Go);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// SPゲージの設定
+	/// </summary>
+	/// <param name="playerNum">プレイヤー番号</param>
+	/// <param name="gauge">ゲージ</param>
+	public void SetRankingSpGauge(int playerNum, float gauge)
+	{
+		RankingSpGauges[playerNum].fillAmount = gauge;
 	}
 
 	//----------------------------------------------------------------------------------------------------

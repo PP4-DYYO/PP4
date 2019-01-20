@@ -57,6 +57,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// ゲーム
 	/// </summary>
 	MyMainGame Game;
+	public MyMainGame GameScript
+	{
+		get { return Game; }
+	}
 	#endregion
 
 	#region コンポーネント
@@ -66,6 +70,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	MyPlayer Player;
+	public MyPlayer PlayerScript
+	{
+		get { return Player; }
+	}
 
 	/// <summary>
 	/// 名札の親
@@ -571,7 +579,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		m_meteoriteDestructionNum = meteoriteDestructionNum;
 
-		//隕石破壊
+		//隕石破壊して爆風影響率取得
 		m_workFloat = Game.StageScript.CurrentFieldScript.DestructionOfMeteorite(Game.OperatingPlayerScript.transform.position);
 
 		//隕石の影響

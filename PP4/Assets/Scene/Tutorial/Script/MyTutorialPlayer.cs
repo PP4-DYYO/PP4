@@ -25,7 +25,7 @@ public class MyTutorialPlayer : MonoBehaviour
 	/// </summary>
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.tag == SplasheInfo.TAG || other.tag == SplasheInfo.TRANS_TAG)
+		if (other.tag == SplasheInfo.TAG)
 		{
 			MainUiScript.WearWater();
 		}
@@ -37,7 +37,7 @@ public class MyTutorialPlayer : MonoBehaviour
 	/// </summary>
 	private void OnTriggerStay(Collider other)
 	{
-		if (other.tag == SplasheInfo.TAG || other.tag == SplasheInfo.TRANS_TAG)
+		if (other.tag == SplasheInfo.TAG)
 		{
 			MainUiScript.WearWater();
 		}

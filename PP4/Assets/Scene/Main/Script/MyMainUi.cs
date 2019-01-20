@@ -236,6 +236,12 @@ public class MyMainUi : MonoBehaviour
 	Image Thunder;
 
 	/// <summary>
+	/// 回復率
+	/// </summary>
+	[SerializeField]
+	Image RecoveryRate;
+
+	/// <summary>
 	/// 残り時間
 	/// </summary>
 	[SerializeField]
@@ -1215,6 +1221,16 @@ public class MyMainUi : MonoBehaviour
 		//被雷していない時
 		if (m_countBlinkingTimeOfLightning == -1)
 			m_countBlinkingTimeOfLightning = 0;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 回復率の設定
+	/// </summary>
+	/// <param name="rate">率</param>
+	public void SetRecoveryRate(float rate)
+	{
+		RecoveryRate.fillAmount = rate;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -598,9 +598,9 @@ public class MyPlayer : MonoBehaviour
 	bool m_isKeepPressingRButton;
 
 	/// <summary>
-	/// Rボタンを押した
+	/// 回復ボタンを押した
 	/// </summary>
-	bool m_isPushedRButton;
+	bool m_isPushedRecoveryButton;
 	#endregion
 
 	#region 作業用
@@ -661,7 +661,7 @@ public class MyPlayer : MonoBehaviour
 		m_isKeepPressingRButton = Input.GetButton("RButton");
 
 		//ボタンを押した
-		m_isPushedRButton = Input.GetButtonDown("RButton");
+		m_isPushedRecoveryButton = Input.GetButtonDown("RButton") || Input.GetButtonDown("AButton");
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1001,8 +1001,8 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void Recovery()
 	{
-		//Rボタンを押すとと回復操作
-		if (m_isPushedRButton)
+		//回復ボタンを押すとと回復操作
+		if (m_isPushedRecoveryButton)
 			m_countNumOfRecoveryOperations++;
 
 		//回復操作が指定数に達した
@@ -1102,7 +1102,7 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	void ResetInput()
 	{
-		m_isPushedRButton = false;
+		m_isPushedRecoveryButton = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1421,6 +1421,16 @@ public class MyPlayer : MonoBehaviour
 		m_countSpTime += m_spTime * m_spConsumptionRate;
 		m_countSpTime = (m_countSpTime > m_spTime ? m_spTime : m_countSpTime);
 		m_isUseSp = false;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 回復率を得る
+	/// </summary>
+	/// <returns>回復率</returns>
+	public float GetRecoveryRate()
+	{
+		return (float)m_countNumOfRecoveryOperations / m_numOfRecoveryOperations;
 	}
 
 	//----------------------------------------------------------------------------------------------------

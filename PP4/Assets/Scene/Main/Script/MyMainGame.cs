@@ -1324,6 +1324,10 @@ public class MyMainGame : MyGame
 			else
 				MainUi.StopOfFall();
 		}
+
+		//落下状態
+		if (m_isOperatingPlayerFall)
+			MainUi.SetRecoveryRate(OperatingPlayer.GetRecoveryRate());
 	}
 
 	//----------------------------------------------------------------------------------------------------

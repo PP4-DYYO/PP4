@@ -186,6 +186,12 @@ public class MyCreditManager : MonoBehaviour
 	GameObject DisplayUpOutsideObject;
 
 	/// <summary>
+	/// 雲の停止位置の位置
+	/// </summary>
+	[SerializeField]
+	GameObject CloudStopPositionObject;
+
+	/// <summary>
 	/// 画面外の位置
 	/// </summary>
 	[SerializeField]
@@ -501,7 +507,7 @@ public class MyCreditManager : MonoBehaviour
 		if (m_jetTime > m_jetIntervalTime)
 		{
 			m_jetTime = 0;
-			MySoundManager.Instance.Play(SeCollection.WaterInjection);
+			MySoundManager.Instance.Play(SeCollection.WaterInjection, true,false, CreditCharacter.transform.position);
 		}
 	}
 
@@ -610,7 +616,7 @@ public class MyCreditManager : MonoBehaviour
 				{
 					ParticleCloud.Pause();
 				}
-				if (CloudObject.transform.position.y > TextStartPositionObject.transform.position.y)
+				if (CloudObject.transform.position.y > CloudStopPositionObject.transform.position.y)
 					CloudObject.transform.position = new Vector3(CloudObject.transform.position.x, CloudObject.transform.position.y - (10f * Time.deltaTime), CloudObject.transform.position.z);
 				break;
 

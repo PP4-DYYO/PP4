@@ -1712,6 +1712,11 @@ public class MyMainGame : MyGame
 		{
 			LeaveBattle();
 		}
+
+		//準備完了になった
+		if (OperatingNetPlayerSetting.IsReady)
+			m_state = GameStatus.RecruitPeople;
+
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1720,7 +1725,6 @@ public class MyMainGame : MyGame
 	/// </summary>
 	public override void ContinueBattle()
 	{
-		m_state = GameStatus.RecruitPeople;
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum(), false);
 		MySoundManager.Instance.Play(SeCollection.Decide);

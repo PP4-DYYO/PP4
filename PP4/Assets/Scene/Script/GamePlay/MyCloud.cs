@@ -190,11 +190,8 @@ public class MyCloud : MonoBehaviour
 		//雷の向き(カメラ向き＋ローカルXZ軸回転の無効)
 		Thunder.transform.LookAt(Camera.main.transform);
 		Thunder.transform.localEulerAngles = Vector3.Scale(Thunder.transform.localEulerAngles, Vector3.up);
-
-		//SE
-		MySoundManager.Instance.Play(SeCollection.Thundercloud, true, true, transform.position);
 	}
-	
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 重なり続ける判定
@@ -206,13 +203,13 @@ public class MyCloud : MonoBehaviour
 		switch (m_type)
 		{
 			case CloudType.RainCloud:
-				RainCloudProcess();
+				RainCloudTriggerStay();
 				break;
 			case CloudType.Thundercloud:
+				ThundercloudTriggerStay();
 				break;
 			case CloudType.WindCloud:
-				if (other.GetComponent<Rigidbody>())
-					WindCloudProcess(other.gameObject);
+				WindCloudProcess(other.gameObject);
 				break;
 			case CloudType.GoldCloud:
 				break;
@@ -223,9 +220,20 @@ public class MyCloud : MonoBehaviour
 	/// <summary>
 	/// 雨雲の処理
 	/// </summary>
-	void RainCloudProcess()
+	void RainCloudTriggerStay()
 	{
+		//SE
 		MySoundManager.Instance.Play(SeCollection.RainCloud, true, true, transform.position);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 雷雲の重なり続ける判定
+	/// </summary>
+	void ThundercloudTriggerStay()
+	{
+		//SE
+		MySoundManager.Instance.Play(SeCollection.Thundercloud, true, true, transform.position);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -235,6 +243,11 @@ public class MyCloud : MonoBehaviour
 	/// <param name="target">影響を受ける対象</param>
 	void WindCloudProcess(GameObject target)
 	{
+		//Rigitbodyなし
+		if (!target.GetComponent<Rigidbody>())
+			return;
+
+		//風力
 		target.transform.position += m_windForce * Time.deltaTime;
 
 		//SE
@@ -249,7 +262,7 @@ public class MyCloud : MonoBehaviour
 	void OnTriggerExit(Collider other)
 	{
 		//タイプ
-		switch(m_type)
+		switch (m_type)
 		{
 			case CloudType.RainCloud:
 				break;

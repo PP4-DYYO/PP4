@@ -856,7 +856,7 @@ public class MyMainGame : MyGame
 		if(OperatingNetPlayerSetting.GetNetPlayerNum() <= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
 		{
 			//整列経過時間とプレイヤーネット番号
-			m_workFloat = m_countChargingTimeOfPlayer - m_timeToStartAligning;
+			m_workFloat = m_countTheTimeOfTheState - m_timeToStartAligning;
 			m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
 
 			//時間によるプレイヤーの位置
@@ -880,7 +880,7 @@ public class MyMainGame : MyGame
 		}
 
 		//終了
-		if(m_countChargingTimeOfPlayer - m_timeToStartAligning >= m_alignmentTime)
+		if(m_countTheTimeOfTheState - m_timeToStartAligning >= m_alignmentTime)
 		{
 			//プレイヤーネット番号
 			m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();

@@ -1063,10 +1063,20 @@ public class MyMainUi : MonoBehaviour
 			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
 				return;
 
-			//プレイヤー名と自分のランキング
+			//プレイヤー名
 			PlayerNamesOnTheMap[i].text = MyNetPlayerSetting.NetPlayerSettings[i].PlayerName;
-			ForegroundOfPlayerOnMap[i].enabled = (i == MyNetPlayerSetting.NetPlayerSettings[i].GetNetPlayerNum());
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マップ上のプレイヤーに印をつける
+	/// </summary>
+	/// <param name="playerNum">プレイヤー番号</param>
+	/// <param name="isMarking">印をつける</param>
+	public void MarkPlayersOnMap(int playerNum, bool isMarking = true)
+	{
+		ForegroundOfPlayerOnMap[playerNum].enabled = isMarking;
 	}
 
 	//----------------------------------------------------------------------------------------------------

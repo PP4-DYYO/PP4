@@ -1076,6 +1076,7 @@ public class MyMainGame : MyGame
 			m_isDisplayRank = true;
 			SettingOfCameraInBattleStartState();
 			MainUi.BattleStart(m_battleTime);
+			MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum());
 
 			//BGM
 			MySoundManager.Instance.StopBGM();
@@ -1721,6 +1722,7 @@ public class MyMainGame : MyGame
 	{
 		m_state = GameStatus.RecruitPeople;
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
+		MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum(), false);
 		MySoundManager.Instance.Play(SeCollection.Decide);
 	}
 

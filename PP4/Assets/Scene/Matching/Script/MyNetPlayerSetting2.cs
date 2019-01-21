@@ -31,6 +31,10 @@ public class MyNetPlayerSetting2 : NetworkBehaviour
 	/// </summary>
 	[SyncVar(hook = "SyncSpGauge")]
 	float m_spGauge;
+	public float SpGauge
+	{
+		get { return m_spGauge; }
+	}
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>

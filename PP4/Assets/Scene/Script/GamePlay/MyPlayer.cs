@@ -1461,7 +1461,8 @@ public class MyPlayer : MonoBehaviour
 	/// </summary>
 	/// <param name="target">ターゲット</param>
 	/// <param name="aura">オーラ</param>
-	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
+	/// <param name="isReduceSpGauge">SPゲージを減らす</param>
+	public void ThrowAuraBall(GameObject target, AuraAttribute aura, bool isReduceSpGauge = true)
 	{
 		//タンクが満タンでない
 		if (GetPercentageOfRemainingSpGauge() < 1f)
@@ -1469,7 +1470,7 @@ public class MyPlayer : MonoBehaviour
 
 		//投げる
 		AuraBall.Throw(target, aura);
-		m_countSpTime += m_spTime * m_spConsumptionRate;
+		m_countSpTime += isReduceSpGauge ? m_spTime * m_spConsumptionRate : 0;
 		m_countSpTime = (m_countSpTime > m_spTime ? m_spTime : m_countSpTime);
 		m_isUseSp = false;
 	}

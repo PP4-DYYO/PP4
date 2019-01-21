@@ -76,6 +76,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
+	/// ネットプレイヤー設定２
+	/// </summary>
+	[SerializeField]
+	MyNetPlayerSetting2 NetPlayerSetting2;
+
+	/// <summary>
 	/// 名札の親
 	/// </summary>
 	[SerializeField]
@@ -508,7 +514,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		//オーラボール
 		if (IsInfoToThrowAuraBall())
-			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall);
+			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall, false);
 
 		//操作プレイヤーでない
 		if (!isLocalPlayer)
@@ -519,7 +525,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			CmdAura(Player.Aura);
 
 		//オーラボールの投げる情報ありandSpゲージがリセットする量
-		if(IsInfoToThrowAuraBall() && Player.GetPercentageOfRemainingSpGauge() >= Player.SpRatioToResetAuraBall)
+		if(IsInfoToThrowAuraBall() && NetPlayerSetting2.SpGauge >= Player.SpRatioToResetAuraBall)
 			ResetAuraBall();
 
 		//隕石破壊フラグ
@@ -907,7 +913,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public void ThrowAuraBall(GameObject target, AuraAttribute aura)
 	{
 		//SPゲージが満タンでない
-		if (Player.GetPercentageOfRemainingSpGauge() < 1f)
+		if (NetPlayerSetting2.SpGauge < 1f)
 			return;
 
 		//投げる

@@ -431,10 +431,10 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void MyInputButtonCheck()
 	{
-		//シーン移動
+		//マッチング開始
 		if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
 		{
-			MySceneManager.Instance.ChangeScene(MyScene.Matching);
+			StartMatching();
 		}
 
 		//ランキング表示切り替え
@@ -716,5 +716,24 @@ public class MyTutorial : MyGame
 			}
 			EnemyObject[i].transform.LookAt(AxisObject[i].transform.position);
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// マッチング開始処理
+	/// </summary>
+	void StartMatching()
+	{
+		MySceneManager.Instance.ChangeScene(MyScene.Matching);
+		MyGameInfo.Instance.SaveIsPlayTutorial(true);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// スタートボタン用
+	/// </summary>
+	public void OnClick()
+	{
+		StartMatching();
 	}
 }

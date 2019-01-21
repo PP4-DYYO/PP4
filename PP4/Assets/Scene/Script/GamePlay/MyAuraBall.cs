@@ -102,6 +102,15 @@ public class MyAuraBall : MonoBehaviour
 	GameObject m_target;
 
 	/// <summary>
+	/// 当たったプレイヤー名
+	/// </summary>
+	string m_hitPlayerName = null;
+	public string HitPlayerName
+	{
+		get { return m_hitPlayerName; }
+	}
+
+	/// <summary>
 	/// オーラ
 	/// </summary>
 	AuraAttribute m_aura;
@@ -113,9 +122,20 @@ public class MyAuraBall : MonoBehaviour
 	float m_travelTime;
 
 	/// <summary>
+	/// ヒット情報の記憶時間
+	/// </summary>
+	[SerializeField]
+	float m_hitInfoStorageTime;
+
+	/// <summary>
 	/// 移動時間を数える
 	/// </summary>
 	float m_countTravelTime = -1;
+
+	/// <summary>
+	/// ヒット情報記憶時間を数える
+	/// </summary>
+	float m_countHitInfoStorageTime = -1;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -123,8 +143,13 @@ public class MyAuraBall : MonoBehaviour
 	/// </summary>
 	void FixedUpdate()
 	{
+		//移動
 		if (m_countTravelTime != -1)
 			Moving();
+
+		//ヒット情報の記憶する時間
+		if (m_countHitInfoStorageTime != -1)
+			ForgetHitInfo();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -176,6 +201,21 @@ public class MyAuraBall : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// ヒット情報を忘れる
+	/// </summary>
+	void ForgetHitInfo()
+	{
+		m_countHitInfoStorageTime += Time.deltaTime;
+
+		if(m_countHitInfoStorageTime >= m_hitInfoStorageTime)
+		{
+			m_countHitInfoStorageTime = -1;
+			m_hitPlayerName = null;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 重なり判定
 	/// </summary>
 	/// <param name="other">重なったもの</param>
@@ -183,7 +223,13 @@ public class MyAuraBall : MonoBehaviour
 	{
 		//プレイヤー
 		if (other.tag == PlayerInfo.TAG)
+		{
+			//プレイヤー名
+			if (other.GetComponent<MyPlayer>())
+				SetHitPlayerName(other.GetComponent<MyPlayer>().Name);
+
 			EraseAura();
+		}
 
 		//オーラ
 		switch (m_aura)
@@ -236,5 +282,16 @@ public class MyAuraBall : MonoBehaviour
 		m_target = target;
 		m_aura = aura;
 		transform.position = Pitcher.position;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 当たったプレイヤー名の設定
+	/// </summary>
+	/// <param name="playerName">プレイヤー名</param>
+	public void SetHitPlayerName(string playerName)
+	{
+		m_hitPlayerName = playerName;
+		m_countHitInfoStorageTime = 0;
 	}
 }

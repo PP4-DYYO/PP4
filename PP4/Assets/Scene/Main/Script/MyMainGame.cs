@@ -1232,6 +1232,16 @@ public class MyMainGame : MyGame
 		OperatingPlayer.SupportRate = 1 +
 			(Players.MaximumAltitude - OperatingPlayer.transform.position.y) * (m_supportRatePerMeter - 1);
 
+		//オーラボール
+		BattleStateAuraBall();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル状態のオーラボール
+	/// </summary>
+	void BattleStateAuraBall()
+	{
 		//オーラボールのリセット
 		if (!m_isResetAuraBall && OperatingPlayer.GetPercentageOfRemainingSpGauge() > m_spRatioToResetAuraBall)
 		{
@@ -1329,6 +1339,9 @@ public class MyMainGame : MyGame
 		//落下状態
 		if (m_isOperatingPlayerFall)
 			MainUi.SetRecoveryRate(OperatingPlayer.GetRecoveryRate());
+
+		//オーラボールのヒット情報
+		MainUi.ShowHitInfoOfAuraBall(OperatingPlayer.GetKilledPlayerName());
 	}
 
 	//----------------------------------------------------------------------------------------------------

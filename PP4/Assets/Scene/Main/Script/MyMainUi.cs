@@ -248,6 +248,18 @@ public class MyMainUi : MonoBehaviour
 	Image RecoveryRate;
 
 	/// <summary>
+	///	ヒット情報
+	/// </summary>
+	[SerializeField]
+	GameObject HitInfo;
+
+	/// <summary>
+	/// 当たったものの名
+	/// </summary>
+	[SerializeField]
+	Text HitName;
+
+	/// <summary>
 	/// 残り時間
 	/// </summary>
 	[SerializeField]
@@ -983,6 +995,7 @@ public class MyMainUi : MonoBehaviour
 		WritePlayerNamesOnTheMap();
 		ShowRankOnMap(true, false);
 		SetNumOfCoins();
+		ShowHitInfoOfAuraBall(null);
 		m_isRemainingTimeNotification = false;
 		m_isCountdownOfBattleFinish = false;
 	}
@@ -1267,6 +1280,18 @@ public class MyMainUi : MonoBehaviour
 	public void StopOfFall()
 	{
 		Falling.SetActive(false);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボールのヒット情報を示す
+	/// </summary>
+	/// <param name="hitName">当たったものの名</param>
+	public void ShowHitInfoOfAuraBall(string hitName)
+	{
+		HitInfo.SetActive(!(hitName == null || hitName == ""));
+
+		HitName.text = hitName;
 	}
 
 	//----------------------------------------------------------------------------------------------------

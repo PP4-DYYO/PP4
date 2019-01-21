@@ -275,6 +275,19 @@ public class MyPlayer : MonoBehaviour
 	MyAuraBall AuraBall;
 	#endregion
 
+	#region 情報
+	[Header("情報")]
+	/// <summary>
+	/// 名前
+	/// </summary>
+	string m_name;
+	public string Name
+	{
+		get { return m_name; }
+		set { m_name = value; }
+	}
+	#endregion
+
 	#region トランスフォーム
 	[Header("トランスフォーム")]
 	/// <summary>
@@ -466,7 +479,7 @@ public class MyPlayer : MonoBehaviour
 	/// フレーム前のオーラ属性
 	/// </summary>
 	AuraAttribute m_auraPrev = AuraAttribute.Non;
-	
+
 	/// <summary>
 	/// スペシャル時間を数える
 	/// </summary>
@@ -768,7 +781,7 @@ public class MyPlayer : MonoBehaviour
 		}
 
 		//水の残量
-		foreach(var gauge in WaterGauges)
+		foreach (var gauge in WaterGauges)
 		{
 			gauge.localScale = Vector3.Scale(gauge.localScale, Vector3.right + Vector3.up)
 				+ Vector3.forward * ((m_jetUseTime - m_countJetUseTime) / m_jetUseTime);
@@ -1239,26 +1252,54 @@ public class MyPlayer : MonoBehaviour
 				m_isFalling = false;
 				break;
 			case PlayerInfo.TAG:
-				//加速移動していない
-				if (!(m_aura == AuraAttribute.Heat && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
-				{
-					m_isFalling = true;
-					m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
-				}
+				PlayerCollisionEnter(other);
 				break;
 			case StageInfo.METEORITE_TAG:
-				//加速移動していない
-				if (!(m_aura == AuraAttribute.Heat && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
-				{
-					m_isFalling = true;
-					m_reasonForFalling = ReasonForFalling.Meteorite;
-				}
-				else
-				{
-					//隕石の破壊
-					m_isMeteoriteDestruction = true;
-				}
+				MeteoriteCollisionEnter();
 				break;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤーの当たり判定
+	/// </summary>
+	/// <param name="other">当たったもの</param>
+	void PlayerCollisionEnter(Collision other)
+	{
+		//落下中andプレイヤークラス所持
+		if (m_isFalling && other.gameObject.GetComponent<MyPlayer>() != null)
+		{
+			AuraBall.SetHitPlayerName(other.gameObject.GetComponent<MyPlayer>().m_name);
+			return;
+		}
+
+		//加速移動していないor落下中プレイヤー
+		if (!(m_aura == AuraAttribute.Heat && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton))
+			|| (other.gameObject.GetComponent<MyNetPlayerSetting>() &&
+			other.gameObject.GetComponent<MyNetPlayerSetting>().State == PlayerBehaviorStatus.Falling))
+		{
+			m_isFalling = true;
+			m_reasonForFalling = ReasonForFalling.CollisionWithPlayers;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石の当たり判定
+	/// </summary>
+	void MeteoriteCollisionEnter()
+	{
+		//加速移動していない
+		if (!(m_aura == AuraAttribute.Heat && (m_horizontalTravelDistance != Vector3.zero || m_isKeepPressingRButton)))
+		{
+			m_isFalling = true;
+			m_reasonForFalling = ReasonForFalling.Meteorite;
+		}
+		else
+		{
+			//隕石の破壊
+			m_isMeteoriteDestruction = true;
 		}
 	}
 
@@ -1425,6 +1466,16 @@ public class MyPlayer : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 倒したプレイヤー名の取得
+	/// </summary>
+	/// <returns>プレイヤー名</returns>
+	public string GetKilledPlayerName()
+	{
+		return AuraBall.HitPlayerName;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 回復率を得る
 	/// </summary>
 	/// <returns>回復率</returns>
@@ -1457,7 +1508,7 @@ public class MyPlayer : MonoBehaviour
 		Rb.constraints = RigidbodyConstraints.FreezeAll;
 
 		//水を満タンにする
-		foreach(var gauge in WaterGauges)
+		foreach (var gauge in WaterGauges)
 		{
 			gauge.localScale = Vector3.one;
 		}

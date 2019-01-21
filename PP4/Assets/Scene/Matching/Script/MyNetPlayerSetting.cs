@@ -144,6 +144,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SyncVar(hook = "SyncState")]
 	PlayerBehaviorStatus m_state;
+	public PlayerBehaviorStatus State
+	{
+		get { return m_state; }
+	}
 
 	/// <summary>
 	/// フレーム前の状態
@@ -390,6 +394,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				{
 					nameplate.text = player.m_playerName;
 				}
+				player.Player.Name = player.m_playerName;
 			}
 		}
 		else
@@ -399,6 +404,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			{
 				nameplate.text = playerName;
 			}
+			Player.Name = playerName;
 		}
 	}
 

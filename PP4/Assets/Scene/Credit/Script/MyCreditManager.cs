@@ -74,6 +74,17 @@ public class MyCreditManager : MonoBehaviour
 	GameObject CreditCharacter;
 
 	/// <summary>
+	/// 中央のキャラクターのジェットのスクリプト
+	/// </summary>
+	[SerializeField]
+	MyTitleJetWater MyTitleJetWaterScript;
+
+	/// <summary>
+	/// 中央のキャラクターの次の位置
+	/// </summary>
+	Vector3 CharacterNextPosition;
+
+	/// <summary>
 	/// 中央のキャラクター移動速度
 	/// </summary>
 	[SerializeField]
@@ -140,6 +151,12 @@ public class MyCreditManager : MonoBehaviour
 	GameObject LeftCharacter;
 
 	/// <summary>
+	/// 左側のキャラクターのジェットのスクリプト
+	/// </summary>
+	[SerializeField]
+	MyTitleJetWater LeftMyTitleJetWaterScript;
+
+	/// <summary>
 	/// 左側のキャラクターの位置
 	/// </summary>
 	Vector3 LeftCharacterPosition;
@@ -184,6 +201,11 @@ public class MyCreditManager : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject DisplayUpOutsideObject;
+
+	/// <summary>
+	/// 雲の次の位置
+	/// </summary>
+	Vector3 CloudNextPosition;
 
 	/// <summary>
 	/// 雲の停止位置の位置
@@ -450,15 +472,19 @@ public class MyCreditManager : MonoBehaviour
 		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 1);
 		SetAnimation(PlayerBehaviorStatus.HorizontalMovement, 2);
 
-		//音の再生
+		//キャラクターのジェットを起動
+		MyTitleJetWaterScript.JetFire(true);
+		LeftMyTitleJetWaterScript.JetFire(true);
+
+		//BGMの再生
 		MySoundManager.Instance.Play(BgmCollection.Credit);
 
-		//開始前を設定
+		//テキスト番号に開始前状態を設定
 		m_textNum = -1;
 
+		//使用する画像の色情報を取得
 		ThunderColor = ThunderRenderer.GetComponent<SpriteRenderer>().color;
 		ThunderRendererAlpha = ThunderRenderer.color.a;
-
 		EndingImageColor = EndingImageRenderer.GetComponent<SpriteRenderer>().color;
 		m_endingImageRendererAlpha = EndingImageRenderer.color.a;
 	}
@@ -507,7 +533,7 @@ public class MyCreditManager : MonoBehaviour
 		if (m_jetTime > m_jetIntervalTime)
 		{
 			m_jetTime = 0;
-			MySoundManager.Instance.Play(SeCollection.WaterInjection, true,false, CreditCharacter.transform.position);
+			MySoundManager.Instance.Play(SeCollection.WaterInjection, true, false, CreditCharacter.transform.position);
 		}
 	}
 
@@ -616,11 +642,18 @@ public class MyCreditManager : MonoBehaviour
 				{
 					ParticleCloud.Pause();
 				}
+
 				if (CloudObject.transform.position.y > CloudStopPositionObject.transform.position.y)
-					CloudObject.transform.position = new Vector3(CloudObject.transform.position.x, CloudObject.transform.position.y - (10f * Time.deltaTime), CloudObject.transform.position.z);
+				{
+					//雲の移動
+					CloudNextPosition.x = CloudObject.transform.position.x;
+					CloudNextPosition.y = CloudObject.transform.position.y - (10f * Time.deltaTime);
+					CloudNextPosition.z = CloudObject.transform.position.z;
+					CloudObject.transform.position = CloudNextPosition;
+				}
 				break;
 
-			//雲が動く
+			//雲の動作
 			case CloudState.Play:
 				ParticleCloud.Play();
 				m_cloudState = CloudState.Progress;
@@ -829,6 +862,7 @@ public class MyCreditManager : MonoBehaviour
 			else
 			{
 				//雷が落ちる（稲妻が出現する）
+				MySoundManager.Instance.Play(SeCollection.Lightning);
 				Thunder.SetActive(true);
 				m_lightningStruck = true;
 				//落ちた時に雲は消え始める
@@ -870,8 +904,11 @@ public class MyCreditManager : MonoBehaviour
 		// m_degreeの値をラジアンに変換した値をm_radianに入れる
 		m_radian = m_degree * DEGREE_TO_RADIAN;
 
-		CreditCharacter.transform.position = new Vector3(AxisObject.transform.position.x + Mathf.Cos(m_radian) * m_radiusX, 0, AxisObject.transform.position.z + Mathf.Sin(m_radian) * m_radiusZ);
-		CreditCharacter.transform.LookAt(AxisObject.transform.position);
+		CharacterNextPosition.x = AxisObject.transform.position.x + Mathf.Cos(m_radian) * m_radiusX;
+		CharacterNextPosition.z = AxisObject.transform.position.z + Mathf.Sin(m_radian) * m_radiusZ;
+
+		CreditCharacter.transform.LookAt(CharacterNextPosition);
+		CreditCharacter.transform.position = CharacterNextPosition;
 	}
 
 	//----------------------------------------------------------------------------------------------------

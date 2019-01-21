@@ -221,6 +221,10 @@ public class MyAuraBall : MonoBehaviour
 	/// <param name="other">重なったもの</param>
 	void OnTriggerEnter(Collider other)
 	{
+		//投手と重なる
+		if (transform.IsChildOf(other.transform))
+			return;
+
 		//プレイヤー
 		if (other.tag == PlayerInfo.TAG)
 		{

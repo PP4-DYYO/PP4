@@ -1136,7 +1136,7 @@ public class MyPlayer : MonoBehaviour
 	void OnTriggerEnter(Collider other)
 	{
 		//オーラボール
-		if (other.gameObject == AuraBall.gameObject)
+		if (other.transform.IsChildOf(AuraBall.transform))
 			return;
 
 		//重なったもののタグ

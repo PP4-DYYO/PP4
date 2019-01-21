@@ -514,7 +514,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		//オーラボール
 		if (IsInfoToThrowAuraBall())
-			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall, false);
+			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall, isLocalPlayer);
 
 		//操作プレイヤーでない
 		if (!isLocalPlayer)
@@ -525,7 +525,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			CmdAura(Player.Aura);
 
 		//オーラボールの投げる情報ありandSpゲージがリセットする量
-		if(IsInfoToThrowAuraBall() && NetPlayerSetting2.SpGauge >= Player.SpRatioToResetAuraBall)
+		if(IsInfoToThrowAuraBall() && (NetPlayerSetting2.SpGauge >= Player.SpRatioToResetAuraBall && NetPlayerSetting2.SpGauge < 1f))
 			ResetAuraBall();
 
 		//隕石破壊フラグ

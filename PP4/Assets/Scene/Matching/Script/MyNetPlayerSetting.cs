@@ -263,16 +263,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	GameObject m_auraBallTarget;
 
 	/// <summary>
-	/// オーラボールがある
-	/// </summary>
-	bool m_isAuraBall;
-
-	/// <summary>
-	/// オーラボールの対象がある
-	/// </summary>
-	bool m_isAuraBallTarget;
-
-	/// <summary>
 	/// 隕石破壊数
 	/// </summary>
 	[SyncVar(hook = "SyncMeteoriteDestructionNum")]
@@ -517,12 +507,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void ManagingPlayerVariables()
 	{
 		//オーラボール
-		if (m_isAuraBallTarget && m_isAuraBall)
-		{
-			m_isAuraBallTarget = false;
-			m_isAuraBall = false;
+		if (IsInfoToThrowAuraBall())
 			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall);
-		}
 
 		//操作プレイヤーでない
 		if (!isLocalPlayer)
@@ -531,6 +517,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//オーラ
 		if (Player.Aura != m_aura)
 			CmdAura(Player.Aura);
+
+		//オーラボールの投げる情報ありandSpゲージがリセットする量
+		if(IsInfoToThrowAuraBall() && Player.GetPercentageOfRemainingSpGauge() >= Player.SpRatioToResetAuraBall)
+			ResetAuraBall();
 
 		//隕石破壊フラグ
 		if (Player.IsMeteoriteDestruction)
@@ -562,6 +552,31 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		m_aura = aura;
 		Player.WrappingUpAura(m_aura);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボールを投げる情報がある
+	/// </summary>
+	/// <returns>情報あり</returns>
+	public bool IsInfoToThrowAuraBall()
+	{
+		return m_auraBallTarget != null && m_auraBall != AuraAttribute.Non;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボールのリセット
+	/// </summary>
+	void ResetAuraBall()
+	{
+		if (isLocalPlayer)
+		{
+			if (m_auraBall != AuraAttribute.Non)
+				CmdAuraBall(AuraAttribute.Non);
+			if (m_auraBallTarget != null)
+				CmdAuraBallTarget(null);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -905,21 +920,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// オーラボールのリセット
-	/// </summary>
-	public void ResetAuraBall()
-	{
-		if (isLocalPlayer)
-		{
-			if (m_auraBall != AuraAttribute.Non)
-				CmdAuraBall(AuraAttribute.Non);
-			if (m_auraBallTarget != null)
-				CmdAuraBallTarget(null);
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	/// オーラボールの通知
 	/// </summary>
 	/// <param name="aura">オーラ</param>
@@ -938,7 +938,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncAuraBall(AuraAttribute aura)
 	{
 		m_auraBall = aura;
-		m_isAuraBall = (aura != AuraAttribute.Non);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -961,7 +960,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncAuraBallTarget(GameObject target)
 	{
 		m_auraBallTarget = target;
-		m_isAuraBallTarget = (target != null);
 	}
 
 	//----------------------------------------------------------------------------------------------------

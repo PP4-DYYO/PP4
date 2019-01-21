@@ -467,6 +467,16 @@ public class MyPlayer : MonoBehaviour
 	float m_variableMagnificationByAura;
 
 	/// <summary>
+	/// オーラボールをリセットするスペシャルゲージ割合
+	/// </summary>
+	[SerializeField]
+	float m_spRatioToResetAuraBall;
+	public float SpRatioToResetAuraBall
+	{
+		get { return m_spRatioToResetAuraBall; }
+	}
+
+	/// <summary>
 	/// オーラ属性
 	/// </summary>
 	AuraAttribute m_aura = AuraAttribute.Non;

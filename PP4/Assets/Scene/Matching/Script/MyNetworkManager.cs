@@ -197,6 +197,9 @@ public class MyNetworkManager : NetworkManager
 
 		//マッチングのリセット
 		ResetMatching();
+
+		//サーバーは切れていない
+		m_isConnectionWithServerIsBroken = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

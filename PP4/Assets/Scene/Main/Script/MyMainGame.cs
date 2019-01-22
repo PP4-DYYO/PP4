@@ -175,6 +175,11 @@ public class MyMainGame : MyGame
 	/// 整列を開始する時間
 	/// </summary>
 	float m_timeToStartAligning;
+
+	/// <summary>
+	/// 整列フラグ
+	/// </summary>
+	bool m_isAlignment;
 	#endregion
 
 	#region 人が集まった状態
@@ -828,21 +833,21 @@ public class MyMainGame : MyGame
 	void AlignmentWhenPeopleGather()
 	{
 		//初期
-		if (OperatingNetPlayerSetting.IsAlignment)
+		if (OperatingNetPlayerSetting.IsAlignment && !m_isAlignment)
 		{
-			OperatingNetPlayerSetting.IsAlignment = false;
+			m_isAlignment = true;
 
 			//設定
 			m_initialPosOfPlayerToBeAligned = OperatingNetPlayerSetting.transform.position;
 			m_timeToStartAligning = m_countTheTimeOfTheState;
 
 			//整列対象
-			if (OperatingNetPlayerSetting.GetNetPlayerNum() <= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
+			if (OperatingNetPlayerSetting.GetNetPlayerNum() >= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
 				OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Run);
 		}
 
 		//整列対象
-		if(OperatingNetPlayerSetting.GetNetPlayerNum() <= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
+		if(OperatingNetPlayerSetting.GetNetPlayerNum() >= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
 		{
 			//整列経過時間とプレイヤーネット番号
 			m_workFloat = m_countTheTimeOfTheState - m_timeToStartAligning;
@@ -880,6 +885,8 @@ public class MyMainGame : MyGame
 			//設定
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 			OperatingNetPlayerSetting.NumOfPlayerWithDisconnected = MyNetPlayerSetting.NetPlayerSettings.Count;
+			OperatingNetPlayerSetting.IsAlignment = false;
+			m_isAlignment = false;
 		}
 	}
 

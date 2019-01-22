@@ -57,7 +57,7 @@ public class MyTutorial : MyGame
 	/// <summary>
 	/// プレイヤーのスクリプト
 	/// </summary>
-	public MyPlayer MyPlayerScript;
+	public MyPlayer Player;
 
 	/// <summary>
 	/// プレイヤー番号
@@ -97,10 +97,10 @@ public class MyTutorial : MyGame
 	GameObject[] ClearObject = new GameObject[3];
 
 	/// <summary>
-	/// ミッション用のテキスト
+	/// ミッション用のテキスト画像
 	/// </summary>
 	[SerializeField]
-	Text[] MissionText = new Text[3];
+	Image[] MissionTextImage;
 
 	/// <summary>
 	/// チュートリアル内時間用のテキスト
@@ -137,10 +137,10 @@ public class MyTutorial : MyGame
 	/// <summary>
 	/// プレイヤーが落下
 	/// </summary>
-	bool m_playerFall;
+	bool m_isPlayerFall;
 
 	/// <summary>
-	/// MyJetWaterのscript(0がプレイヤー)
+	/// MyJetWaterのスクリプト(0がプレイヤー)
 	/// </summary>
 	[SerializeField]
 	MyJetWater[] MyJetWaterScript;
@@ -362,17 +362,9 @@ public class MyTutorial : MyGame
 		m_height[4] = 300;
 		m_height[5] = 200;
 		m_height[6] = 100;
-		m_height[7] = (int)MyPlayerScript.transform.position.y;
+		m_height[7] = (int)Player.transform.position.y;
 
 		m_displayRanking = true;
-
-		TutorialMission[0].m_text = "３００mに到達せよ";
-		TutorialMission[1].m_text = "タンクの水を空にせよ";
-		TutorialMission[2].m_text = "コインを１０枚所得せよ";
-
-		MissionText[0].text = TutorialMission[0].m_text;
-		MissionText[1].text = TutorialMission[1].m_text;
-		MissionText[2].text = TutorialMission[2].m_text;
 
 		TimerText.text = "" + m_tutorialTime;
 	}
@@ -418,6 +410,9 @@ public class MyTutorial : MyGame
 
 		//名札の制御
 		NamePlateControl();
+
+		//紙吹雪の位置調整
+		Papers.transform.position = PaperPositionObject.transform.position;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -426,7 +421,7 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void NamePlateControl()
 	{
-		foreach(var nameplate in NamePlates)
+		foreach (var nameplate in NamePlates)
 		{
 			//名札の方向
 			nameplate.rotation = Camera.main.transform.rotation;
@@ -439,12 +434,12 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void JetControl()
 	{
-		if (MyPlayerScript.State == PlayerBehaviorStatus.Idle || MyPlayerScript.State == PlayerBehaviorStatus.Falling)
+		if (Player.State == PlayerBehaviorStatus.Idle || Player.State == PlayerBehaviorStatus.Falling)
 		{
 			MyJetWaterScript[0].JetFire(false);
 		}
-		if (MyPlayerScript.State == PlayerBehaviorStatus.IdleInTheAir || MyPlayerScript.State == PlayerBehaviorStatus.IdleInTheAir
-			|| MyPlayerScript.State == PlayerBehaviorStatus.JetRise || MyPlayerScript.State == PlayerBehaviorStatus.JetDescent)
+		if (Player.State == PlayerBehaviorStatus.IdleInTheAir || Player.State == PlayerBehaviorStatus.IdleInTheAir
+			|| Player.State == PlayerBehaviorStatus.JetRise || Player.State == PlayerBehaviorStatus.JetDescent)
 		{
 			MyJetWaterScript[0].JetFire(true);
 		}
@@ -501,19 +496,17 @@ public class MyTutorial : MyGame
 		if (OperatingPlayer.GetPercentageOfRemainingWater() == 0)
 		{
 			MainUi.StartOfFall(OperatingPlayer.ReasonForFallingEnum);
-			if (!m_playerFall)
+			if (m_isPlayerFall)
 			{
-				m_playerFall = true;
 				MyJetWaterScript[0].JetFire(false);
 			}
 		}
 
 		//回復で落下終了
-		if (m_playerFall && OperatingPlayer.GetPercentageOfRemainingWater() >= 0.99)
+		if (!m_isPlayerFall && OperatingPlayer.GetPercentageOfRemainingWater() >= 0.99)
 		{
 			MainUi.StopOfFall();
 			MyJetWaterScript[0].JetFire(true);
-			m_playerFall = false;
 		}
 	}
 
@@ -565,10 +558,10 @@ public class MyTutorial : MyGame
 	void CheckMission()
 	{
 		//300mに到達
-		if (MyPlayerScript.transform.position.y > 300 && TutorialMission[0].m_clear == false)
+		if (Player.transform.position.y > 300 && TutorialMission[0].m_clear == false)
 		{
 			TutorialMission[0].m_clear = true;
-			MissionText[0].color = Color.gray;
+			MissionTextImage[0].color = Color.gray;
 			ClearObject[0].SetActive(true);
 			Paper(true);
 		}
@@ -577,7 +570,7 @@ public class MyTutorial : MyGame
 		if (OperatingPlayer.GetPercentageOfRemainingWater() == 0 && TutorialMission[1].m_clear == false)
 		{
 			TutorialMission[1].m_clear = true;
-			MissionText[1].color = Color.gray;
+			MissionTextImage[1].color = Color.gray;
 			ClearObject[1].SetActive(true);
 			Paper(true);
 		}
@@ -586,7 +579,7 @@ public class MyTutorial : MyGame
 		if (OperatingPlayer.NumOfCoins >= 10 && TutorialMission[2].m_clear == false)
 		{
 			TutorialMission[2].m_clear = true;
-			MissionText[2].color = Color.gray;
+			MissionTextImage[2].color = Color.gray;
 			ClearObject[2].SetActive(true);
 			Paper(true);
 		}
@@ -629,42 +622,42 @@ public class MyTutorial : MyGame
 	{
 		if (m_displayRanking)
 		{
-			if (MyPlayerScript.transform.position.y < m_height[6])
+			if (Player.transform.position.y < m_height[6])
 			{
 				m_players[6] = (int)Ranks.Seventh;
 				m_players[7] = (int)Ranks.Eighth;
 			}
-			else if (MyPlayerScript.transform.position.y < m_height[5])
+			else if (Player.transform.position.y < m_height[5])
 			{
 				m_players[5] = (int)Ranks.Sixth;
 				m_players[6] = (int)Ranks.Eighth;
 				m_players[7] = (int)Ranks.Seventh;
 			}
-			else if (MyPlayerScript.transform.position.y < m_height[4])
+			else if (Player.transform.position.y < m_height[4])
 			{
 				m_players[4] = (int)Ranks.Fifth;
 				m_players[5] = (int)Ranks.Seventh;
 				m_players[7] = (int)Ranks.Sixth;
 			}
-			else if (MyPlayerScript.transform.position.y < m_height[3])
+			else if (Player.transform.position.y < m_height[3])
 			{
 				m_players[3] = (int)Ranks.Fourth;
 				m_players[4] = (int)Ranks.Sixth;
 				m_players[7] = (int)Ranks.Fifth;
 			}
-			else if (MyPlayerScript.transform.position.y < m_height[2])
+			else if (Player.transform.position.y < m_height[2])
 			{
 				m_players[2] = (int)Ranks.Third;
 				m_players[3] = (int)Ranks.Fifth;
 				m_players[7] = (int)Ranks.Fourth;
 			}
-			else if (MyPlayerScript.transform.position.y < m_height[1])
+			else if (Player.transform.position.y < m_height[1])
 			{
 				m_players[1] = (int)Ranks.Second;
 				m_players[2] = (int)Ranks.Fourth;
 				m_players[7] = (int)Ranks.Third;
 			}
-			else if (MyPlayerScript.transform.position.y < m_height[0])
+			else if (Player.transform.position.y < m_height[0])
 			{
 				m_players[0] = (int)Ranks.First;
 				m_players[1] = (int)Ranks.Third;
@@ -769,9 +762,14 @@ public class MyTutorial : MyGame
 	void CameraControl()
 	{
 		//落下している
-		//if (m_playerFall)
-		//	OperatingCamera.BecomeCustomOperablePursuitCamera(true);
-		//else
-		//	OperatingCamera.BecomeOperablePursuitCamera(true);
+		if (m_isPlayerFall != Player.IsFalling)
+		{
+			if (Player.IsFalling)
+				OperatingCamera.BecomeCustomOperablePursuitCamera(true);
+			else
+				OperatingCamera.BecomeOperablePursuitCamera(true);
+
+			m_isPlayerFall = Player.IsFalling;
+		}
 	}
 }

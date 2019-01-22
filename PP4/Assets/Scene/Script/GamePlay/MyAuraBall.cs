@@ -150,6 +150,9 @@ public class MyAuraBall : MonoBehaviour
 		//ヒット情報の記憶する時間
 		if (m_countHitInfoStorageTime != -1)
 			ForgetHitInfo();
+
+		//カメラを注視
+		transform.LookAt(Camera.main.transform);
 	}
 
 	//----------------------------------------------------------------------------------------------------

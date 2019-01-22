@@ -277,6 +277,12 @@ public class MyTutorial : MyGame
 	const float SPEED = 20f;
 
 	/// <summary>
+	/// 名札たち
+	/// </summary>
+	[SerializeField]
+	Transform[] NamePlates;
+
+	/// <summary>
 	/// 順位
 	/// </summary>
 	public enum Ranks
@@ -386,6 +392,9 @@ public class MyTutorial : MyGame
 		//コイン所持数表示
 		MainUi.SetNumOfCoins(OperatingPlayer.NumOfCoins);
 
+		//カメラの制御
+		CameraControl();
+
 		//ミッションの判定
 		CheckMission();
 
@@ -406,6 +415,22 @@ public class MyTutorial : MyGame
 
 		//ジェットの制御
 		JetControl();
+
+		//名札の制御
+		NamePlateControl();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 名札の制御
+	/// </summary>
+	void NamePlateControl()
+	{
+		foreach(var nameplate in NamePlates)
+		{
+			//名札の方向
+			nameplate.rotation = Camera.main.transform.rotation;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -735,5 +760,18 @@ public class MyTutorial : MyGame
 	public void OnClick()
 	{
 		StartMatching();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// カメラの制御
+	/// </summary>
+	void CameraControl()
+	{
+		//落下している
+		//if (m_playerFall)
+		//	OperatingCamera.BecomeCustomOperablePursuitCamera(true);
+		//else
+		//	OperatingCamera.BecomeOperablePursuitCamera(true);
 	}
 }

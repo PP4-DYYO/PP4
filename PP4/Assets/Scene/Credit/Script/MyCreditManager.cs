@@ -546,18 +546,6 @@ public class MyCreditManager : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
 		{
 			m_ending = true;
-			Time.timeScale = 1;
-		}
-
-		if (!m_ending)
-		{
-			if (Input.GetKey(KeyCode.Space) || Input.GetButton("AButton"))
-				Time.timeScale = 5;
-		}
-
-		if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonUp("AButton"))
-		{
-			Time.timeScale = 1;
 		}
 	}
 
@@ -601,7 +589,6 @@ public class MyCreditManager : MonoBehaviour
 			EndingImageRenderer.color = EndingImageColor;
 			if (m_endingImageRendererAlpha >= 1)
 			{
-				Time.timeScale = 1;
 				MySceneManager.Instance.ChangeScene(MyScene.Title);
 			}
 		}

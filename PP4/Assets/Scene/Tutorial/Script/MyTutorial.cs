@@ -75,11 +75,6 @@ public class MyTutorial : MyGame
 	struct Mission
 	{
 		/// <summary>
-		/// 説明文
-		/// </summary>
-		public string m_text;
-
-		/// <summary>
 		///クリア済みか 
 		/// </summary>
 		public bool m_clear;
@@ -282,8 +277,10 @@ public class MyTutorial : MyGame
 	[SerializeField]
 	Transform[] NamePlates;
 
-	GameObject target;
-
+	/// <summary>
+	/// オーラボールのターゲット
+	/// </summary>
+	GameObject AuraBallTarget;
 
 	/// <summary>
 	/// DパッドXがポジティブになった
@@ -484,26 +481,28 @@ public class MyTutorial : MyGame
 	{
 		if (m_nowRank != 0)
 		{
-			target = EnemyObject[m_nowRank - 1];
+			//1ランク上の敵を設定
+			AuraBallTarget = EnemyObject[m_nowRank - 1];
 		}
 		else
 		{
-			target = EnemyObject[0];
+			//1番上にいる敵を設定
+			AuraBallTarget = EnemyObject[0];
 		}
 
 		if (m_isDpadYBecameNegative)
 		{
-			OperatingPlayer.ThrowAuraBall(target, AuraAttribute.Heat);
+			OperatingPlayer.ThrowAuraBall(AuraBallTarget, AuraAttribute.Heat);
 			MainUi.SetMarkThatCanNotAccelerated(false);
 		}
 		else if (m_isDpadXBecameNegative)
 		{
-			OperatingPlayer.ThrowAuraBall(target, AuraAttribute.Elasticity);
+			OperatingPlayer.ThrowAuraBall(AuraBallTarget, AuraAttribute.Elasticity);
 			MainUi.SetMarkThatCanNotAccelerated(false);
 		}
 		else if (m_isDpadXBecamePositive)
 		{
-			OperatingPlayer.ThrowAuraBall(target, AuraAttribute.Electrical);
+			OperatingPlayer.ThrowAuraBall(AuraBallTarget, AuraAttribute.Electrical);
 			MainUi.SetMarkThatCanNotAccelerated(false);
 		}
 	}

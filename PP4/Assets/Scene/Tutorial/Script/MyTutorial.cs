@@ -282,6 +282,39 @@ public class MyTutorial : MyGame
 	[SerializeField]
 	Transform[] NamePlates;
 
+	GameObject target;
+
+
+	/// <summary>
+	/// DパッドXがポジティブになった
+	/// </summary>
+	bool m_isDpadXBecamePositive;
+
+	/// <summary>
+	/// フレーム前にDパッドXがポジティブになった
+	/// </summary>
+	bool m_isDpadXBecamePositivePrev;
+
+	/// <summary>
+	/// DパッドXがネガティブになった
+	/// </summary>
+	bool m_isDpadXBecameNegative;
+
+	/// <summary>
+	/// フレーム前にDパッドXがネガティブになった
+	/// </summary>
+	bool m_isDpadXBecameNegativePrev;
+
+	/// <summary>
+	/// DパッドのY軸がネガティブになった
+	/// </summary>
+	bool m_isDpadYBecameNegative;
+
+	/// <summary>
+	/// フレーム前にDパッドのY軸がネガティブになった
+	/// </summary>
+	bool m_isDpadYBecameNegativePrev;
+
 	/// <summary>
 	/// 順位
 	/// </summary>
@@ -375,14 +408,8 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void Update()
 	{
-		//水の残量表示
-		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
-
-		//スペシャルゲージの割合表示
-		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingSpGauge());
-
-		//コイン所持数表示
-		MainUi.SetNumOfCoins(OperatingPlayer.NumOfCoins);
+		//UIの処理
+		MyUIControl();
 
 		//カメラの制御
 		CameraControl();
@@ -411,8 +438,74 @@ public class MyTutorial : MyGame
 		//名札の制御
 		NamePlateControl();
 
+		//オーラボールの動き
+		AuraBallControl();
+
+		//嵐の表示
+		Stage.CurrentFieldScript.SetStormPos(OperatingPlayer.transform.position);
+
 		//紙吹雪の位置調整
 		Papers.transform.position = PaperPositionObject.transform.position;
+
+		//入力のリセット
+		ResetInput();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// UI
+	/// </summary>
+	void MyUIControl()
+	{
+		//水の残量表示
+		MainUi.SetRemainingAmountOfWater(OperatingPlayer.GetPercentageOfRemainingWater());
+
+		//スペシャルゲージの割合表示
+		MainUi.SetRemainingAmountOfAcceleration(OperatingPlayer.GetPercentageOfRemainingSpGauge());
+
+		//コイン所持数表示
+		MainUi.SetNumOfCoins(OperatingPlayer.NumOfCoins);
+
+		//回復率のゲージ表示
+		MainUi.SetRankingSpGauge(m_playerNum, OperatingPlayer.GetPercentageOfRemainingSpGauge());
+
+		//加速できない印
+		MainUi.SetMarkThatCanNotAccelerated(OperatingPlayer.IsUseSp);
+
+		//オーラボールのヒット情報
+		MainUi.ShowHitInfoOfAuraBall(OperatingPlayer.GetKilledPlayerName());
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラボールの動き
+	/// </summary>
+	void AuraBallControl()
+	{
+		if (m_nowRank != 0)
+		{
+			target = EnemyObject[m_nowRank - 1];
+		}
+		else
+		{
+			target = EnemyObject[0];
+		}
+
+		if (m_isDpadYBecameNegative)
+		{
+			OperatingPlayer.ThrowAuraBall(target, AuraAttribute.Heat);
+			MainUi.SetMarkThatCanNotAccelerated(false);
+		}
+		else if (m_isDpadXBecameNegative)
+		{
+			OperatingPlayer.ThrowAuraBall(target, AuraAttribute.Elasticity);
+			MainUi.SetMarkThatCanNotAccelerated(false);
+		}
+		else if (m_isDpadXBecamePositive)
+		{
+			OperatingPlayer.ThrowAuraBall(target, AuraAttribute.Electrical);
+			MainUi.SetMarkThatCanNotAccelerated(false);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -451,6 +544,16 @@ public class MyTutorial : MyGame
 	/// </summary>
 	void MyInputButtonCheck()
 	{
+		if (Input.GetAxis("DpadX") > 0 && !m_isDpadXBecamePositivePrev)
+			m_isDpadXBecamePositive = true;
+		m_isDpadXBecamePositivePrev = (Input.GetAxis("DpadX") > 0);
+		if (Input.GetAxis("DpadX") < 0 && !m_isDpadXBecameNegativePrev)
+			m_isDpadXBecameNegative = true;
+		m_isDpadXBecameNegativePrev = (Input.GetAxis("DpadX") < 0);
+		if (Input.GetAxis("DpadY") < 0 && !m_isDpadYBecameNegativePrev)
+			m_isDpadYBecameNegative = true;
+		m_isDpadYBecameNegativePrev = (Input.GetAxis("DpadY") < 0);
+
 		//マッチング開始
 		if (Input.GetKeyDown(KeyCode.M) || Input.GetButtonDown("HomeButton"))
 		{
@@ -469,20 +572,6 @@ public class MyTutorial : MyGame
 				m_displayRanking = true;
 			}
 			Ranking.SetActive(m_displayRanking);
-		}
-
-		//オーラ発動
-		if (Mathf.Abs(Input.GetAxis("DpadX")) > 0.1 || Mathf.Abs(Input.GetAxis("DpadY")) > 0.1)
-		{
-			AuraObject.SetActive(true);
-			if (m_nowRank != 0)
-			{
-				OperatingPlayer.ThrowAuraBall(EnemyObject[m_nowRank - 1], AuraAttribute.Elasticity);
-			}
-			else
-			{
-				OperatingPlayer.ThrowAuraBall(EnemyObject[0], AuraAttribute.Elasticity);
-			}
 		}
 	}
 
@@ -771,5 +860,16 @@ public class MyTutorial : MyGame
 
 			m_isPlayerFall = Player.IsFalling;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 入力のリセット
+	/// </summary>
+	void ResetInput()
+	{
+		m_isDpadXBecamePositive = false;
+		m_isDpadXBecameNegative = false;
+		m_isDpadYBecameNegative = false;
 	}
 }

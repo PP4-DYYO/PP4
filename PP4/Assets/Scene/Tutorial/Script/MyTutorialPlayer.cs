@@ -23,7 +23,7 @@ public class MyTutorialPlayer : MonoBehaviour
 	/// <summary>
 	/// 当たり判定
 	/// </summary>
-	private void OnTriggerEnter(Collider other)
+	void OnTriggerEnter(Collider other)
 	{
 		if (other.tag == SplasheInfo.TAG || other.tag == CloudInfo.RAIN_TAG)
 		{
@@ -35,7 +35,7 @@ public class MyTutorialPlayer : MonoBehaviour
 	/// <summary>
 	/// 当たり続ける判定
 	/// </summary>
-	private void OnTriggerStay(Collider other)
+	void OnTriggerStay(Collider other)
 	{
 		if (other.tag == SplasheInfo.TAG || other.tag == CloudInfo.RAIN_TAG)
 		{

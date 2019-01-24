@@ -1470,7 +1470,7 @@ public class MyPlayer : MonoBehaviour
 
 		//投げる
 		AuraBall.Throw(target, aura);
-		m_countSpTime += isReduceSpGauge ? m_spTime * m_spConsumptionRate : 0;
+		m_countSpTime += isReduceSpGauge ? m_spTime : 0;
 		m_countSpTime = (m_countSpTime > m_spTime ? m_spTime : m_countSpTime);
 		m_isUseSp = false;
 	}

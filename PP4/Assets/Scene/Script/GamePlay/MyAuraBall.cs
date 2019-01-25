@@ -128,12 +128,6 @@ public class MyAuraBall : MonoBehaviour
 	float m_hitInfoStorageTime;
 
 	/// <summary>
-	/// 音の時間
-	/// </summary>
-	[SerializeField]
-	float m_timeOfSound;
-
-	/// <summary>
 	/// 注意をし始める距離
 	/// </summary>
 	[SerializeField]
@@ -153,11 +147,6 @@ public class MyAuraBall : MonoBehaviour
 	/// ヒット情報記憶時間を数える
 	/// </summary>
 	float m_countHitInfoStorageTime = -1;
-
-	/// <summary>
-	/// 音の時間を数える
-	/// </summary>
-	float m_countTimeOfSound;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -257,11 +246,6 @@ public class MyAuraBall : MonoBehaviour
 		if ((Camera.main.transform.position - transform.position).sqrMagnitude >= m_distanceToStartToNote * m_distanceToStartToNote)
 			return;
 
-		m_countTimeOfSound += Time.deltaTime;
-
-		if (m_countTimeOfSound < m_timeOfSound)
-			return;
-
 		//オーラ
 		switch (m_aura)
 		{
@@ -275,8 +259,6 @@ public class MyAuraBall : MonoBehaviour
 				MySoundManager.Instance.Play(SeCollection.EarthAura, true, true, transform.position);
 				break;
 		}
-
-		m_countTimeOfSound = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------

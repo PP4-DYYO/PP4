@@ -96,6 +96,8 @@ public class MyAuraBall : MonoBehaviour
 	GameObject ElectricalAuraBall;
 	#endregion
 
+	#region ターゲット
+	[Header("ターゲット")]
 	/// <summary>
 	/// ターゲット
 	/// </summary>
@@ -109,12 +111,10 @@ public class MyAuraBall : MonoBehaviour
 	{
 		get { return m_hitPlayerName; }
 	}
+	#endregion
 
-	/// <summary>
-	/// オーラ
-	/// </summary>
-	AuraAttribute m_aura;
-
+	#region 能力
+	[Header("能力")]
 	/// <summary>
 	/// 移動時間
 	/// </summary>
@@ -128,6 +128,17 @@ public class MyAuraBall : MonoBehaviour
 	float m_hitInfoStorageTime;
 
 	/// <summary>
+	/// 注意をし始める距離
+	/// </summary>
+	[SerializeField]
+	float m_distanceToStartToNote;
+
+	/// <summary>
+	/// オーラ
+	/// </summary>
+	AuraAttribute m_aura;
+
+	/// <summary>
 	/// 移動時間を数える
 	/// </summary>
 	float m_countTravelTime = -1;
@@ -136,6 +147,7 @@ public class MyAuraBall : MonoBehaviour
 	/// ヒット情報記憶時間を数える
 	/// </summary>
 	float m_countHitInfoStorageTime = -1;
+	#endregion
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -153,6 +165,9 @@ public class MyAuraBall : MonoBehaviour
 
 		//カメラを注視
 		transform.LookAt(Camera.main.transform);
+
+		//接近音
+		SoundApproachingSound();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -210,10 +225,39 @@ public class MyAuraBall : MonoBehaviour
 	{
 		m_countHitInfoStorageTime += Time.deltaTime;
 
-		if(m_countHitInfoStorageTime >= m_hitInfoStorageTime)
+		if (m_countHitInfoStorageTime >= m_hitInfoStorageTime)
 		{
 			m_countHitInfoStorageTime = -1;
 			m_hitPlayerName = null;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 接近した音を鳴らす
+	/// </summary>
+	void SoundApproachingSound()
+	{
+		//オーラ移動中でない
+		if (m_countTravelTime == -1)
+			return;
+
+		//カメラとの距離
+		if ((Camera.main.transform.position - transform.position).sqrMagnitude > m_distanceToStartToNote * m_distanceToStartToNote)
+			return;
+
+		//オーラ
+		switch (m_aura)
+		{
+			case AuraAttribute.Heat:
+				MySoundManager.Instance.Play(SeCollection.FlameAura, true, false, transform.position);
+				break;
+			case AuraAttribute.Elasticity:
+				MySoundManager.Instance.Play(SeCollection.LightningAura, true, false, transform.position);
+				break;
+			case AuraAttribute.Electrical:
+				MySoundManager.Instance.Play(SeCollection.EarthAura, true, false, transform.position);
+				break;
 		}
 	}
 
@@ -273,15 +317,12 @@ public class MyAuraBall : MonoBehaviour
 		{
 			case AuraAttribute.Heat:
 				HeatAuraBall.SetActive(true);
-				MySoundManager.Instance.Play(SeCollection.FlameAura, true, false, transform.position);
 				break;
 			case AuraAttribute.Elasticity:
 				ElasticityAuraBall.SetActive(true);
-				MySoundManager.Instance.Play(SeCollection.LightningAura, true, false, transform.position);
 				break;
 			case AuraAttribute.Electrical:
 				ElectricalAuraBall.SetActive(true);
-				MySoundManager.Instance.Play(SeCollection.EarthAura, true, false, transform.position);
 				break;
 		}
 

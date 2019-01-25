@@ -248,6 +248,18 @@ public enum SpecialSeCollection
 	/// </summary>
 	Thundercloud,
 	/// <summary>
+	/// 温熱オーラ
+	/// </summary>
+	FlameAura,
+	/// <summary>
+	/// 弾性オーラ
+	/// </summary>
+	EarthAura,
+	/// <summary>
+	/// 電気オーラ
+	/// </summary>
+	LightningAura,
+	/// <summary>
 	/// 隕石
 	/// </summary>
 	Meteorite,

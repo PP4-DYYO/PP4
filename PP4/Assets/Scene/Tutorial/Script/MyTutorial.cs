@@ -366,7 +366,7 @@ public class MyTutorial : MyGame
 		//敵の設定
 		for (int i = 1; i < MyJetWaterScript.Length; i++)
 		{
-			SetAnimation(PlayerBehaviorStatus.JetRise, i);
+			SetAnimation(PlayerBehaviorStatus.HorizontalMovement, i);
 			MyJetWaterScript[i].JetFire(true);
 		}
 
@@ -471,6 +471,10 @@ public class MyTutorial : MyGame
 
 		//オーラボールのヒット情報
 		MainUi.ShowHitInfoOfAuraBall(OperatingPlayer.GetKilledPlayerName());
+
+		//回復率を得る
+		if (m_isPlayerFall)
+			MainUi.SetRecoveryRate(OperatingPlayer.GetRecoveryRate());
 	}
 
 	//----------------------------------------------------------------------------------------------------

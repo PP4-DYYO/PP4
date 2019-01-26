@@ -112,6 +112,38 @@ public class MySplasheWater : MonoBehaviour
 	[SerializeField]
 	float m_nonTouchTime;
 
+	/// <summary>
+	/// 水しぶきのパーティクルシステム
+	/// </summary>
+	[SerializeField]
+	ParticleSystem SplashParticle;
+
+	/// <summary>
+	/// 水しぶきのパーティクルシステムのモジュール
+	/// </summary>
+	ParticleSystem.MainModule SplashParticleMainModule;
+
+	/// <summary>
+	/// 水しぶきのパーティクルシステムのモジュールがうごいているか
+	/// </summary>
+	bool m_isParticleModuleMoving;
+
+	/// <summary>
+	/// 水しぶきのパーティクルシステムのDuration
+	/// </summary>
+	float m_splashParticleDuration;
+
+	/// <summary>
+	/// ループが止まるまでの時間へ足す数値
+	/// </summary>
+	[SerializeField]
+	float m_addNum;
+
+	/// <summary>
+	/// ループが止まる時間
+	/// </summary>
+	float m_loopStopTime;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの動き
@@ -120,6 +152,9 @@ public class MySplasheWater : MonoBehaviour
 	{
 		m_splasheScaleZ = Body.transform.localScale.z;
 		tag = SplasheInfo.TRANS_TAG;
+		m_isParticleModuleMoving = true;
+		SplashParticleMainModule = SplashParticle.main;
+		m_loopStopTime = SplashParticleMainModule.duration + m_addNum;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -135,6 +170,9 @@ public class MySplasheWater : MonoBehaviour
 			{
 				MySplasheDestroy();
 			}
+
+			//パーティクルのループの設定
+			ParticleLoop();
 
 			//タグの調整
 			TagControl();
@@ -206,6 +244,7 @@ public class MySplasheWater : MonoBehaviour
 		m_isfallen = false;
 		m_isDisplay = false;
 		m_splasheLivingTime = 0;
+		m_isParticleModuleMoving = true;
 		tag = SplasheInfo.TRANS_TAG;
 	}
 
@@ -218,6 +257,7 @@ public class MySplasheWater : MonoBehaviour
 		Body.SetActive(choosing);
 		m_isDisplay = choosing;
 		m_splasheLivingTime = 0;
+		m_isParticleModuleMoving = true;
 		tag = SplasheInfo.TRANS_TAG;
 	}
 
@@ -229,6 +269,20 @@ public class MySplasheWater : MonoBehaviour
 	{
 		Rb.velocity = Vector3.zero;
 		Rb.AddForce(v);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 水しぶきパーティクルのループの設定
+	/// </summary>
+	void ParticleLoop()
+	{
+		//一定時間経過か着地でループが止まる
+		if (m_splasheLifeTime - m_splasheLivingTime <= m_loopStopTime && m_isParticleModuleMoving || m_isfallen)
+			m_isParticleModuleMoving = false;
+
+		if (SplashParticleMainModule.loop != m_isParticleModuleMoving)
+			SplashParticleMainModule.loop = m_isParticleModuleMoving;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -102,7 +102,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// 選択されたスキン
 	/// </summary>
-	MySkin m_selectSkin;
+	MySkin m_selectSkin = null;
 	public MySkin SelectSkin
 	{
 		get { return m_selectSkin; }
@@ -432,7 +432,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			foreach (var player in m_netPlayerSettings)
 			{
 				//スキンの生成と設定
-				player.m_selectSkin = Instantiate(player.Skin[player.m_playerType], player.transform).GetComponent<MySkin>();
+				if (player.m_selectSkin == null)
+					player.m_selectSkin = Instantiate(player.Skin[player.m_playerType], player.transform).GetComponent<MySkin>();
 				ResetTransform(player.m_selectSkin.transform);
 				player.m_selectSkin.SetSkin(player.GetComponent<MyPlayer>(), player.GetComponent<MyNetPlayerSetting>());
 			}
@@ -440,7 +441,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		else
 		{
 			//スキンの生成と設定
-			m_selectSkin = Instantiate(Skin[typeNum], transform).GetComponent<MySkin>();
+			if (m_selectSkin == null)
+				m_selectSkin = Instantiate(Skin[typeNum], transform).GetComponent<MySkin>();
 			ResetTransform(m_selectSkin.transform);
 			m_selectSkin.SetSkin(GetComponent<MyPlayer>(), GetComponent<MyNetPlayerSetting>());
 		}

@@ -36,6 +36,16 @@ public class MyNetPlayerSetting2 : NetworkBehaviour
 		get { return m_spGauge; }
 	}
 
+	/// <summary>
+	/// フレーム前のSPゲージ
+	/// </summary>
+	float m_spGaugePrev = -1;
+
+	/// <summary>
+	/// 作業用のFloat
+	/// </summary>
+	float m_workFloat;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 定期フレーム
@@ -47,7 +57,26 @@ public class MyNetPlayerSetting2 : NetworkBehaviour
 			return;
 
 		//SPゲージ
-		CmdSpGauge(NetPlayerSetting.PlayerScript.GetPercentageOfRemainingSpGauge());
+		SendSpGaugeInfo();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// SPゲージ情報を送る
+	/// </summary>
+	[ClientCallback]
+	void SendSpGaugeInfo()
+	{
+		//SPゲージ割合
+		m_workFloat = NetPlayerSetting.PlayerScript.GetPercentageOfRemainingSpGauge();
+
+		if (m_workFloat == m_spGaugePrev)
+			return;
+
+		//通知
+		CmdSpGauge(m_workFloat);
+
+		m_spGaugePrev = m_workFloat;
 	}
 
 	//----------------------------------------------------------------------------------------------------

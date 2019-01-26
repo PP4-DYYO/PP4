@@ -94,6 +94,24 @@ public class MyAuraBall : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject ElectricalAuraBall;
+
+	/// <summary>
+	/// 温熱のエフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem HeatEffect;
+
+	/// <summary>
+	/// 弾性のエフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem ElasticityEffect;
+
+	/// <summary>
+	/// 電気のエフェクト
+	/// </summary>
+	[SerializeField]
+	ParticleSystem ElectricalEffect;
 	#endregion
 
 	#region ターゲット
@@ -279,7 +297,26 @@ public class MyAuraBall : MonoBehaviour
 			if (other.GetComponent<MyPlayer>())
 				SetHitPlayerName(other.GetComponent<MyPlayer>().Name);
 
+			//ヒット演出
+			switch(m_aura)
+			{
+				case AuraAttribute.Heat:
+					HeatEffect.transform.position = transform.position;
+					HeatEffect.Play();
+					break;
+				case AuraAttribute.Elasticity:
+					ElasticityEffect.transform.position = transform.position;
+					ElasticityEffect.Play();
+					break;
+				case AuraAttribute.Electrical:
+					ElectricalEffect.transform.position = transform.position;
+					ElectricalEffect.Play();
+					break;
+			}
+
 			EraseAura();
+
+			return;
 		}
 
 		//オーラ

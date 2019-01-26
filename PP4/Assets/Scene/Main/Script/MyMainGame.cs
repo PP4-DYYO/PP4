@@ -748,7 +748,6 @@ public class MyMainGame : MyGame
 
 			//プレイヤーとカメラとUI
 			OperatingNetPlayerSetting.BattleInitSetting();
-			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
 			Players.ResetPlayerColor();
 			GhostPlayers.SetActive(true);
 			OperatingCamera.BecomeFixedCamera(m_cameraPosWhenWaitingForPeople, m_cameraDirectionWhenWaitingForPeople);
@@ -821,6 +820,8 @@ public class MyMainGame : MyGame
 		//整列中
 		if (!OperatingNetPlayerSetting.IsReady)
 			AlignmentWhenPeopleGather();
+		else
+			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
 
 		//解放時間を更新
 		MainUi.SetTimeToWaitWorPeople(m_timeToWaitForPeople - m_countTheTimeOfTheState);

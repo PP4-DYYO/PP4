@@ -130,6 +130,7 @@ public class MyImageAnimation : MonoBehaviour
 		{
 			m_imageNum = 0;
 			m_countImageDisplayTime = 0;
+			Target.sprite = Images[m_imageNum];
 		}
 	}
 

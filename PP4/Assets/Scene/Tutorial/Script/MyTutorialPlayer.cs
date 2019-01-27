@@ -19,6 +19,12 @@ public class MyTutorialPlayer : MonoBehaviour
 	[SerializeField]
 	MyMainUi MainUiScript;
 
+	/// <summary>
+	/// チュートリアルのスクリプト
+	/// </summary>
+	[SerializeField]
+	MyTutorial MyTutorialScript;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 当たり判定
@@ -28,6 +34,11 @@ public class MyTutorialPlayer : MonoBehaviour
 		if (other.tag == SplasheInfo.TAG || other.tag == CloudInfo.RAIN_TAG)
 		{
 			MainUiScript.WearWater();
+		}
+
+		else if (other.tag == PlayerInfo.TAG)
+		{
+			MyTutorialScript.PlayerCollision();
 		}
 	}
 

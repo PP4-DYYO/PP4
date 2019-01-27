@@ -604,6 +604,15 @@ public class MyTutorial : MyGame
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// プレイヤーとの衝突
+	/// </summary>
+	public void PlayerCollision()
+	{
+		MainUi.StartOfFall(OperatingPlayer.ReasonForFallingEnum);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	///時間経過での動き
 	/// </summary>
 	void TutorialTimer()

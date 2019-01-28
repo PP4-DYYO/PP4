@@ -19,37 +19,52 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// ネットワークプレイヤーセッティングクラス達
 	/// </summary>
-	static List<MyNetPlayerSetting> m_netPlayerSettings = new List<MyNetPlayerSetting>();
+	static List<MyNetPlayerSetting> s_netPlayerSettings = new List<MyNetPlayerSetting>();
 	public static List<MyNetPlayerSetting> NetPlayerSettings
 	{
-		get { return m_netPlayerSettings; }
-		set { m_netPlayerSettings = value; }
+		get { return s_netPlayerSettings; }
+		set { s_netPlayerSettings = value; }
 	}
 
 	/// <summary>
 	/// 切断された数
 	/// </summary>
-	static int m_numOfDisconnections;
+	static int s_numOfDisconnections;
 
 	/// <summary>
 	/// 切断されたプレイヤー番号
 	/// </summary>
-	static int m_numOfPlayerWithDisconnected;
+	static int s_numOfPlayerWithDisconnected;
 	public int NumOfPlayerWithDisconnected
 	{
-		get { return m_numOfPlayerWithDisconnected; }
-		set { m_numOfPlayerWithDisconnected = value; }
+		get { return s_numOfPlayerWithDisconnected; }
+		set { s_numOfPlayerWithDisconnected = value; }
 	}
 
 	/// <summary>
 	/// 整列フラグ
 	/// </summary>
-	static bool m_isAlignment;
+	static bool s_isAlignment;
 	public bool IsAlignment
 	{
-		get { return m_isAlignment; }
-		set { m_isAlignment = value; }
+		get { return s_isAlignment; }
+		set { s_isAlignment = value; }
 	}
+
+	/// <summary>
+	/// AIキャラクター作成フラグ
+	/// </summary>
+	static bool s_isCreateAi;
+
+	/// <summary>
+	/// フレーム前のAIキャラクター作成フラグ
+	/// </summary>
+	static bool s_isCreateAiPrev;
+
+	/// <summary>
+	/// プレイヤーの数
+	/// </summary>
+	static int s_numOfPlayers;
 
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
@@ -125,6 +140,26 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject[] Skin;
+
+	/// <summary>
+	/// AIプレイヤー
+	/// </summary>
+	[SerializeField]
+	GameObject AiPlayer;
+
+	/// <summary>
+	/// AIフラグ
+	/// </summary>
+	bool m_isAi;
+
+	/// <summary>
+	/// 管理しているAIキャラクター
+	/// </summary>
+	List<MyNetPlayerSetting> m_aiNetPlayerSettings = new List<MyNetPlayerSetting>();
+	public List<MyNetPlayerSetting> AiNetPlayerSettings
+	{
+		get { return m_aiNetPlayerSettings; }
+	}
 	#endregion
 
 	#region プレイヤーの情報
@@ -143,6 +178,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public bool IsReady
 	{
 		get { return m_isReady; }
+	}
+
+	/// <summary>
+	/// AIキャラの作成フラグ
+	/// </summary>
+	[SyncVar(hook = "SyncIsCreateAi")]
+	bool m_isCreateAi;
+	public bool IsCreateAi
+	{
+		get { return m_isCreateAi; }
 	}
 
 	/// <summary>
@@ -292,6 +337,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	#region 作業用
 	/// <summary>
+	/// 作業用のNetPlayerSettingクラス
+	/// </summary>
+	MyNetPlayerSetting m_workNetPlayerSetting;
+
+	/// <summary>
 	/// 変更される番号
 	/// </summary>
 	static int m_numToBeChanged;
@@ -328,10 +378,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		Player.BecomeUnauthorizedPlayer();
 
 		//クラス変数の初期化
-		if (m_netPlayerSettings.Count > 0 && m_netPlayerSettings[0].Player == null)
-			m_netPlayerSettings.Clear();
+		if (s_netPlayerSettings.Count > 0 && s_netPlayerSettings[0].Player == null)
+			s_netPlayerSettings.Clear();
 
-		m_netPlayerSettings.Add(this);
+		s_netPlayerSettings.Add(this);
 
 		//SE
 		MySoundManager.Instance.Play(SeCollection.PlayerEnters);
@@ -339,24 +389,32 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// ローカルプレイヤーの初期
+	/// 権限を持った時の初期
 	/// </summary>
-	public override void OnStartLocalPlayer()
+	public override void OnStartAuthority()
 	{
-		base.OnStartLocalPlayer();
+		base.OnStartAuthority();
 
 		//ゲームに必要な設定
-		Game.OperatingPlayerScript = Player;
+		if (!m_isAi)
+			Game.OperatingPlayerScript = Player;
 		transform.parent = Game.PlayersScript.transform;
 
 		//名前の登録
-		CmdRegisterPlayerName(MyGameInfo.Instance.PlayerName);
+		CmdRegisterPlayerName(MyGameInfo.Instance.PlayerName + (m_isAi ? GetNetPlayerNum().ToString() : ""));
 
 		//タイプの登録
 		CmdRegisterPlayerType(MyGameInfo.Instance.TypeNum);
 
 		//準備完了
 		CmdNotifyOfIsReady(true);
+
+		//AIの設定
+		if(m_isAi)
+		{
+			CmdLevel(MyGameInfo.Instance.Level);
+			CmdPower(MyGameInfo.Instance.Power);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -384,7 +442,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (isLocalPlayer)
 		{
 			//既存プレイヤーの名前登録
-			foreach (var player in m_netPlayerSettings)
+			foreach (var player in s_netPlayerSettings)
 			{
 				foreach (var nameplate in player.Nameplates)
 				{
@@ -429,7 +487,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (isLocalPlayer)
 		{
 			//既存プレイヤーのタイプ登録
-			foreach (var player in m_netPlayerSettings)
+			foreach (var player in s_netPlayerSettings)
 			{
 				//スキンの生成と設定
 				if (player.m_selectSkin == null)
@@ -484,6 +542,31 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// AIキャラクター作成フラグの通知
+	/// </summary>
+	/// <param name="isCreateAi">フラグ</param>
+	[Command]
+	public void CmdIsCreateAi(bool isCreateAi)
+	{
+		m_isCreateAi = isCreateAi;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIキャラクター作成フラグを同期
+	/// </summary>
+	/// <param name="isCreateAi"></param>
+	[Client]
+	void SyncIsCreateAi(bool isCreateAi)
+	{
+		m_isCreateAi = isCreateAi;
+
+		s_isCreateAi = m_isCreateAi;
+		s_numOfPlayers = s_netPlayerSettings.Count;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	///	定期フレーム
 	/// </summary>
 	void FixedUpdate()
@@ -518,16 +601,20 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (IsInfoToThrowAuraBall())
 			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall, isLocalPlayer);
 
-		//操作プレイヤーでない
-		if (!isLocalPlayer)
+		//権限を持ったプレイヤーでない
+		if (!hasAuthority)
 			return;
+
+		//AIキャラクター作成
+		if (!m_isAi && s_isCreateAi != s_isCreateAiPrev)
+			SpawnAiCharacter(s_isCreateAi);
 
 		//オーラ
 		if (Player.Aura != m_aura)
 			CmdAura(Player.Aura);
 
 		//オーラボールの投げる情報ありandSpゲージがリセットする量
-		if(IsInfoToThrowAuraBall() && (NetPlayerSetting2.SpGauge >= Player.SpRatioToResetAuraBall && NetPlayerSetting2.SpGauge < 1f))
+		if (IsInfoToThrowAuraBall() && (NetPlayerSetting2.SpGauge >= Player.SpRatioToResetAuraBall && NetPlayerSetting2.SpGauge < 1f))
 			ResetAuraBall();
 
 		//隕石破壊フラグ
@@ -537,6 +624,43 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			Player.IsMeteoriteDestruction = false;
 			CmdMeteoriteDestructionNum(m_meteoriteDestructionNum + 1);
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIキャラクターのスポーン
+	/// </summary>
+	/// <param name="isCreateAi">キャラクター作成フラグ</param>
+	void SpawnAiCharacter(bool isCreateAi)
+	{
+		//作成
+		if (isCreateAi)
+		{
+			//プレイヤー一人が生成する数
+			m_workFloat = (Game.NumOfPlayers - s_numOfPlayers) / s_numOfPlayers;
+			m_workFloat = m_workFloat + ((Game.NumOfPlayers - s_numOfPlayers) % s_numOfPlayers >= GetNetPlayerNum() + 1 ? 1 : 0);
+
+			for (m_workInt = 0; m_workInt < m_workFloat; m_workInt++)
+			{
+				m_workNetPlayerSetting = Instantiate(AiPlayer, Player.PlayersScript.transform).GetComponent<MyNetPlayerSetting>();
+				m_workNetPlayerSetting.m_isAi = true;
+				m_aiNetPlayerSettings.Add(m_workNetPlayerSetting);
+				NetworkServer.SpawnWithClientAuthority(m_workNetPlayerSetting.gameObject, connectionToClient);
+			}
+		}
+		else
+		{
+			//AIキャラクターの削除
+			for(m_workInt = 0; m_workInt < m_aiNetPlayerSettings.Count;)
+			{
+				m_workNetPlayerSetting = m_aiNetPlayerSettings[m_workInt];
+				NetworkServer.UnSpawn(m_workNetPlayerSetting.gameObject);
+				m_aiNetPlayerSettings.Remove(m_workNetPlayerSetting);
+				Destroy(m_workNetPlayerSetting.gameObject);
+			}
+		}
+
+		s_isCreateAiPrev = s_isCreateAi;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -578,7 +702,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void ResetAuraBall()
 	{
-		if (isLocalPlayer)
+		if (hasAuthority)
 		{
 			if (m_auraBall != AuraAttribute.Non)
 				CmdAuraBall(AuraAttribute.Non);
@@ -621,8 +745,8 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void AnimProcess()
 	{
-		//操作プレイヤー
-		if (isLocalPlayer)
+		//権限を持ったプレイヤー
+		if (hasAuthority)
 		{
 			//状態が変わった
 			if (m_state != Player.State)
@@ -742,7 +866,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		NameplateParent.localPosition = m_overheadPos;
 
 		//他プレイヤーの名札
-		foreach (var player in m_netPlayerSettings)
+		foreach (var player in s_netPlayerSettings)
 		{
 			//位置
 			if (player)
@@ -784,13 +908,13 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			return;
 
 		//全てのプレイヤーにアクセス
-		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count; m_workInt++)
+		for (m_workInt = 0; m_workInt < s_netPlayerSettings.Count; m_workInt++)
 		{
 			//シード値が設定されている
-			if (m_netPlayerSettings[m_workInt].m_seed != -1)
+			if (s_netPlayerSettings[m_workInt].m_seed != -1)
 			{
 				//シード値の設定
-				m_seed = m_netPlayerSettings[m_workInt].m_seed;
+				m_seed = s_netPlayerSettings[m_workInt].m_seed;
 				UnityEngine.Random.InitState(m_seed);
 			}
 		}
@@ -816,7 +940,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <returns>ネットプレイヤー番号</returns>
 	public int GetNetPlayerNum()
 	{
-		return m_netPlayerSettings.IndexOf(this);
+		return s_netPlayerSettings.IndexOf(this);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -830,15 +954,15 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		ConfirmationOfPlayersWhoAreDisconnected();
 
 		//全てのプレイヤーにアクセス
-		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count; m_workInt++)
+		for (m_workInt = 0; m_workInt < s_netPlayerSettings.Count; m_workInt++)
 		{
 			//準備完了でない
-			if (!m_netPlayerSettings[m_workInt].m_isReady)
+			if (!s_netPlayerSettings[m_workInt].m_isReady)
 				return false;
 		}
 
 		//プレイヤー人数が揃うか
-		return (m_netPlayerSettings.Count >= Game.NumOfPlayers);
+		return (s_netPlayerSettings.Count >= Game.NumOfPlayers);
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -896,10 +1020,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		for (var i = 0; i < battleRecords.Length; i++)
 		{
 			//プレイヤー情報の代入
-			m_netPlayerSettings[i].Rank = 0;
-			battleRecords[i].rank = m_netPlayerSettings[i].Rank;
-			battleRecords[i].level = m_netPlayerSettings[i].Level;
-			battleRecords[i].playerName = m_netPlayerSettings[i].m_playerName;
+			s_netPlayerSettings[i].Rank = 0;
+			battleRecords[i].rank = s_netPlayerSettings[i].Rank;
+			battleRecords[i].level = s_netPlayerSettings[i].Level;
+			battleRecords[i].playerName = s_netPlayerSettings[i].m_playerName;
 			battleRecords[i].height = 0;
 			battleRecords[i].numOfCoins = 0;
 			battleRecords[i].score = 0;
@@ -919,7 +1043,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 			return;
 
 		//投げる
-		if (isLocalPlayer)
+		if (hasAuthority)
 		{
 			CmdAuraBall(aura);
 			CmdAuraBallTarget(target);
@@ -976,13 +1100,22 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	public void MakeItBattleEndState()
 	{
+		//プレイヤークラス
+		Player.MakeItBattleEndState();
+
 		//名札の設定
 		ChangeDisplayNameOfNameplate();
 		NameplateDisplay();
 		NameplateParent.localPosition = m_chestPos;
 
+		//AIプレイヤー
+		foreach (var aiPlayer in m_aiNetPlayerSettings)
+		{
+			aiPlayer.PlayerScript.MakeItBattleEndState();
+		}
+
 		//他プレイヤーの名札
-		foreach (var player in m_netPlayerSettings)
+		foreach (var player in s_netPlayerSettings)
 		{
 			//位置
 			if (player)
@@ -1064,39 +1197,39 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	public static void PutPlayerAchievementsInBattleRecord(ref PublishRecord[] battleRecords)
 	{
 		//評価されるネットプレイヤー
-		for (m_numToBeChanged = 0; m_numToBeChanged < m_netPlayerSettings.Count - 1; m_numToBeChanged++)
+		for (m_numToBeChanged = 0; m_numToBeChanged < s_netPlayerSettings.Count - 1; m_numToBeChanged++)
 		{
 			//評価するネットプレイヤー
-			for (m_targetNum = m_numToBeChanged + 1; m_targetNum < m_netPlayerSettings.Count; m_targetNum++)
+			for (m_targetNum = m_numToBeChanged + 1; m_targetNum < s_netPlayerSettings.Count; m_targetNum++)
 			{
 				//低いスコアのプレイヤーが順位が下がる
-				if (m_netPlayerSettings[m_numToBeChanged].Score >= m_netPlayerSettings[m_targetNum].Score)
-					m_netPlayerSettings[m_targetNum].Rank++;
+				if (s_netPlayerSettings[m_numToBeChanged].Score >= s_netPlayerSettings[m_targetNum].Score)
+					s_netPlayerSettings[m_targetNum].Rank++;
 				else
-					m_netPlayerSettings[m_numToBeChanged].Rank++;
+					s_netPlayerSettings[m_numToBeChanged].Rank++;
 			}
 		}
 
 		//切断された数
-		m_numOfDisconnections = 0;
+		s_numOfDisconnections = 0;
 
 		//全ての戦績
 		for (m_targetNum = 0; m_targetNum < battleRecords.Length; m_targetNum++)
 		{
 			//ネットワーク切れのプレイヤー
-			if (!m_netPlayerSettings[m_targetNum])
+			if (!s_netPlayerSettings[m_targetNum])
 			{
 				//最下位
-				m_numOfDisconnections++;
-				battleRecords[m_targetNum].rank = m_netPlayerSettings.Count - m_numOfDisconnections;
+				s_numOfDisconnections++;
+				battleRecords[m_targetNum].rank = s_netPlayerSettings.Count - s_numOfDisconnections;
 				continue;
 			}
 
 			//プレイヤー成果の代入
-			battleRecords[m_targetNum].rank = m_netPlayerSettings[m_targetNum].Rank;
-			battleRecords[m_targetNum].height = (int)m_netPlayerSettings[m_targetNum].FinalAltitude;
-			battleRecords[m_targetNum].numOfCoins = m_netPlayerSettings[m_targetNum].NumOfCoins;
-			battleRecords[m_targetNum].score = m_netPlayerSettings[m_targetNum].Score;
+			battleRecords[m_targetNum].rank = s_netPlayerSettings[m_targetNum].Rank;
+			battleRecords[m_targetNum].height = (int)s_netPlayerSettings[m_targetNum].FinalAltitude;
+			battleRecords[m_targetNum].numOfCoins = s_netPlayerSettings[m_targetNum].NumOfCoins;
+			battleRecords[m_targetNum].score = s_netPlayerSettings[m_targetNum].Score;
 		}
 	}
 
@@ -1106,17 +1239,17 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// </summary>
 	void ConfirmationOfPlayersWhoAreDisconnected()
 	{
-		if (!m_isAlignment)
-			m_numOfPlayerWithDisconnected = m_netPlayerSettings.Count;
+		if (!s_isAlignment)
+			s_numOfPlayerWithDisconnected = s_netPlayerSettings.Count;
 
 		//全プレイヤー
-		for (m_workInt = 0; m_workInt < m_netPlayerSettings.Count;)
+		for (m_workInt = 0; m_workInt < s_netPlayerSettings.Count;)
 		{
 			//存在していない
-			if (!m_netPlayerSettings[m_workInt])
+			if (!s_netPlayerSettings[m_workInt])
 			{
-				m_netPlayerSettings.RemoveAt(m_workInt);
-				m_numOfPlayerWithDisconnected = Mathf.Min(m_workInt, m_numOfPlayerWithDisconnected);
+				s_netPlayerSettings.RemoveAt(m_workInt);
+				s_numOfPlayerWithDisconnected = Mathf.Min(m_workInt, s_numOfPlayerWithDisconnected);
 			}
 			else
 			{
@@ -1125,9 +1258,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		}
 
 		//切断された
-		if (m_numOfPlayerWithDisconnected < m_netPlayerSettings.Count)
+		if (s_numOfPlayerWithDisconnected < s_netPlayerSettings.Count)
 		{
-			m_isAlignment = true;
+			s_isAlignment = true;
 			CmdNotifyOfIsReady(false);
 
 			//SE

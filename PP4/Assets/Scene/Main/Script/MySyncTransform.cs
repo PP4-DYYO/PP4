@@ -127,7 +127,7 @@ public class MySyncTransform : NetworkBehaviour
 	/// </summary>
 	void LerpPosition()
 	{
-		if (!isLocalPlayer)
+		if (!hasAuthority)
 		{
 			if (m_useHistoricalLerping)
 				HistoricalLerping();
@@ -166,7 +166,7 @@ public class MySyncTransform : NetworkBehaviour
 	void TransmitPosition()
 	{
 		//現在位置と前フレームの位置がthresholdより大きい時
-		if (isLocalPlayer && (transform.position - m_lastPos).sqrMagnitude > THRESHOLD * THRESHOLD)
+		if (hasAuthority && (transform.position - m_lastPos).sqrMagnitude > THRESHOLD * THRESHOLD)
 		{
 			CmdProvidePositionToServer(transform.position);
 			m_lastPos = transform.position;
@@ -180,7 +180,7 @@ public class MySyncTransform : NetworkBehaviour
 	[Client]
 	void TransmitRotations()
 	{
-		if (isLocalPlayer)
+		if (hasAuthority)
 		{
 			if (Mathf.Abs(transform.localEulerAngles.y - m_lastRot) > THRESHOLD_ROT)
 			{
@@ -251,7 +251,7 @@ public class MySyncTransform : NetworkBehaviour
 	/// </summary>
 	void LerpRotations()
 	{
-		if (!isLocalPlayer)
+		if (!hasAuthority)
 		{
 			if (m_useHistoricalInterpolation)
 				HistoricalInterpolation();

@@ -52,8 +52,8 @@ public class MyNetPlayerSetting2 : NetworkBehaviour
 	/// </summary>
 	void FixedUpdate()
 	{
-		//操作プレイヤーでない
-		if (!isLocalPlayer)
+		//権限を持ったプレイヤーでない
+		if (!hasAuthority)
 			return;
 
 		//SPゲージ

@@ -784,17 +784,6 @@ public class MyMainGame : MyGame
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 人を待つ位置にプレイヤーを移動する
-	/// </summary>
-	/// <param name="playerNum">プレイヤー番号</param>
-	void MovePlayerToPosToWaitForPeople(int playerNum)
-	{
-		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Stand);
-		OperatingPlayer.StandAtSpecifiedPos(m_playerPosWhenWaitingForPeople[playerNum], m_playerDirectionWhenWaitingForPeople[playerNum]);
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	/// 人が集まった状態の準備
 	/// </summary>
 	void GetReadyForPeopleGathered()
@@ -806,6 +795,32 @@ public class MyMainGame : MyGame
 		//状態遷移する時間
 		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGathered + m_timeWhenPeopleGatherAndChangeState)
 			m_state = GameStatus.PeopleGathered;
+
+		MovePlayerToPosToWaitForPeople();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 人を待つ位置にプレイヤーを移動する
+	/// </summary>
+	void MovePlayerToPosToWaitForPeople()
+	{
+		//操作プレイヤーの番号
+		m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
+
+		//操作プレイヤー
+		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Stand);
+		OperatingPlayer.StandAtSpecifiedPos(m_playerPosWhenWaitingForPeople[m_workInt], m_playerDirectionWhenWaitingForPeople[m_workInt]);
+
+		//AIプレイヤー
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//AIプレイヤーの番号
+			m_workInt = aiPlayer.GetNetPlayerNum();
+
+			aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.Stand);
+			aiPlayer.PlayerScript.StandAtSpecifiedPos(m_playerPosWhenWaitingForPeople[m_workInt], m_playerDirectionWhenWaitingForPeople[m_workInt]);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -817,11 +832,15 @@ public class MyMainGame : MyGame
 		//人が集まっていない
 		m_timeWhenPeopleGathered = -1;
 
+		//AIキャラクターの作成
+		if (!OperatingNetPlayerSetting.IsCreateAi && OperatingNetPlayerSetting.GetNetPlayerNum() == 0 && Input.GetKeyDown(KeyCode.A))
+			OperatingNetPlayerSetting.CmdIsCreateAi(true);
+
 		//整列中
 		if (!OperatingNetPlayerSetting.IsReady)
 			AlignmentWhenPeopleGather();
 		else
-			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
+			MovePlayerToPosToWaitForPeople();
 
 		//解放時間を更新
 		MainUi.SetTimeToWaitWorPeople(m_timeToWaitForPeople - m_countTheTimeOfTheState);
@@ -881,7 +900,7 @@ public class MyMainGame : MyGame
 			m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
 
 			//整列後の位置
-			MovePlayerToPosToWaitForPeople(OperatingNetPlayerSetting.GetNetPlayerNum());
+			MovePlayerToPosToWaitForPeople();
 
 			//設定
 			OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
@@ -958,6 +977,9 @@ public class MyMainGame : MyGame
 			else
 				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
 
+			//AIの処理
+			AiPlayerGoesToEdgeOfShip();
+
 			return;
 		}
 
@@ -987,7 +1009,82 @@ public class MyMainGame : MyGame
 			else
 				OperatingPlayer.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
 
+			//AIの処理
+			AiPlayerJumpsOff();
+
 			return;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIプレイヤーが船の端に行く
+	/// </summary>
+	void AiPlayerGoesToEdgeOfShip()
+	{
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//プレイヤーネット番号
+			m_workInt = aiPlayer.GetNetPlayerNum();
+
+			//走るアニメーション
+			aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.Run);
+
+			//プレイヤーの初期位置
+			m_workVector3 = m_playerPosWhenWaitingForPeople[m_workInt];
+
+			//時間によるプレイヤーの位置
+			aiPlayer.PlayerScript.transform.position = m_workVector3 +
+				((m_posOfEndOfShip[m_workInt] - m_workVector3) * (m_countTheTimeOfTheState / m_timeWhenPlayerGoesToEdgeOfShip));
+
+			//向きたい角度
+			m_workFloat = Vector3.Cross(aiPlayer.PlayerScript.transform.forward, m_posOfEndOfShip[m_workInt] - m_workVector3).y;
+			m_workFloat = Vector3.Angle(aiPlayer.PlayerScript.transform.forward,
+				Vector3.Scale((m_posOfEndOfShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
+
+			//向ける角度が向きたい角度より大きい
+			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
+				aiPlayer.PlayerScript.transform.Rotate(Vector3.up, m_workFloat);
+			else if (m_workFloat > 0)
+				aiPlayer.PlayerScript.transform.Rotate(Vector3.up, m_playerRotationSpeed * Time.deltaTime);
+			else
+				aiPlayer.PlayerScript.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIプレイヤーが飛び降りる
+	/// </summary>
+	void AiPlayerJumpsOff()
+	{
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//プレイヤーネット番号
+			m_workInt = aiPlayer.GetNetPlayerNum();
+
+			//アイドルアニメーション
+			aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.Idle);
+
+			//プレイヤーの初期位置
+			m_workVector3 = m_posOfEndOfShip[m_workInt];
+
+			//時間によるプレイヤーの位置
+			aiPlayer.PlayerScript.transform.position = m_workVector3 + ((m_posToJumpOffShip[m_workInt] - m_workVector3)
+				* ((m_countTheTimeOfTheState - m_timeWhenPlayerGoesToEdgeOfShip) / m_timePlayerJumpsOffShip));
+
+			//向きたい角度
+			m_workFloat = Vector3.Cross(aiPlayer.PlayerScript.transform.forward, m_posToJumpOffShip[m_workInt] - m_workVector3).y;
+			m_workFloat = Vector3.Angle(aiPlayer.PlayerScript.transform.forward,
+				Vector3.Scale((m_posToJumpOffShip[m_workInt] - m_workVector3), Vector3.right + Vector3.forward)) * (m_workFloat < 0 ? -1 : 1);
+
+			//向ける角度が向きたい角度より大きい
+			if (m_playerRotationSpeed * Time.deltaTime >= Mathf.Abs(m_workFloat))
+				aiPlayer.PlayerScript.transform.Rotate(Vector3.up, m_workFloat);
+			else if (m_workFloat > 0)
+				aiPlayer.PlayerScript.transform.Rotate(Vector3.up, m_playerRotationSpeed * Time.deltaTime);
+			else
+				aiPlayer.PlayerScript.transform.Rotate(Vector3.up, -m_playerRotationSpeed * Time.deltaTime);
 		}
 	}
 
@@ -1043,6 +1140,9 @@ public class MyMainGame : MyGame
 		//アニメーション
 		OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Select);
 
+		//AIの処理
+		AiPlayerBattleSettings();
+
 		//プレイヤーの帯電率のリセット
 		if (m_countPlayerChargeRate == null)
 		{
@@ -1054,6 +1154,25 @@ public class MyMainGame : MyGame
 			{
 				m_countPlayerChargeRate[i] = 0;
 			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIプレイヤーのバトル設定
+	/// </summary>
+	void AiPlayerBattleSettings()
+	{
+		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//プレイヤー番号よる位置
+			aiPlayer.PlayerScript.transform.position = Stage.CurrentFieldScript.StartPositions[aiPlayer.GetNetPlayerNum()];
+
+			//中心を見る
+			aiPlayer.PlayerScript.transform.LookAt(Vector3.right + Vector3.forward);
+
+			//アニメーション
+			aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.Select);
 		}
 	}
 
@@ -1087,6 +1206,10 @@ public class MyMainGame : MyGame
 
 			//プレイヤーとReadyメッセージ設定
 			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
+			foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+			{
+				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.Idle);
+			}
 			MainUi.StartReadyAnimation();
 		}
 
@@ -1155,6 +1278,10 @@ public class MyMainGame : MyGame
 
 			//プレイヤーとカメラとフラグ
 			OperatingPlayer.MakeItBattleState();
+			foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+			{
+				aiPlayer.PlayerScript.MakeItBattleState();
+			}
 			OperatingNetPlayerSetting.NameplateDisplay(false);
 			OperatingCamera.BecomeOperablePursuitCamera();
 
@@ -1231,6 +1358,9 @@ public class MyMainGame : MyGame
 
 		//オーラボール
 		BattleStateAuraBall();
+
+		//AI処理
+		BattleStateAiPlayer();
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1259,6 +1389,41 @@ public class MyMainGame : MyGame
 			OperatingNetPlayerSetting.ThrowAuraBall(m_workGameObj, AuraAttribute.Elasticity);
 		if (m_isDpadXBecamePositive)
 			OperatingNetPlayerSetting.ThrowAuraBall(m_workGameObj, AuraAttribute.Electrical);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル状態のAIプレイヤー
+	/// </summary>
+	void BattleStateAiPlayer()
+	{
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//サポート
+			aiPlayer.PlayerScript.SupportRate = 1 +
+				(Players.MaximumAltitude - aiPlayer.PlayerScript.transform.position.y) * (m_supportRatePerMeter - 1);
+
+			//SPゲージが満タンでない
+			if (aiPlayer.PlayerScript.GetPercentageOfRemainingSpGauge() < 1f)
+				continue;
+
+			//上位の順位
+			m_workInt = Players.HeightRanks[aiPlayer.GetNetPlayerNum()] - 1;
+
+			if (m_workInt < 0)
+				continue;
+
+			//一つ上の上位プレイヤー
+			m_workGameObj = Players.GetPlayer(m_workInt);
+
+			//3種のオーラ
+			if (((MyAiPlayer)(aiPlayer.PlayerScript)).WantToThrowHeatAura)
+				aiPlayer.ThrowAuraBall(m_workGameObj, AuraAttribute.Heat);
+			if (((MyAiPlayer)(aiPlayer.PlayerScript)).WantToThrowElasticityAura)
+				aiPlayer.ThrowAuraBall(m_workGameObj, AuraAttribute.Elasticity);
+			if (((MyAiPlayer)(aiPlayer.PlayerScript)).WantToThrowElectricalAura)
+				aiPlayer.ThrowAuraBall(m_workGameObj, AuraAttribute.Electrical);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1344,7 +1509,6 @@ public class MyMainGame : MyGame
 
 			//ステージとプレイヤーとUIとフラグ
 			Stage.CurrentFieldScript.PauseMeteorit();
-			OperatingPlayer.MakeItBattleEndState();
 			OperatingNetPlayerSetting.MakeItBattleEndState();
 			MainUi.EndBattle();
 			m_isFadeOutAfterBattleEnds = false;
@@ -1390,6 +1554,19 @@ public class MyMainGame : MyGame
 		//スコアの同期
 		OperatingNetPlayerSetting.CmdScore(
 			(int)(OperatingPlayer.transform.position.y * (1 + m_coinMagnificationAgainstHeight * OperatingPlayer.NumOfCoins)));
+
+		//AIの同期
+		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//高さの同期
+			aiPlayer.CmdFinalAltitude(aiPlayer.transform.position.y);
+
+			//コインの同期
+			aiPlayer.CmdNumOfCoins(aiPlayer.PlayerScript.NumOfCoins);
+
+			//スコアの同期
+			aiPlayer.CmdScore((int)(aiPlayer.transform.position.y * (1 + m_coinMagnificationAgainstHeight * aiPlayer.PlayerScript.NumOfCoins)));
+		}
 
 		//経験値の計算
 		CalculationOfExp();
@@ -1581,8 +1758,39 @@ public class MyMainGame : MyGame
 		m_workVector3.y = OperatingPlayer.transform.position.y;
 		OperatingPlayer.transform.position = m_workVector3;
 
-		//Z軸を中心として外側を見る
-		OperatingPlayer.transform.LookAt(Vector3.Scale(OperatingPlayer.transform.position, Vector3.one + (Vector3.right * 2)));
+		//AI処理
+		MakeAiPlayerIntoResultState();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIプレイヤーを結果状態にする
+	/// </summary>
+	void MakeAiPlayerIntoResultState()
+	{
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			aiPlayer.PlayerScript.MakeItResultState();
+
+			//指定高度より高い
+			if (aiPlayer.PlayerScript.transform.position.y >= m_playerInitialHeightOfResultState)
+			{
+				//高さの変更
+				m_workVector3 = aiPlayer.PlayerScript.transform.position;
+				m_workVector3.y = m_playerInitialHeightOfResultState;
+				aiPlayer.PlayerScript.transform.position = m_workVector3;
+			}
+
+			//プレイヤー番号による指定位置
+			m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[aiPlayer.Rank];
+
+			//高さを除いた位置を代入
+			m_workVector3.y = aiPlayer.PlayerScript.transform.position.y;
+			aiPlayer.PlayerScript.transform.position = m_workVector3;
+
+			//X軸を中心として反対側を見る
+			aiPlayer.PlayerScript.transform.LookAt(Vector3.Scale(aiPlayer.PlayerScript.transform.position, Vector3.one + (-Vector3.forward * 2)));
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1597,8 +1805,26 @@ public class MyMainGame : MyGame
 		else
 			LoseBattle();
 
+		//AIの処理
+		AiPlayerBattleResult();
+
 		//UIに順位の表示
 		MainUi.DisplayRanking(OperatingNetPlayerSetting.Rank + 1, OperatingNetPlayerSetting.Score);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// AIプレイヤーのバトル結果
+	/// </summary>
+	void AiPlayerBattleResult()
+	{
+		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			if (aiPlayer.Rank < MyNetPlayerSetting.NetPlayerSettings.Count / 2 || aiPlayer.Rank < m_numToBeAwarded)
+				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.SuccessfulLanding);
+			else
+				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.LandingFailed);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1632,6 +1858,16 @@ public class MyMainGame : MyGame
 
 		//順位のアニメーション
 		OperatingPlayer.StartAnimByRank(OperatingNetPlayerSetting.Rank + 1);
+
+		//AIの処理
+		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//リジッドボディの速度を０
+			aiPlayer.PlayerScript.SetVelocityOfRbToZero();
+
+			//順位のアニメーション
+			aiPlayer.PlayerScript.StartAnimByRank(aiPlayer.Rank + 1);
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1642,6 +1878,15 @@ public class MyMainGame : MyGame
 	{
 		//プレイヤーアニメーション
 		OperatingPlayer.SetAnimation(m_isWin ? PlayerBehaviorStatus.Win : PlayerBehaviorStatus.Defeat);
+
+		//AIの処理
+		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		{
+			//アニメーション
+			aiPlayer.PlayerScript.SetAnimation(
+				aiPlayer.Rank < MyNetPlayerSetting.NetPlayerSettings.Count / 2 || aiPlayer.Rank < m_numToBeAwarded ?
+				PlayerBehaviorStatus.Win : PlayerBehaviorStatus.Defeat);
+		}
 
 		//カメラ設定
 		CameraSettingOfBattleResultDisplay();
@@ -1716,7 +1961,6 @@ public class MyMainGame : MyGame
 		//準備完了になった
 		if (OperatingNetPlayerSetting.IsReady)
 			m_state = GameStatus.RecruitPeople;
-
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -1725,6 +1969,10 @@ public class MyMainGame : MyGame
 	/// </summary>
 	public override void ContinueBattle()
 	{
+		//AIキャラクターの削除
+		if (OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
+			OperatingNetPlayerSetting.CmdIsCreateAi(false);
+
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum(), false);
 		MySoundManager.Instance.Play(SeCollection.Decide);

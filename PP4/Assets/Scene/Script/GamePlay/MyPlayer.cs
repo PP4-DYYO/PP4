@@ -1361,6 +1361,9 @@ public class MyPlayer : MonoBehaviour
 	/// <param name="state">状態</param>
 	public void SetAnimation(PlayerBehaviorStatus state)
 	{
+		if (!Anim)
+			return;
+
 		m_state = state;
 		Anim.SetInteger(PlayerInfo.ANIM_PARAMETER_NAME, (int)state);
 	}

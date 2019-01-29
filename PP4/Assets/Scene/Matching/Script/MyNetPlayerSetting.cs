@@ -51,21 +51,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		set { s_isAlignment = value; }
 	}
 
-	/// <summary>
-	/// AIキャラクター作成フラグ
-	/// </summary>
-	static bool s_isCreateAi;
-
-	/// <summary>
-	/// フレーム前のAIキャラクター作成フラグ
-	/// </summary>
-	static bool s_isCreateAiPrev;
-
-	/// <summary>
-	/// プレイヤーの数
-	/// </summary>
-	static int s_numOfPlayers;
-
 	#region 外部のインスタンス
 	[Header("外部のインスタンス")]
 	/// <summary>
@@ -150,6 +135,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// AIフラグ
 	/// </summary>
+	[SerializeField]
 	bool m_isAi;
 
 	/// <summary>
@@ -183,7 +169,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// <summary>
 	/// AIキャラの作成フラグ
 	/// </summary>
-	[SyncVar(hook = "SyncIsCreateAi")]
 	bool m_isCreateAi;
 	public bool IsCreateAi
 	{
@@ -337,11 +322,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	#region 作業用
 	/// <summary>
-	/// 作業用のNetPlayerSettingクラス
-	/// </summary>
-	MyNetPlayerSetting m_workNetPlayerSetting;
-
-	/// <summary>
 	/// 変更される番号
 	/// </summary>
 	static int m_numToBeChanged;
@@ -360,6 +340,11 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// 作業用Float
 	/// </summary>
 	float m_workFloat;
+
+	/// <summary>
+	/// 作業用のGameObject
+	/// </summary>
+	GameObject m_workObj;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -412,8 +397,26 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		//AIの設定
 		if(m_isAi)
 		{
+			//値の通知
 			CmdLevel(MyGameInfo.Instance.Level);
 			CmdPower(MyGameInfo.Instance.Power);
+
+			//操作プレイヤーのAIプレイヤーになる
+			Game.OperationgNetPlayerSettingScript.AiNetPlayerSettings.Add(this);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 権限がなくなった時
+	/// </summary>
+	public override void OnStopAuthority()
+	{
+		//操作プレイヤーのAIプレイヤーから離れる
+		if (m_isAi)
+		{
+			Game.OperationgNetPlayerSettingScript.AiNetPlayerSettings.Remove(this);
+			Destroy(gameObject);
 		}
 	}
 
@@ -542,31 +545,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// AIキャラクター作成フラグの通知
-	/// </summary>
-	/// <param name="isCreateAi">フラグ</param>
-	[Command]
-	public void CmdIsCreateAi(bool isCreateAi)
-	{
-		m_isCreateAi = isCreateAi;
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// AIキャラクター作成フラグを同期
-	/// </summary>
-	/// <param name="isCreateAi"></param>
-	[Client]
-	void SyncIsCreateAi(bool isCreateAi)
-	{
-		m_isCreateAi = isCreateAi;
-
-		s_isCreateAi = m_isCreateAi;
-		s_numOfPlayers = s_netPlayerSettings.Count;
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
 	///	定期フレーム
 	/// </summary>
 	void FixedUpdate()
@@ -605,10 +583,6 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		if (!hasAuthority)
 			return;
 
-		//AIキャラクター作成
-		if (!m_isAi && s_isCreateAi != s_isCreateAiPrev)
-			SpawnAiCharacter(s_isCreateAi);
-
 		//オーラ
 		if (Player.Aura != m_aura)
 			CmdAura(Player.Aura);
@@ -631,36 +605,36 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// AIキャラクターのスポーン
 	/// </summary>
 	/// <param name="isCreateAi">キャラクター作成フラグ</param>
-	void SpawnAiCharacter(bool isCreateAi)
+	public void SpawnAiCharacter(bool isCreateAi)
 	{
 		//作成
 		if (isCreateAi)
 		{
-			//プレイヤー一人が生成する数
-			m_workFloat = (Game.NumOfPlayers - s_numOfPlayers) / s_numOfPlayers;
-			m_workFloat = m_workFloat + ((Game.NumOfPlayers - s_numOfPlayers) % s_numOfPlayers >= GetNetPlayerNum() + 1 ? 1 : 0);
+			//プレイヤーを生成する数
+			m_workFloat = Game.MinNumOfPlayers - s_netPlayerSettings.Count;
 
 			for (m_workInt = 0; m_workInt < m_workFloat; m_workInt++)
 			{
-				m_workNetPlayerSetting = Instantiate(AiPlayer, Player.PlayersScript.transform).GetComponent<MyNetPlayerSetting>();
-				m_workNetPlayerSetting.m_isAi = true;
-				m_aiNetPlayerSettings.Add(m_workNetPlayerSetting);
-				NetworkServer.SpawnWithClientAuthority(m_workNetPlayerSetting.gameObject, connectionToClient);
+				m_workObj = Instantiate(AiPlayer, Player.PlayersScript.transform);
+				NetworkServer.SpawnWithClientAuthority(
+					m_workObj, s_netPlayerSettings[m_workInt % (s_netPlayerSettings.Count - m_workInt)].connectionToClient);
 			}
 		}
 		else
 		{
 			//AIキャラクターの削除
-			for(m_workInt = 0; m_workInt < m_aiNetPlayerSettings.Count;)
+			for(m_workInt = 0; m_workInt < s_netPlayerSettings.Count;)
 			{
-				m_workNetPlayerSetting = m_aiNetPlayerSettings[m_workInt];
-				NetworkServer.UnSpawn(m_workNetPlayerSetting.gameObject);
-				m_aiNetPlayerSettings.Remove(m_workNetPlayerSetting);
-				Destroy(m_workNetPlayerSetting.gameObject);
+				//AIじゃない
+				if (!s_netPlayerSettings[m_workInt].m_isAi)
+					continue;
+
+				//デスポーン
+				NetworkServer.UnSpawn(s_netPlayerSettings[m_workInt].gameObject);
 			}
 		}
 
-		s_isCreateAiPrev = s_isCreateAi;
+		m_isCreateAi = isCreateAi;
 	}
 
 	//----------------------------------------------------------------------------------------------------

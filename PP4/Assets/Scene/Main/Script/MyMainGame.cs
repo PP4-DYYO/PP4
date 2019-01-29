@@ -162,6 +162,16 @@ public class MyMainGame : MyGame
 	}
 
 	/// <summary>
+	/// 最低プレイヤー人数
+	/// </summary>
+	[SerializeField]
+	int m_minNumOfPlayers;
+	public int MinNumOfPlayers
+	{
+		get { return m_minNumOfPlayers; }
+	}
+
+	/// <summary>
 	/// 人が集まった時間
 	/// </summary>
 	float m_timeWhenPeopleGathered;
@@ -834,7 +844,7 @@ public class MyMainGame : MyGame
 
 		//AIキャラクターの作成
 		if (!OperatingNetPlayerSetting.IsCreateAi && OperatingNetPlayerSetting.GetNetPlayerNum() == 0 && Input.GetKeyDown(KeyCode.A))
-			OperatingNetPlayerSetting.CmdIsCreateAi(true);
+			OperatingNetPlayerSetting.SpawnAiCharacter(true);
 
 		//整列中
 		if (!OperatingNetPlayerSetting.IsReady)
@@ -1971,7 +1981,7 @@ public class MyMainGame : MyGame
 	{
 		//AIキャラクターの削除
 		if (OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
-			OperatingNetPlayerSetting.CmdIsCreateAi(false);
+			OperatingNetPlayerSetting.SpawnAiCharacter(false);
 
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum(), false);

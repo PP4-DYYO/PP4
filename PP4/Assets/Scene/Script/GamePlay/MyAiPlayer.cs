@@ -14,6 +14,41 @@ using UnityEngine;
 /// </summary>
 public class MyAiPlayer : MyPlayer
 {
+	#region 外部のインスタンス
+	[Header("外部のインスタンス")]
+	/// <summary>
+	/// 空間把握
+	/// </summary>
+	[SerializeField]
+	MySpaceGrasp SpaceGrasp;
+	#endregion
+
+	#region 能力
+	[Header("能力")]
+	/// <summary>
+	/// 衝突の危険を感じる距離
+	/// </summary>
+	[SerializeField]
+	float m_distanceAtWhichRiskOfCollisionIsFelt;
+
+	/// <summary>
+	/// 行動可能半径
+	/// </summary>
+	[SerializeField]
+	float m_behaviorableRadius;
+
+	/// <summary>
+	/// ボタンを連射する間隔時間
+	/// </summary>
+	[SerializeField]
+	float m_timeIntervalOfButtonFire;
+
+	/// <summary>
+	/// ボタン連打間隔時間を数える
+	/// </summary>
+	float m_countTimeInterValOfButtonFire;
+	#endregion
+
 	/// <summary>
 	/// 温熱オーラが投げたい
 	/// </summary>
@@ -42,16 +77,98 @@ public class MyAiPlayer : MyPlayer
 		get { return m_wantToThrowElectricalAura; }
 	}
 
-
-	// Use this for initialization
-	void Start()
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// フレーム
+	/// </summary>
+	void Update()
 	{
+		m_horizontalValue = 0;
+		m_verticalValue = 0;
 
+		//行動を考える
+		ThinkAction();
 	}
 
-	// Update is called once per frame
-	void FixedUpdate()
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 行動を考える
+	/// </summary>
+	void ThinkAction()
 	{
-		transform.position += Vector3.up * Time.deltaTime;
+		//回復
+		if (IsFalling)
+			ThinkingRecovery();
+
+		//衝突回避
+		ThinkAboutCollisionAvoidance();
+
+		////ボタンを押している
+		//m_isKeepPressingAButton = Input.GetButton("AButton");
+		//m_isKeepPressingBButton = Input.GetButton("BButton");
+		//m_isKeepPressingXButton = Input.GetButton("XButton");
+		//m_isKeepPressingLButton = Input.GetButton("LButton");
+		m_isKeepPressingRButton = true;
+		//m_horizontalValue;
+		//m_verticalValue;
+
+
+
+		//m_wantToThrowHeatAura;
+		//m_wantToThrowElasticityAura;
+		//m_wantToThrowElectricalAura;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 回復を考える
+	/// </summary>
+	void ThinkingRecovery()
+	{
+		m_countTimeInterValOfButtonFire += Time.deltaTime;
+
+		//回復ボタンを押す
+		if (m_countTimeInterValOfButtonFire >= m_timeIntervalOfButtonFire)
+			m_isPushedRecoveryButton = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 衝突回避を考える
+	/// </summary>
+	void ThinkAboutCollisionAvoidance()
+	{
+		//行動不可半径
+		if (Vector3.Scale(transform.position, (Vector3.right + Vector3.forward)).sqrMagnitude > m_behaviorableRadius * m_behaviorableRadius)
+		{
+			//中央への方向
+			m_workVector3 = -transform.position;
+
+			m_horizontalValue = Vector3.Dot(Camera.main.transform.right, m_workVector3);
+			m_verticalValue = Vector3.Dot(Camera.main.transform.forward, m_workVector3);
+		}
+
+		//プレイヤー
+		foreach (var player in SpaceGrasp.Players)
+		{
+			//プレイヤーへの逆方向
+			m_workVector3 = transform.position - player.transform.position;
+
+			//衝突回避距離
+			if (m_workVector3.sqrMagnitude < m_distanceAtWhichRiskOfCollisionIsFelt * m_distanceAtWhichRiskOfCollisionIsFelt)
+			{
+				m_horizontalValue = Vector3.Dot(Camera.main.transform.right, m_workVector3);
+				m_verticalValue = Vector3.Dot(Camera.main.transform.forward, m_workVector3);
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 風の発生
+	/// </summary>
+	protected override void GenerateWind()
+	{
+		return;
 	}
 }

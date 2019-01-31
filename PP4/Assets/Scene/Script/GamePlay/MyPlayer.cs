@@ -618,12 +618,22 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// Rボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingRButton;
+	protected bool m_isKeepPressingRButton;
+
+	/// <summary>
+	/// 水平移動の値
+	/// </summary>
+	protected float m_horizontalValue;
+
+	/// <summary>
+	/// 垂直移動の値
+	/// </summary>
+	protected float m_verticalValue;
 
 	/// <summary>
 	/// 回復ボタンを押した
 	/// </summary>
-	bool m_isPushedRecoveryButton;
+	protected bool m_isPushedRecoveryButton;
 	#endregion
 
 	#region 作業用
@@ -631,6 +641,11 @@ public class MyPlayer : MonoBehaviour
 	/// 作業用Float
 	/// </summary>
 	float m_workFloat;
+
+	/// <summary>
+	/// 作業用のVector3
+	/// </summary>
+	protected Vector3 m_workVector3;
 	#endregion
 
 	//----------------------------------------------------------------------------------------------------
@@ -682,6 +697,8 @@ public class MyPlayer : MonoBehaviour
 		m_isKeepPressingXButton = Input.GetButton("XButton");
 		m_isKeepPressingLButton = Input.GetButton("LButton");
 		m_isKeepPressingRButton = Input.GetButton("RButton");
+		m_horizontalValue = Input.GetAxis("Horizontal");
+		m_verticalValue = Input.GetAxis("Vertical");
 
 		//ボタンを押した
 		m_isPushedRecoveryButton = Input.GetButtonDown("RButton") || Input.GetButtonDown("AButton");
@@ -952,8 +969,8 @@ public class MyPlayer : MonoBehaviour
 		m_posPrev = transform.position;
 
 		//カメラの向きに対応した移動
-		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * Input.GetAxis("Vertical")
-			+ m_camera.transform.right * Input.GetAxis("Horizontal")).normalized * m_movingSpeed * Time.deltaTime;
+		m_horizontalTravelDistance = (Vector3.Scale(m_camera.transform.forward, (Vector3.right + Vector3.forward)) * m_verticalValue
+			+ m_camera.transform.right * m_horizontalValue).normalized * m_movingSpeed * Time.deltaTime;
 		transform.position += m_horizontalTravelDistance;
 	}
 
@@ -1094,7 +1111,7 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// 風の発生
 	/// </summary>
-	void GenerateWind()
+	protected virtual void GenerateWind()
 	{
 		m_countWindBlowingInterval += Time.deltaTime;
 

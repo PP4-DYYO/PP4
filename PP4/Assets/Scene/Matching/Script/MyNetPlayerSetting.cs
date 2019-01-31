@@ -408,9 +408,9 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 権限がなくなった時
+	/// ネットワーク上の破棄時
 	/// </summary>
-	public override void OnStopAuthority()
+	public override void OnNetworkDestroy()
 	{
 		//操作プレイヤーのAIプレイヤーから離れる
 		if (m_isAi)
@@ -623,14 +623,14 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		else
 		{
 			//AIキャラクターの削除
-			for(m_workInt = 0; m_workInt < s_netPlayerSettings.Count;)
+			for (m_workInt = 0; m_workInt < s_netPlayerSettings.Count; m_workInt++)
 			{
 				//AIじゃない
 				if (!s_netPlayerSettings[m_workInt].m_isAi)
 					continue;
 
 				//デスポーン
-				NetworkServer.UnSpawn(s_netPlayerSettings[m_workInt].gameObject);
+				NetworkServer.Destroy(s_netPlayerSettings[m_workInt].gameObject);
 			}
 		}
 

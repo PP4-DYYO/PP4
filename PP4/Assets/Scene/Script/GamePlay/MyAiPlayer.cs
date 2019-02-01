@@ -103,20 +103,21 @@ public class MyAiPlayer : MyPlayer
 		//衝突回避
 		ThinkAboutCollisionAvoidance();
 
-		////ボタンを押している
-		//m_isKeepPressingAButton = Input.GetButton("AButton");
-		//m_isKeepPressingBButton = Input.GetButton("BButton");
-		//m_isKeepPressingXButton = Input.GetButton("XButton");
-		//m_isKeepPressingLButton = Input.GetButton("LButton");
-		m_isKeepPressingRButton = true;
-		//m_horizontalValue;
-		//m_verticalValue;
+		Debug.Log("下の変数を使ってAIを作ってください");
+		{
+			//ボタンを押している 
+			//m_isKeepPressingAButton = false;
+			//m_isKeepPressingBButton = false;
+			//m_isKeepPressingXButton = false;
+			//m_isKeepPressingLButton = false;
+			m_isKeepPressingRButton = true;
+			//m_horizontalValue = 0;
+			//m_verticalValue = 0;
 
-
-
-		//m_wantToThrowHeatAura;
-		//m_wantToThrowElasticityAura;
-		//m_wantToThrowElectricalAura;
+			//m_wantToThrowHeatAura = false;
+			//m_wantToThrowElasticityAura = false;
+			//m_wantToThrowElectricalAura = false;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------------

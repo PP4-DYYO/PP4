@@ -598,22 +598,22 @@ public class MyPlayer : MonoBehaviour
 	/// <summary>
 	/// Aボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingAButton;
+	protected bool m_isKeepPressingAButton;
 
 	/// <summary>
 	/// Bボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingBButton;
+	protected bool m_isKeepPressingBButton;
 
 	/// <summary>
 	/// Xボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingXButton;
+	protected bool m_isKeepPressingXButton;
 
 	/// <summary>
 	/// Lボタンを押しっぱなし
 	/// </summary>
-	bool m_isKeepPressingLButton;
+	protected bool m_isKeepPressingLButton;
 
 	/// <summary>
 	/// Rボタンを押しっぱなし

@@ -308,6 +308,12 @@ public class MyMainUi : MonoBehaviour
 	GameObject BattleRecords;
 
 	/// <summary>
+	/// プレイヤーの戦績
+	/// </summary>
+	[SerializeField]
+	GameObject[] PlayerRecords;
+
+	/// <summary>
 	/// 戦績のレベル達
 	/// </summary>
 	[SerializeField]
@@ -402,6 +408,12 @@ public class MyMainUi : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Sprite NonSelectedLeaveBattle;
+
+	/// <summary>
+	/// バトル中止のカウント
+	/// </summary>
+	[SerializeField]
+	Text LeaveBattleCount;
 	#endregion
 
 	#region フェードインアウト
@@ -926,7 +938,7 @@ public class MyMainUi : MonoBehaviour
 		//桁ごとに時間の代入
 		for(m_workInt = 0; m_workInt < TimeToWaitForPeople.Length; m_workInt++)
 		{
-			TimeToWaitForPeople[m_workInt].sprite = (time >= 0 ? Number[(int)time % Number.Length] : null);
+			TimeToWaitForPeople[m_workInt].sprite = (time >= 0 ? Number[(int)time % Number.Length] : Number[0]);
 			time /= Number.Length;
 		}
 	}
@@ -996,6 +1008,8 @@ public class MyMainUi : MonoBehaviour
 		ShowRankOnMap(true, false);
 		SetNumOfCoins();
 		ShowHitInfoOfAuraBall(null);
+		m_operatingPlayerRankPrev = m_operatingPlayerRank;
+		m_isRankingOfOperationPlayerHasRisen = false;
 		m_isRemainingTimeNotification = false;
 		m_isCountdownOfBattleFinish = false;
 	}
@@ -1072,11 +1086,19 @@ public class MyMainUi : MonoBehaviour
 		//全プレイヤーをテキストに代入
 		for (var i = 0; i < PlayerNamesOnTheMap.Length; i++)
 		{
+			//順位の整理
+			PlayersOnMap[i].transform.SetParent(ParentsOfRank[i]);
+			PlayersOnMap[i].transform.localPosition = Vector3.zero;
+
 			//ネットプレイヤー設定がない
 			if (i >= MyNetPlayerSetting.NetPlayerSettings.Count)
-				return;
+			{
+				PlayersOnMap[i].SetActive(false);
+				continue;
+			}
 
-			//プレイヤー名
+			//マップのプレイヤーを表示してプレイヤー名の入力
+			PlayersOnMap[i].SetActive(true);
 			PlayerNamesOnTheMap[i].text = MyNetPlayerSetting.NetPlayerSettings[i].PlayerName;
 		}
 	}
@@ -1345,6 +1367,10 @@ public class MyMainUi : MonoBehaviour
 	{
 		ResultScreen.SetActive(true);
 		BattleRecords.SetActive(true);
+		for(m_workInt = 0; m_workInt < PlayerRecords.Length; m_workInt++)
+		{
+			PlayerRecords[m_workInt].SetActive(m_workInt < publishRecords.Length);
+		}
 		Exp.SetActive(false);
 		Rematch.SetActive(false);
 
@@ -1404,7 +1430,11 @@ public class MyMainUi : MonoBehaviour
 		//不要オブジェクトの非表示
 		WinningOrLosing.SetActive(false);
 		BattleRecords.SetActive(false);
-		foreach(var arrow in ArrowOfYourOwnAchievement)
+		foreach (var record in PlayerRecords)
+		{
+			record.SetActive(true);
+		}
+		foreach (var arrow in ArrowOfYourOwnAchievement)
 		{
 			arrow.enabled = false;
 		}
@@ -1441,5 +1471,15 @@ public class MyMainUi : MonoBehaviour
 	public void OnClickLeaveBattle()
 	{
 		Game.LeaveBattle();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル中止のカウントを設定
+	/// </summary>
+	/// <param name="time">時間</param>
+	public void SetLeaveBattleCount(float time)
+	{
+		LeaveBattleCount.text = ((int)time).ToString();
 	}
 }

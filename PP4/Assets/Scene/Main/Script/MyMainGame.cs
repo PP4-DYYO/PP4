@@ -190,6 +190,11 @@ public class MyMainGame : MyGame
 	/// 整列フラグ
 	/// </summary>
 	bool m_isAlignment;
+
+	/// <summary>
+	/// フレーム前のプレイヤー人数
+	/// </summary>
+	int m_numOfPlayersPrev;
 	#endregion
 
 	#region 人が集まった状態
@@ -428,11 +433,23 @@ public class MyMainGame : MyGame
 	float m_timeToStartDisplayingRematch;
 
 	/// <summary>
+	/// 再戦待機時間
+	/// </summary>
+	[SerializeField]
+	float m_rematchWaitingTime;
+
+	/// <summary>
 	/// 結果状態のプレイヤーの初期高さ
 	/// </summary>
 	[SerializeField]
 	float m_playerInitialHeightOfResultState;
-	
+
+	/// <summary>
+	/// 着地を試みる高さ
+	/// </summary>
+	[SerializeField]
+	float m_heightTryingToLand;
+
 	/// <summary>
 	/// 結果表示中のプレイヤーから見たカメラ相対的位置たち
 	/// </summary>
@@ -450,12 +467,6 @@ public class MyMainGame : MyGame
 	/// </summary>
 	[SerializeField]
 	float m_coinMagnificationAgainstHeight;
-
-	/// <summary>
-	/// 表彰される数
-	/// </summary>
-	[SerializeField]
-	int m_numToBeAwarded;
 
 	/// <summary>
 	/// 目標経験値
@@ -530,6 +541,11 @@ public class MyMainGame : MyGame
 	/// バトルを続けるフラグ
 	/// </summary>
 	bool m_isContinueBattle;
+
+	/// <summary>
+	/// 再戦待機時間を数える
+	/// </summary>
+	float m_countRematchWaitingTime;
 	#endregion
 
 	#region キーボード関係
@@ -568,7 +584,7 @@ public class MyMainGame : MyGame
 	/// フレーム前にDパッドXがネガティブになった
 	/// </summary>
 	bool m_isDpadXBecameNegativePrev;
-	
+
 	/// <summary>
 	/// DパッドのY軸がネガティブになった
 	/// </summary>
@@ -630,6 +646,7 @@ public class MyMainGame : MyGame
 	{
 		m_state = GameStatus.CreateSkin;
 		m_statePrev = GameStatus.Result;
+		m_countRematchWaitingTime = 0;
 
 		m_netManager = FindObjectOfType<MyNetworkManager>();
 	}
@@ -685,7 +702,7 @@ public class MyMainGame : MyGame
 
 		//全体の状態初期設定
 		if (m_state != m_statePrev)
-			m_countTheTimeOfTheState = 0;
+			m_countTheTimeOfTheState = 0 + (m_statePrev == GameStatus.Result ? m_countRematchWaitingTime : 0);
 
 		//状態
 		switch (m_state)
@@ -775,15 +792,20 @@ public class MyMainGame : MyGame
 		}
 
 		//ゲームが開始できるか
-		if (OperatingNetPlayerSetting.IsBattleStart())
+		if (OperatingNetPlayerSetting.IsBattleStart() || OperatingNetPlayerSetting.IsDuringBattle())
 		{
 			//次の状態への準備
 			GetReadyForPeopleGathered();
 		}
 		else if (m_countTheTimeOfTheState > m_timeToWaitForPeople)
 		{
-			//プレイヤーの解放（ネット接続を切る）
-			m_netManager.StopConnection();
+			//時間切れ時のサーバ処理
+			if (!OperatingNetPlayerSetting.IsCreateAi && OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
+			{
+				//AIキャラのスポーンとゲーム開始通知
+				OperatingNetPlayerSetting.SpawnAiCharacter(true);
+				OperatingNetPlayerSetting.CmdIsDuringBattle(true);
+			}
 		}
 		else
 		{
@@ -806,6 +828,10 @@ public class MyMainGame : MyGame
 		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGathered + m_timeWhenPeopleGatherAndChangeState)
 			m_state = GameStatus.PeopleGathered;
 
+		//時間表示
+		MainUi.SetTimeToWaitWorPeople(0);
+
+		//プレイヤーの位置固定
 		MovePlayerToPosToWaitForPeople();
 	}
 
@@ -842,18 +868,21 @@ public class MyMainGame : MyGame
 		//人が集まっていない
 		m_timeWhenPeopleGathered = -1;
 
-		//AIキャラクターの作成
-		if (!OperatingNetPlayerSetting.IsCreateAi && OperatingNetPlayerSetting.GetNetPlayerNum() == 0 && Input.GetKeyDown(KeyCode.A))
-			OperatingNetPlayerSetting.SpawnAiCharacter(true);
-
 		//整列中
 		if (!OperatingNetPlayerSetting.IsReady)
 			AlignmentWhenPeopleGather();
 		else
 			MovePlayerToPosToWaitForPeople();
 
+		//プレイヤー人数が増えた
+		if (m_numOfPlayersPrev < MyNetPlayerSetting.NetPlayerSettings.Count)
+			m_countTheTimeOfTheState = 0;
+
 		//解放時間を更新
 		MainUi.SetTimeToWaitWorPeople(m_timeToWaitForPeople - m_countTheTimeOfTheState);
+
+		//プレイヤー人数の更新
+		m_numOfPlayersPrev = MyNetPlayerSetting.NetPlayerSettings.Count;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -877,7 +906,7 @@ public class MyMainGame : MyGame
 		}
 
 		//整列対象
-		if(OperatingNetPlayerSetting.GetNetPlayerNum() >= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
+		if (OperatingNetPlayerSetting.GetNetPlayerNum() >= OperatingNetPlayerSetting.NumOfPlayerWithDisconnected)
 		{
 			//整列経過時間とプレイヤーネット番号
 			m_workFloat = m_countTheTimeOfTheState - m_timeToStartAligning;
@@ -904,7 +933,7 @@ public class MyMainGame : MyGame
 		}
 
 		//終了
-		if(m_countTheTimeOfTheState - m_timeToStartAligning >= m_alignmentTime)
+		if (m_countTheTimeOfTheState - m_timeToStartAligning >= m_alignmentTime)
 		{
 			//プレイヤーネット番号
 			m_workInt = OperatingNetPlayerSetting.GetNetPlayerNum();
@@ -1115,7 +1144,7 @@ public class MyMainGame : MyGame
 			MainUi.BattleStartSetting();
 
 			//プレイヤー情報を戦績に代入
-			if (m_battleRecords == null)
+			if (m_battleRecords == null || m_battleRecords.Length != MyNetPlayerSetting.NetPlayerSettings.Count)
 				m_battleRecords = new PublishRecord[MyNetPlayerSetting.NetPlayerSettings.Count];
 			MyNetPlayerSetting.PutPlayerInfoInBattleRecord(ref m_battleRecords);
 		}
@@ -1154,13 +1183,13 @@ public class MyMainGame : MyGame
 		AiPlayerBattleSettings();
 
 		//プレイヤーの帯電率のリセット
-		if (m_countPlayerChargeRate == null)
+		if (m_countPlayerChargeRate == null || m_countPlayerChargeRate.Length != MyNetPlayerSetting.NetPlayerSettings.Count)
 		{
 			m_countPlayerChargeRate = new float[MyNetPlayerSetting.NetPlayerSettings.Count];
 		}
 		else
 		{
-			for(var i = 0; i < m_countPlayerChargeRate.Length; i++)
+			for (var i = 0; i < m_countPlayerChargeRate.Length; i++)
 			{
 				m_countPlayerChargeRate[i] = 0;
 			}
@@ -1173,7 +1202,7 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void AiPlayerBattleSettings()
 	{
-		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 		{
 			//プレイヤー番号よる位置
 			aiPlayer.PlayerScript.transform.position = Stage.CurrentFieldScript.StartPositions[aiPlayer.GetNetPlayerNum()];
@@ -1197,10 +1226,12 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//フラグとカメラとUIの設定
+			//フラグとプレイヤーとカメラとUIの設定
 			m_isItJustBeforeBattle = false;
 			m_isDisplayRank = true;
+			Players.UpdateHeightRank();
 			SettingOfCameraInBattleStartState();
+			MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetNetPlayerNum());
 			MainUi.BattleStart(m_battleTime);
 			MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum());
 
@@ -1216,7 +1247,7 @@ public class MyMainGame : MyGame
 
 			//プレイヤーとReadyメッセージ設定
 			OperatingPlayer.SetAnimation(PlayerBehaviorStatus.Idle);
-			foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+			foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 			{
 				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.Idle);
 			}
@@ -1286,9 +1317,9 @@ public class MyMainGame : MyGame
 		{
 			m_statePrev = m_state;
 
-			//プレイヤーとカメラとフラグ
+			//プレイヤーとカメラとUIとフラグ
 			OperatingPlayer.MakeItBattleState();
-			foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+			foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 			{
 				aiPlayer.PlayerScript.MakeItBattleState();
 			}
@@ -1566,7 +1597,7 @@ public class MyMainGame : MyGame
 			(int)(OperatingPlayer.transform.position.y * (1 + m_coinMagnificationAgainstHeight * OperatingPlayer.NumOfCoins)));
 
 		//AIの同期
-		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 		{
 			//高さの同期
 			aiPlayer.CmdFinalAltitude(aiPlayer.transform.position.y);
@@ -1670,7 +1701,7 @@ public class MyMainGame : MyGame
 		}
 
 		//着水していないandプレイヤーが着水
-		if (!m_isLanding && OperatingPlayer.transform.position.y <= 0f)
+		if (!m_isLanding && OperatingPlayer.transform.position.y <= m_heightTryingToLand)
 		{
 			m_isLanding = true;
 
@@ -1729,6 +1760,8 @@ public class MyMainGame : MyGame
 
 			//再戦表示
 			MainUi.ShowRematch();
+
+			m_countRematchWaitingTime = 0;
 		}
 
 		//再戦表示済み
@@ -1762,7 +1795,11 @@ public class MyMainGame : MyGame
 		}
 
 		//プレイヤー番号による指定位置
-		m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[OperatingNetPlayerSetting.Rank];
+		if (OperatingNetPlayerSetting.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
+			m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[OperatingNetPlayerSetting.Rank];
+		else
+			m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[
+				Stage.CurrentFieldScript.PositionsOfRank.Length - (MyNetPlayerSetting.NetPlayerSettings.Count - OperatingNetPlayerSetting.Rank)];
 
 		//高さを除いた位置を代入
 		m_workVector3.y = OperatingPlayer.transform.position.y;
@@ -1792,7 +1829,11 @@ public class MyMainGame : MyGame
 			}
 
 			//プレイヤー番号による指定位置
-			m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[aiPlayer.Rank];
+			if (aiPlayer.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
+				m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[aiPlayer.Rank];
+			else
+				m_workVector3 = Stage.CurrentFieldScript.PositionsOfRank[
+					Stage.CurrentFieldScript.PositionsOfRank.Length - (MyNetPlayerSetting.NetPlayerSettings.Count - aiPlayer.Rank)];
 
 			//高さを除いた位置を代入
 			m_workVector3.y = aiPlayer.PlayerScript.transform.position.y;
@@ -1809,8 +1850,8 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void BattleResult()
 	{
-		//順位が上位or順位が表彰対象
-		if (OperatingNetPlayerSetting.Rank < MyNetPlayerSetting.NetPlayerSettings.Count / 2 || OperatingNetPlayerSetting.Rank < m_numToBeAwarded)
+		//順位が上位
+		if (OperatingNetPlayerSetting.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
 			WinBattle();
 		else
 			LoseBattle();
@@ -1828,9 +1869,9 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void AiPlayerBattleResult()
 	{
-		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 		{
-			if (aiPlayer.Rank < MyNetPlayerSetting.NetPlayerSettings.Count / 2 || aiPlayer.Rank < m_numToBeAwarded)
+			if (aiPlayer.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
 				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.SuccessfulLanding);
 			else
 				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.LandingFailed);
@@ -1867,16 +1908,24 @@ public class MyMainGame : MyGame
 		OperatingPlayer.SetVelocityOfRbToZero();
 
 		//順位のアニメーション
-		OperatingPlayer.StartAnimByRank(OperatingNetPlayerSetting.Rank + 1);
+		if (OperatingNetPlayerSetting.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
+			OperatingPlayer.StartAnimByRank(OperatingNetPlayerSetting.Rank + 1);
+		else
+			OperatingPlayer.StartAnimByRank(Stage.CurrentFieldScript.PositionsOfRank.Length
+				- (MyNetPlayerSetting.NetPlayerSettings.Count - OperatingNetPlayerSetting.Rank) + 1);
 
 		//AIの処理
-		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 		{
 			//リジッドボディの速度を０
 			aiPlayer.PlayerScript.SetVelocityOfRbToZero();
 
 			//順位のアニメーション
-			aiPlayer.PlayerScript.StartAnimByRank(aiPlayer.Rank + 1);
+			if (aiPlayer.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
+				aiPlayer.PlayerScript.StartAnimByRank(aiPlayer.Rank + 1);
+			else
+				aiPlayer.PlayerScript.StartAnimByRank(Stage.CurrentFieldScript.PositionsOfRank.Length
+					- (MyNetPlayerSetting.NetPlayerSettings.Count - aiPlayer.Rank) + 1);
 		}
 	}
 
@@ -1890,11 +1939,10 @@ public class MyMainGame : MyGame
 		OperatingPlayer.SetAnimation(m_isWin ? PlayerBehaviorStatus.Win : PlayerBehaviorStatus.Defeat);
 
 		//AIの処理
-		foreach(var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
+		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 		{
 			//アニメーション
-			aiPlayer.PlayerScript.SetAnimation(
-				aiPlayer.Rank < MyNetPlayerSetting.NetPlayerSettings.Count / 2 || aiPlayer.Rank < m_numToBeAwarded ?
+			aiPlayer.PlayerScript.SetAnimation(aiPlayer.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2 ?
 				PlayerBehaviorStatus.Win : PlayerBehaviorStatus.Defeat);
 		}
 
@@ -1942,6 +1990,9 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void SelectRematch()
 	{
+		//再戦時間を数える
+		m_countRematchWaitingTime += Time.deltaTime;
+
 		//Dパッドか左スティックの横方向の入力あり
 		if (m_isDpadXBecamePositive || m_isDpadXBecameNegative || m_isHorizontalBecamePositive || m_isHorizontalBecameNegative)
 		{
@@ -1951,8 +2002,9 @@ public class MyMainGame : MyGame
 			MySoundManager.Instance.Play(SeCollection.Select);
 		}
 
-		//ボタンの色変更
+		//UI
 		MainUi.SelectionOfRematch(m_isContinueBattle);
+		MainUi.SetLeaveBattleCount(m_rematchWaitingTime - m_countRematchWaitingTime + 1);
 
 		//もう一度か終了か
 		if (m_isAButtonDown)
@@ -1963,7 +2015,7 @@ public class MyMainGame : MyGame
 			else
 				LeaveBattle();
 		}
-		else if (m_isBButtonDown)
+		else if (m_isBButtonDown || m_countRematchWaitingTime >= m_rematchWaitingTime)
 		{
 			LeaveBattle();
 		}
@@ -1979,9 +2031,12 @@ public class MyMainGame : MyGame
 	/// </summary>
 	public override void ContinueBattle()
 	{
-		//AIキャラクターの削除
+		//AIキャラクターの削除とバトル中フラグ
 		if (OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
+		{
 			OperatingNetPlayerSetting.SpawnAiCharacter(false);
+			OperatingNetPlayerSetting.CmdIsDuringBattle(false);
+		}
 
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum(), false);

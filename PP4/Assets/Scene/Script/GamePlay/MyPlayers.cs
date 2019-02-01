@@ -154,7 +154,7 @@ public class MyPlayers : MonoBehaviour
 		//配列の初期化
 		m_netPlayerSettings = netPlayerSettings;
 		m_powers.Clear();
-		if (m_heightRanks == null)
+		if (m_heightRanks == null || m_heightRanks.Length != m_netPlayerSettings.Length)
 			m_heightRanks = new int[m_netPlayerSettings.Length];
 
 		//パワーの順位を決める

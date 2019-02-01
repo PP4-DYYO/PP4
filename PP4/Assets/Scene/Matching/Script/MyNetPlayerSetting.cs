@@ -176,6 +176,12 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	}
 
 	/// <summary>
+	/// バトル中フラグ
+	/// </summary>
+	[SyncVar(hook = "SyncIsDuringBattle")]
+	bool m_isDuringBattle;
+
+	/// <summary>
 	/// 状態
 	/// </summary>
 	[SyncVar(hook = "SyncState")]
@@ -541,6 +547,28 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	void SyncIsReady(bool isReady)
 	{
 		m_isReady = isReady;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル中フラグの通知
+	/// </summary>
+	/// <param name="isDuringBattle">バトル中</param>
+	[Command]
+	public void CmdIsDuringBattle(bool isDuringBattle)
+	{
+		m_isDuringBattle = isDuringBattle;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル中フラグの同期
+	/// </summary>
+	/// <param name="isDuringBattle">バトル中</param>
+	[Client]
+	void SyncIsDuringBattle(bool isDuringBattle)
+	{
+		m_isDuringBattle = isDuringBattle;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -937,6 +965,24 @@ public class MyNetPlayerSetting : NetworkBehaviour
 
 		//プレイヤー人数が揃うか
 		return (s_netPlayerSettings.Count >= Game.NumOfPlayers);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// バトル中か
+	/// </summary>
+	/// <returns>バトル中</returns>
+	public bool IsDuringBattle()
+	{
+		//全てのプレイヤーにアクセス
+		for (m_workInt = 0; m_workInt < s_netPlayerSettings.Count; m_workInt++)
+		{
+			//バトル中のサーバ
+			if (s_netPlayerSettings[m_workInt].m_isDuringBattle)
+				return true;
+		}
+
+		return false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

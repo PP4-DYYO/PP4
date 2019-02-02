@@ -75,6 +75,10 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject Meteorite;
+	public GameObject MeteoriteObject
+	{
+		get { return Meteorite; }
+	}
 
 	/// <summary>
 	/// 隕石の本体
@@ -315,12 +319,12 @@ public class MyField : MonoBehaviour
 		Meteorite.transform.Rotate(Vector3.up, m_meteoriteRotateSpeed * Time.deltaTime);
 
 		//隕石が出現する時間
-		if(m_countMeteoriteTime <= m_timeOfMeteoriteAppearance)
+		if (m_countMeteoriteTime <= m_timeOfMeteoriteAppearance)
 		{
 			//出現中
 			Meteorite.transform.localScale = Vector3.one * (m_countMeteoriteTime / m_timeOfMeteoriteAppearance);
 		}
-		else if(m_countMeteoriteTime >= m_timeOfMeteoriteFall - m_timeForMeteoriteExtinction)
+		else if (m_countMeteoriteTime >= m_timeOfMeteoriteFall - m_timeForMeteoriteExtinction)
 		{
 			//消滅中
 			m_workVector3 = Vector3.one * ((m_timeOfMeteoriteFall - m_countMeteoriteTime) / m_timeForMeteoriteExtinction);
@@ -490,10 +494,10 @@ public class MyField : MonoBehaviour
 		Meteorite.transform.localScale = Vector3.zero;
 		Meteorite.transform.position = Vector3.up * startHeight;
 		Meteorite.SetActive(true);
-		if(!MeteoriteBody.activeInHierarchy)
+		if (!MeteoriteBody.activeInHierarchy)
 		{
 			MeteoriteBody.SetActive(true);
-			foreach(var effect in MeteoriteFallEffects)
+			foreach (var effect in MeteoriteFallEffects)
 			{
 				effect.Play();
 			}
@@ -511,7 +515,7 @@ public class MyField : MonoBehaviour
 	{
 		//落下演出の停止
 		MeteoriteBody.SetActive(false);
-		foreach(var effect in MeteoriteFallEffects)
+		foreach (var effect in MeteoriteFallEffects)
 		{
 			effect.Stop();
 		}

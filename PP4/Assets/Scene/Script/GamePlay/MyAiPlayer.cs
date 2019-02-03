@@ -21,6 +21,11 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	[SerializeField]
 	MySpaceGrasp SpaceGrasp;
+
+	/// <summary>
+	/// MyField
+	/// </summary>
+	MyField MyFieldScript;
 	#endregion
 
 	#region 能力
@@ -67,7 +72,6 @@ public class MyAiPlayer : MyPlayer
 		get { return m_wantToThrowElasticityAura; }
 	}
 
-
 	/// <summary>
 	/// 電気オーラが投げたい
 	/// </summary>
@@ -75,6 +79,121 @@ public class MyAiPlayer : MyPlayer
 	public bool WantToThrowElectricalAura
 	{
 		get { return m_wantToThrowElectricalAura; }
+	}
+
+	/// <summary>
+	/// オーラを投げた
+	/// </summary>
+	bool m_isAuraThrow;
+
+	/// <summary>
+	/// オーラを投げるための乱数生成用
+	/// </summary>
+	int m_randomThrow;
+
+	/// <summary>
+	/// 乱数生成用の上限の数字
+	/// </summary>
+	const int UPPER_LIMIT_NUM = 101;
+
+
+	/// <summary>
+	/// 投げるオーラの種類
+	/// </summary>
+	public enum RandomThrowAuraNum
+	{
+		HeatAura,
+		ElasticityAura,
+		ElectricalAura
+	}
+
+	/// <summary>
+	/// オーラを投げられる
+	/// </summary>
+	bool m_ableThrowAura;
+
+	/// <summary>
+	/// オーラの待機時間を数えるか
+	/// </summary>
+	bool m_isAuraTimeCount;
+
+	/// <summary>
+	/// この数値を超えていたらオーラを使える(0.5f)
+	/// </summary>
+	[SerializeField]
+	float m_auraUseLimit;
+
+	/// <summary>
+	/// オーラの使用間隔(13f)
+	/// </summary>
+	[SerializeField]
+	float m_auraIntervalTime;
+
+	/// <summary>
+	/// オーラの待機時間
+	/// </summary>
+	float m_auraWaitingTime;
+
+	/// <summary>
+	/// 隕石との距離
+	/// </summary>
+	float m_meteoriteDistance;
+
+	/// <summary>
+	/// 隕石のゲームオブジェクト
+	/// </summary>
+	GameObject Meteorite;
+
+	/// <summary>
+	/// 隕石が近くにあるか
+	/// </summary>
+	bool m_isMeteoriteNear;
+
+	/// <summary>
+	/// 隕石を破壊しようとする距離(50f)
+	/// </summary>
+	[SerializeField]
+	float m_breakMeteoriteDistance;
+
+	/// <summary>
+	/// 加速を使える
+	/// </summary>
+	bool m_ableSp;
+
+	/// <summary>
+	/// 加速を使った
+	/// </summary>
+	bool m_isUsedSp;
+
+	/// <summary>
+	/// 加速の待機時間を数えるか
+	/// </summary>
+	bool m_isSpTimeCount;
+
+	/// <summary>
+	/// 加速の使用間隔(5f)
+	/// </summary>
+	[SerializeField]
+	float m_spIntervalTime;
+
+	/// <summary>
+	/// 加速使用後の経過時間
+	/// </summary>
+	float m_spWaitingTime;
+
+	/// <summary>
+	/// この数値までゲージを加速に使える(0.3f)
+	/// </summary>
+	[SerializeField]
+	float m_spUseLimit;
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 最初の動作
+	/// </summary>
+	void Start()
+	{
+		Meteorite = GameObject.Find("Field").GetComponent<MyField>().MeteoriteObject;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -96,6 +215,18 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	void ThinkAction()
 	{
+		//Debug.Log("下の変数を使ってAIを作ってください");
+		//m_isKeepPressingAButton = false;
+		//m_isKeepPressingBButton = false;
+		//m_isKeepPressingXButton = false;
+		//m_isKeepPressingLButton = false;
+		//m_isKeepPressingRButton = true;
+		//m_horizontalValue = 0;
+		//m_verticalValue = 0;
+		//m_wantToThrowHeatAura = false;
+		//m_wantToThrowElasticityAura = false;
+		//m_wantToThrowElectricalAura = false;
+
 		//回復
 		if (IsFalling)
 			ThinkingRecovery();
@@ -103,20 +234,72 @@ public class MyAiPlayer : MyPlayer
 		//衝突回避
 		ThinkAboutCollisionAvoidance();
 
-		Debug.Log("下の変数を使ってAIを作ってください");
-		{
-			//ボタンを押している 
-			//m_isKeepPressingAButton = false;
-			//m_isKeepPressingBButton = false;
-			//m_isKeepPressingXButton = false;
-			//m_isKeepPressingLButton = false;
-			m_isKeepPressingRButton = true;
-			//m_horizontalValue = 0;
-			//m_verticalValue = 0;
+		//オーラ
+		ThinkThrowAuraBall();
 
-			//m_wantToThrowHeatAura = false;
-			//m_wantToThrowElasticityAura = false;
-			//m_wantToThrowElectricalAura = false;
+		//隕石破壊行動
+		ThinkbreakMeteorite();
+
+		//ボタン入力 
+		ThinkButtonPress();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// ボタン入力を考える
+	/// </summary>
+	void ThinkButtonPress()
+	{
+		//常に上昇ボタンを入力する 
+		m_isKeepPressingRButton = true;
+
+		//加速は条件あり
+		ThinkAcceleration();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 加速使用タイミングを考える
+	/// </summary>
+	void ThinkAcceleration()
+	{
+		//使用後は
+		if (m_isSpTimeCount)
+		{
+			if (m_spWaitingTime < m_spIntervalTime)
+				m_spWaitingTime += Time.deltaTime;
+			else
+			{
+				m_ableSp = true;
+				m_isSpTimeCount = false;
+				m_spWaitingTime = 0;
+			}
+		}
+
+		if (!m_isSpTimeCount)
+		{
+			m_ableSp = true;
+		}
+		else
+		{
+			m_ableSp = false;
+		}
+
+		//加速が使えるとき
+		if (m_ableSp)
+		{
+			//SPゲージが一定数ある時または隕石が近い時に加速
+			if (GetPercentageOfRemainingSpGauge() >= m_spUseLimit || m_isMeteoriteNear)
+			{
+				m_isKeepPressingAButton = true;
+			}
+			//SPゲージが一定数を切ると再使用まで待機時間発生
+			else
+			{
+				m_ableSp = false;
+				m_isSpTimeCount = true;
+				m_isKeepPressingAButton = false;
+			}
 		}
 	}
 
@@ -162,6 +345,80 @@ public class MyAiPlayer : MyPlayer
 				m_verticalValue = Vector3.Dot(Camera.main.transform.forward, m_workVector3);
 			}
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// オーラを投げることを考える
+	/// </summary>
+	void ThinkThrowAuraBall()
+	{
+		if (m_isAuraTimeCount)
+		{
+			if (m_auraWaitingTime < m_auraIntervalTime)
+				m_auraWaitingTime += Time.deltaTime;
+			else
+			{
+				m_isAuraTimeCount = false;
+				m_auraWaitingTime = 0;
+			}
+		}
+
+		//投げた後は投げたい情報リセット
+		if (m_isAuraThrow)
+		{
+			m_wantToThrowHeatAura = false;
+			m_wantToThrowElasticityAura = false;
+			m_wantToThrowElectricalAura = false;
+			m_isAuraThrow = false;
+		}
+
+		if (GetPercentageOfRemainingSpGauge() > m_auraUseLimit && !m_isAuraTimeCount)
+		{
+			m_ableThrowAura = true;
+		}
+		else
+		{
+			m_ableThrowAura = false;
+		}
+
+		//オーラが投げられるとき
+		if (m_ableThrowAura)
+		{
+			m_randomThrow = Random.Range(0, UPPER_LIMIT_NUM);
+			switch (m_randomThrow)
+			{
+				case (int)RandomThrowAuraNum.HeatAura:
+					m_wantToThrowHeatAura = true;
+					break;
+				case (int)RandomThrowAuraNum.ElasticityAura:
+					m_wantToThrowElasticityAura = true;
+					break;
+				case (int)RandomThrowAuraNum.ElectricalAura:
+					m_wantToThrowElectricalAura = true;
+					break;
+			}
+			if (m_randomThrow <= (int)RandomThrowAuraNum.ElectricalAura)
+			{
+				m_isAuraThrow = true;
+				m_isAuraTimeCount = true;
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 隕石の破壊を考える
+	/// </summary>
+	void ThinkbreakMeteorite()
+	{
+		//隕石との距離
+		m_meteoriteDistance = Vector3.Distance(transform.position, Meteorite.transform.position);
+
+		if (m_meteoriteDistance < m_breakMeteoriteDistance)
+			m_isMeteoriteNear = true;
+		else
+			m_isMeteoriteNear = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

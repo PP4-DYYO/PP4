@@ -374,6 +374,12 @@ public class MyMainUi : MonoBehaviour
 	Text ExpNum;
 
 	/// <summary>
+	/// 経験値のレベル
+	/// </summary>
+	[SerializeField]
+	Text LevelOfExp;
+
+	/// <summary>
 	/// 再戦
 	/// </summary>
 	[SerializeField]
@@ -639,6 +645,11 @@ public class MyMainUi : MonoBehaviour
 	/// 前の目標経験値
 	/// </summary>
 	int m_targetExpPrev;
+
+	/// <summary>
+	/// レベル
+	/// </summary>
+	int m_level;
 	#endregion
 
 	#region 作業用
@@ -862,18 +873,19 @@ public class MyMainUi : MonoBehaviour
 		m_workFloat = m_originalExp + (m_increasingExp * m_countExpAddedTime / m_expAddedTime);
 
 		//目標経験値と増加中経験値の探索
-		foreach (var targetExp in m_targetExp)
+		for (m_workInt = 0; m_workInt < m_targetExp.Length; m_workInt++)
 		{
-			if(m_workFloat <= targetExp)
+			if(m_workFloat <= m_targetExp[m_workInt])
 			{
 				//経験値の反映
-				PercentageOfExp.fillAmount = m_workFloat / targetExp;
-				ExpNum.text = (int)m_workFloat + m_expBreak + targetExp;
+				PercentageOfExp.fillAmount = m_workFloat / m_targetExp[m_workInt];
+				ExpNum.text = (int)m_workFloat + m_expBreak + m_targetExp[m_workInt];
 
 				//レベルアップ
-				if(m_targetExpPrev != targetExp)
+				if(m_targetExpPrev != m_targetExp[m_workInt])
 				{
-					m_targetExpPrev = targetExp;
+					m_targetExpPrev = m_targetExp[m_workInt];
+					LevelOfExp.text = (m_level - (m_targetExp.Length - m_workInt) + 1).ToString();
 					MySoundManager.Instance.Play(SeCollection.UpLv);
 				}
 
@@ -1426,7 +1438,8 @@ public class MyMainUi : MonoBehaviour
 	/// <param name="originalExp">元の経験値数</param>
 	/// <param name="increasingExp">増える経験値数</param>
 	/// <param name="targetExp">目標経験値たち</param>
-	public void ShowExp(int originalExp, int increasingExp, int[] targetExp)
+	/// <param name="newLevel">新しいレベル</param>
+	public void ShowExp(int originalExp, int increasingExp, int[] targetExp, int newLevel)
 	{
 		Exp.SetActive(true);
 
@@ -1437,6 +1450,8 @@ public class MyMainUi : MonoBehaviour
 		m_originalExp = originalExp;
 		m_increasingExp = increasingExp;
 		m_targetExpPrev = targetExp[0];
+		m_level = newLevel;
+		LevelOfExp.text = (m_level - (targetExp.Length - 1)).ToString();
 
 		//元の経験値の反映
 		PercentageOfExp.fillAmount = (float)originalExp / targetExp[0];

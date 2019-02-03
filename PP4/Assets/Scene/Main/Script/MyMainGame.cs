@@ -1775,7 +1775,7 @@ public class MyMainGame : MyGame
 			m_isDisplayOfExp = true;
 
 			//経験値の表示
-			MainUi.ShowExp((MyGameInfo.Instance.Exp - m_additionalExp), m_additionalExp, m_nextTargetExp.ToArray());
+			MainUi.ShowExp((MyGameInfo.Instance.Exp - m_additionalExp), m_additionalExp, m_nextTargetExp.ToArray(), MyGameInfo.Instance.Level);
 		}
 
 		//再戦表示していないand再戦表示する時間

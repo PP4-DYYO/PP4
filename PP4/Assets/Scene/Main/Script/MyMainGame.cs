@@ -1524,7 +1524,7 @@ public class MyMainGame : MyGame
 		}
 
 		//Startボタンを押した
-		if(m_isStartButtonDown)
+		if (m_isStartButtonDown)
 		{
 			m_isDisplayOperationTable = !m_isDisplayOperationTable;
 
@@ -1726,17 +1726,18 @@ public class MyMainGame : MyGame
 		}
 
 		//着水していないandプレイヤーが着水
-		if (!m_isLanding && OperatingPlayer.transform.position.y <= m_heightTryingToLand)
+		if (!m_isLanding)
 		{
-			m_isLanding = true;
-
 			//バトル結果
 			BattleResult();
+			AiPlayerBattleResult();
 		}
 
 		//表彰台が表示される時間
 		if (!m_isDisplayPodium && m_countTheTimeOfTheState >= m_timePodiumIsDisplayed)
 		{
+			m_isLanding = true;
+
 			//時間経過による表彰台の位置
 			Stage.CurrentFieldScript.MovePodium(
 				(m_countTheTimeOfTheState - m_timePodiumIsDisplayed) / (m_timePodiumWasDisplayed - m_timePodiumIsDisplayed));
@@ -1875,14 +1876,15 @@ public class MyMainGame : MyGame
 	/// </summary>
 	void BattleResult()
 	{
+		//着地していない
+		if (OperatingPlayer.transform.position.y > m_heightTryingToLand)
+			return;
+
 		//順位が上位
 		if (OperatingNetPlayerSetting.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
 			WinBattle();
 		else
 			LoseBattle();
-
-		//AIの処理
-		AiPlayerBattleResult();
 
 		//UIに順位の表示
 		MainUi.DisplayRanking(OperatingNetPlayerSetting.Rank + 1, OperatingNetPlayerSetting.Score);
@@ -1896,6 +1898,10 @@ public class MyMainGame : MyGame
 	{
 		foreach (var aiPlayer in OperatingNetPlayerSetting.AiNetPlayerSettings)
 		{
+			//着地していない
+			if (aiPlayer.transform.position.y > m_heightTryingToLand)
+				continue;
+
 			if (aiPlayer.Rank < (MyNetPlayerSetting.NetPlayerSettings.Count + 1) / 2)
 				aiPlayer.PlayerScript.SetAnimation(PlayerBehaviorStatus.SuccessfulLanding);
 			else

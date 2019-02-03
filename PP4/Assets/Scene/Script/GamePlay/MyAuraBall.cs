@@ -220,9 +220,10 @@ public class MyAuraBall : MonoBehaviour
 
 		m_countTravelTime += Time.deltaTime;
 
-		//目標物に近づくとゆっくりになる移動率
+		//始まりと終わりがゆっくりな移動率
 		m_workFloat = m_countTravelTime / m_travelTime;
-		m_workFloat = (m_workFloat > m_rateAtWhichMovementSpeedChanges ? (1 - Mathf.Pow(1 - m_workFloat, 2) / m_rateAtWhichMovementSpeedChanges)
+		m_workFloat = (m_workFloat > m_rateAtWhichMovementSpeedChanges ?
+			(1 - Mathf.Pow(1 - m_workFloat, 2) / (1 - m_rateAtWhichMovementSpeedChanges))
 			: (m_workFloat * m_workFloat) / m_rateAtWhichMovementSpeedChanges);
 
 		transform.position = Vector3.Lerp(Pitcher.position, m_target.transform.position, m_workFloat);

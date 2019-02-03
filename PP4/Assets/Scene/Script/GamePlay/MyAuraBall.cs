@@ -140,6 +140,12 @@ public class MyAuraBall : MonoBehaviour
 	float m_travelTime;
 
 	/// <summary>
+	/// 移動速度が変わる割合
+	/// </summary>
+	[SerializeField]
+	float m_rateAtWhichMovementSpeedChanges;
+
+	/// <summary>
 	/// ヒット情報の記憶時間
 	/// </summary>
 	[SerializeField]
@@ -166,6 +172,11 @@ public class MyAuraBall : MonoBehaviour
 	/// </summary>
 	float m_countHitInfoStorageTime = -1;
 	#endregion
+
+	/// <summary>
+	/// 作業用のFloat
+	/// </summary>
+	float m_workFloat;
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
@@ -209,7 +220,11 @@ public class MyAuraBall : MonoBehaviour
 
 		m_countTravelTime += Time.deltaTime;
 
-		transform.position = Vector3.Lerp(Pitcher.position, m_target.transform.position, (m_countTravelTime / m_travelTime));
+		//目標物に近づくとゆっくりになる移動率
+		m_workFloat = m_countTravelTime / m_travelTime;
+		m_workFloat = (m_workFloat > m_rateAtWhichMovementSpeedChanges ? 1 - Mathf.Pow(1 - m_workFloat, 2) : m_workFloat);
+
+		transform.position = Vector3.Lerp(Pitcher.position, m_target.transform.position, m_workFloat);
 	}
 
 	//----------------------------------------------------------------------------------------------------

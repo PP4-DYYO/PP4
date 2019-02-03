@@ -1787,6 +1787,13 @@ public class MyMainGame : MyGame
 			//再戦表示
 			MainUi.ShowRematch();
 
+			//AIキャラクターの削除とバトル中フラグ
+			if (OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
+			{
+				OperatingNetPlayerSetting.SpawnAiCharacter(false);
+				OperatingNetPlayerSetting.CmdIsDuringBattle(false);
+			}
+
 			m_countRematchWaitingTime = 0;
 		}
 
@@ -2061,13 +2068,6 @@ public class MyMainGame : MyGame
 	/// </summary>
 	public override void ContinueBattle()
 	{
-		//AIキャラクターの削除とバトル中フラグ
-		if (OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
-		{
-			OperatingNetPlayerSetting.SpawnAiCharacter(false);
-			OperatingNetPlayerSetting.CmdIsDuringBattle(false);
-		}
-
 		OperatingNetPlayerSetting.CmdNotifyOfIsReady(true);
 		MainUi.MarkPlayersOnMap(OperatingNetPlayerSetting.GetNetPlayerNum(), false);
 		MySoundManager.Instance.Play(SeCollection.Decide);

@@ -216,7 +216,7 @@ public class MyAuraBall : MonoBehaviour
 	/// <summary>
 	/// オーラを消す
 	/// </summary>
-	void EraseAura()
+	public void EraseAura()
 	{
 		m_countTravelTime = -1;
 

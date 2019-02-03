@@ -206,6 +206,12 @@ public class MyMainUi : MonoBehaviour
 	Image[] ForegroundOfPlayerOnMap;
 
 	/// <summary>
+	/// 操作表
+	/// </summary>
+	[SerializeField]
+	GameObject OperationTable;
+
+	/// <summary>
 	/// コイン枚数
 	/// </summary>
 	[SerializeField]
@@ -1006,6 +1012,7 @@ public class MyMainUi : MonoBehaviour
 		SetMarkThatCanNotAccelerated();
 		WritePlayerNamesOnTheMap();
 		ShowRankOnMap(true, false);
+		ShowOperationTable(false, false);
 		SetNumOfCoins();
 		ShowHitInfoOfAuraBall(null);
 		m_operatingPlayerRankPrev = m_operatingPlayerRank;
@@ -1211,6 +1218,21 @@ public class MyMainUi : MonoBehaviour
 			MySoundManager.Instance.Play(isDisplay ? SeCollection.Select : SeCollection.Cancel);
 	}
 
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 操作表を表示する
+	/// </summary>
+	/// <param name="isDisplay">表示するか</param>
+	/// <param name="isSe">SEを鳴らすか</param>
+	public void ShowOperationTable(bool isDisplay = true, bool isSe = true)
+	{
+		OperationTable.SetActive(isDisplay);
+
+		//SE
+		if (isSe)
+			MySoundManager.Instance.Play(isDisplay ? SeCollection.Select : SeCollection.Cancel);
+	}
+	
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// コイン枚数

@@ -365,6 +365,11 @@ public class MyMainGame : MyGame
 	bool m_isDisplayRank;
 
 	/// <summary>
+	/// 操作表の表示
+	/// </summary>
+	bool m_isDisplayOperationTable;
+
+	/// <summary>
 	/// 操作プレイヤーが落下フラグ
 	/// </summary>
 	bool m_isOperatingPlayerFall;
@@ -566,6 +571,11 @@ public class MyMainGame : MyGame
 	bool m_isYButtonDown;
 
 	/// <summary>
+	/// スタートボタンを押した
+	/// </summary>
+	bool m_isStartButtonDown;
+
+	/// <summary>
 	/// DパッドXがポジティブになった
 	/// </summary>
 	bool m_isDpadXBecamePositive;
@@ -673,6 +683,8 @@ public class MyMainGame : MyGame
 			m_isBButtonDown = true;
 		if (Input.GetButtonDown("YButton"))
 			m_isYButtonDown = true;
+		if (Input.GetButtonDown("HomeButton"))
+			m_isStartButtonDown = true;
 		if (Input.GetAxis("DpadX") > 0 && !m_isDpadXBecamePositivePrev)
 			m_isDpadXBecamePositive = true;
 		m_isDpadXBecamePositivePrev = (Input.GetAxis("DpadX") > 0);
@@ -1229,6 +1241,7 @@ public class MyMainGame : MyGame
 			//フラグとプレイヤーとカメラとUIの設定
 			m_isItJustBeforeBattle = false;
 			m_isDisplayRank = true;
+			m_isDisplayOperationTable = false;
 			Players.UpdateHeightRank();
 			SettingOfCameraInBattleStartState();
 			MainUi.SetRank(Players.HeightRanks, OperatingNetPlayerSetting.GetNetPlayerNum());
@@ -1510,6 +1523,15 @@ public class MyMainGame : MyGame
 			MainUi.ShowRankOnMap(m_isDisplayRank);
 		}
 
+		//Startボタンを押した
+		if(m_isStartButtonDown)
+		{
+			m_isDisplayOperationTable = !m_isDisplayOperationTable;
+
+			//操作表の表示
+			MainUi.ShowOperationTable(m_isDisplayOperationTable);
+		}
+
 		//コイン枚数の反映
 		MainUi.SetNumOfCoins(OperatingPlayer.NumOfCoins);
 
@@ -1565,6 +1587,9 @@ public class MyMainGame : MyGame
 			//フェードアウト
 			m_isFadeOutAfterBattleEnds = true;
 			MainUi.StartFadeOut();
+
+			//オーラボールの停止
+			MyNetPlayerSetting.EraseAllAuraBall();
 
 			//バトル結果を記録
 			RecordBattleResults();
@@ -1968,8 +1993,7 @@ public class MyMainGame : MyGame
 		{
 			//プレイヤーの前方位置からカメラ位置を生成(プレイヤーの向きに応じた位置)
 			m_cameraPosForSpecifying[i] =
-				(OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch)
-				+ (OperatingPlayer.transform.forward * OperatingCamera.DistanceToPlayer))
+				OperatingPlayer.transform.position + (Vector3.up * OperatingCamera.HeightToWatch)
 				+ OperatingPlayer.transform.right * m_relativeCameraPosSeenFromDisplayingResult[i].x
 				+ OperatingPlayer.transform.up * m_relativeCameraPosSeenFromDisplayingResult[i].y
 				+ OperatingPlayer.transform.forward * m_relativeCameraPosSeenFromDisplayingResult[i].z;
@@ -2063,6 +2087,7 @@ public class MyMainGame : MyGame
 		m_isAButtonDown = false;
 		m_isBButtonDown = false;
 		m_isYButtonDown = false;
+		m_isStartButtonDown = false;
 		m_isDpadXBecamePositive = false;
 		m_isDpadXBecameNegative = false;
 		m_isDpadYBecameNegative = false;

@@ -94,6 +94,20 @@ public class MyMatching : MonoBehaviour
 	#region マッチング状態
 	[Header("マッチング状態")]
 	/// <summary>
+	/// マッチングの時間
+	/// </summary>
+	[SerializeField]
+	float m_matchingTime;
+
+	/// <summary>
+	/// マッチング時間を数える
+	/// </summary>
+	float m_countMatchingTime;
+	#endregion
+
+	#region 待機状態
+	[Header("待機状態")]
+	/// <summary>
 	/// 選択中の番号
 	/// </summary>
 	int m_selectedNum;
@@ -170,6 +184,7 @@ public class MyMatching : MonoBehaviour
 	{
 		m_netManager = FindObjectOfType<MyNetworkManager>();
 		m_netManager.IsStandbyState = false;
+		m_countMatchingTime = 0;
 
 		//Sound
 		MySoundManager.Instance.Play(BgmCollection.Matching);
@@ -227,7 +242,17 @@ public class MyMatching : MonoBehaviour
 		{
 			//ネットワークマネージャを動かす
 			m_netManager.IsStandbyState = false;
+			m_countMatchingTime = 0;
 			m_statePrev = m_state;
+		}
+
+		m_countMatchingTime += Time.deltaTime;
+
+		//マッチング時間切れ
+		if (m_countMatchingTime >= m_matchingTime)
+		{
+			m_netManager.StopConnection();
+			m_countMatchingTime = 0;
 		}
 
 		//サーバと接続が切れた
@@ -309,6 +334,7 @@ public class MyMatching : MonoBehaviour
 	void ToRematch()
 	{
 		m_state = MatchingStatus.Matching;
+		m_netManager.ResetMatching();
 		m_netManager.IsStandbyState = false;
 		m_netManager.IsConnectionWithServerIsBroken = false;
 		MatchingUi.HideRematch();

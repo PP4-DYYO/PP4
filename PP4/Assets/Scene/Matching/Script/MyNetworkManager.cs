@@ -118,9 +118,9 @@ public class MyNetworkManager : NetworkManager
 			m_match.ListMatches(0, 20, "", true, 0, 0, OnMatchList);
 
 			//使用中のネットワークIDを取得
-			if (matches.Count >= 1)
+			if (matches.Count >= 1 && matchInfo != null)
 			{
-				m_networkIdInUse = (UInt64)(matches[0].networkId);
+				m_networkIdInUse = (UInt64)matchInfo.networkId;
 				m_isStandbyState = true;
 			}
 			return;
@@ -223,7 +223,7 @@ public class MyNetworkManager : NetworkManager
 	/// <summary>
 	/// マッチングのリセット
 	/// </summary>
-	void ResetMatching()
+	public void ResetMatching()
 	{
 		//マネージャーの設定
 		StartMatchMaker();

@@ -302,7 +302,7 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	/// オーラボールの対象
 	/// </summary>
 	[SyncVar(hook = "SyncAuraBallTarget")]
-	GameObject m_auraBallTarget;
+	GameObject m_auraBallTarget = null;
 
 	/// <summary>
 	/// 隕石破壊数
@@ -605,7 +605,16 @@ public class MyNetPlayerSetting : NetworkBehaviour
 	{
 		//オーラボール
 		if (IsInfoToThrowAuraBall())
-			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall, isLocalPlayer);
+		{
+			Player.ThrowAuraBall(m_auraBallTarget, m_auraBall, hasAuthority);
+
+			//権限のないものが何発も打てないように
+			if (!hasAuthority)
+			{
+				m_auraBallTarget = null;
+				m_auraBall = AuraAttribute.Non;
+			}
+		}
 
 		//権限を持ったプレイヤーでない
 		if (!hasAuthority)
@@ -710,6 +719,18 @@ public class MyNetPlayerSetting : NetworkBehaviour
 				CmdAuraBall(AuraAttribute.Non);
 			if (m_auraBallTarget != null)
 				CmdAuraBallTarget(null);
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 全てのオーラボールを消す
+	/// </summary>
+	public static void EraseAllAuraBall()
+	{
+		foreach(var player in s_netPlayerSettings)
+		{
+			player.PlayerScript.EraseAuraBall();
 		}
 	}
 

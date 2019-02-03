@@ -82,19 +82,15 @@ public class MyAiPlayer : MyPlayer
 	}
 
 	/// <summary>
-	/// オーラを投げるための乱数生成用
+	/// 投げるオーラを決める数値
 	/// </summary>
-	int m_randomThrow;
+	float m_chooseThrowAuraNum;
 
 	/// <summary>
-	/// 乱数生成用の上限の数字
+	/// オーラの使用状態(初期値はUsed)
 	/// </summary>
-	const int UPPER_LIMIT_NUM = 101;
-
-	/// <summary>
-	/// オーラのの使用状態
-	/// </summary>
-	ActionState m_auraState;
+	[SerializeField]
+	ActionState AuraState;
 
 	/// <summary>
 	/// この数値以上ならオーラを使える(1f)
@@ -116,7 +112,8 @@ public class MyAiPlayer : MyPlayer
 	/// <summary>
 	/// 加速の使用状態
 	/// </summary>
-	ActionState m_SpState;
+	[SerializeField]
+	ActionState SpState;
 
 	/// <summary>
 	/// 加速の使用間隔(10f)
@@ -136,17 +133,17 @@ public class MyAiPlayer : MyPlayer
 	float m_spUseLimit;
 
 	/// <summary>
-	/// 投げるオーラの種類
+	/// 投げるオーラを決める判断の数値
 	/// </summary>
-	public enum RandomThrowAuraNum
+	struct RandomThrowAuraNum
 	{
-		HeatAura,
-		ElasticityAura,
-		ElectricalAura
+		public const float HEAT_AURA = 0.33f;
+		public const float ELASTICITY_AURA = 0.66f;
+		public const float ELECTRICAL_AURA = 1.0f;
 	}
 
 	/// <summary>
-	/// 使用状態
+	/// 行動の状態
 	/// </summary>
 	public enum ActionState
 	{
@@ -229,31 +226,31 @@ public class MyAiPlayer : MyPlayer
 	void ThinkAcceleration()
 	{
 		//使用後は
-		if (m_SpState == ActionState.Used)
+		if (SpState == ActionState.Used)
 		{
 			if (m_spWaitingTime < m_spIntervalTime)
 				m_spWaitingTime += Time.deltaTime;
 			else
 			{
-				m_SpState = ActionState.Waiting;
+				SpState = ActionState.Waiting;
 				m_spWaitingTime = 0;
 			}
 		}
 
 		//加速が使えるとき
-		if (m_SpState == ActionState.Waiting || m_SpState == ActionState.Using)
+		if (SpState == ActionState.Waiting || SpState == ActionState.Using)
 		{
 			//SPゲージが一定数ある時または隕石が近い時に加速
-			if (GetPercentageOfRemainingSpGauge() >= m_spUseLimit || SpaceGrasp.MeteoriteNear)
+			if (AuraState != ActionState.Using && (GetPercentageOfRemainingSpGauge() > m_spUseLimit || SpaceGrasp.MeteoriteNear))
 			{
 				m_isKeepPressingAButton = true;
-				m_SpState = ActionState.Using;
+				SpState = ActionState.Using;
 			}
+
 			//使用後は待機時間発生
-			else
+			if (SpState == ActionState.Using && GetPercentageOfRemainingSpGauge() <= m_spUseLimit)
 			{
-				if (m_SpState == ActionState.Using)
-					m_SpState = ActionState.Used;
+				SpState = ActionState.Used;
 				m_isKeepPressingAButton = false;
 			}
 		}
@@ -315,19 +312,19 @@ public class MyAiPlayer : MyPlayer
 	void ThinkThrowAuraBall()
 	{
 		//使用後
-		if (m_auraState == ActionState.Used)
+		if (AuraState == ActionState.Used)
 		{
 			if (m_auraWaitingTime < m_auraIntervalTime)
 				m_auraWaitingTime += Time.deltaTime;
 			else
 			{
-				m_auraState = ActionState.Waiting;
+				AuraState = ActionState.Waiting;
 				m_auraWaitingTime = 0;
 			}
 		}
 
-		//投げた後は投げたい情報リセット
-		if (m_auraState == ActionState.Using)
+		//投げた後は投げたい情報リセット(自分が一位の場合は抜かさせるまでゲージを使わない)
+		if (AuraState == ActionState.Using && GetPercentageOfRemainingSpGauge() < m_spUseLimit)
 		{
 			if (m_wantToThrowHeatAura)
 				m_wantToThrowHeatAura = false;
@@ -335,29 +332,26 @@ public class MyAiPlayer : MyPlayer
 				m_wantToThrowElasticityAura = false;
 			if (m_wantToThrowElectricalAura)
 				m_wantToThrowElectricalAura = false;
-			m_auraState = ActionState.Used;
+			AuraState = ActionState.Used;
 		}
 
 		//オーラが投げられるとき
-		if (m_auraState == ActionState.Waiting && GetPercentageOfRemainingSpGauge() >= m_auraUseLimit)
+		if (AuraState == ActionState.Waiting && GetPercentageOfRemainingSpGauge() >= m_auraUseLimit)
 		{
-			m_randomThrow = Random.Range(0, UPPER_LIMIT_NUM);
-			switch (m_randomThrow)
+			m_chooseThrowAuraNum = transform.position.y % 1;
+			if (m_chooseThrowAuraNum <= RandomThrowAuraNum.HEAT_AURA)
 			{
-				case (int)RandomThrowAuraNum.HeatAura:
-					m_wantToThrowHeatAura = true;
-					break;
-				case (int)RandomThrowAuraNum.ElasticityAura:
-					m_wantToThrowElasticityAura = true;
-					break;
-				case (int)RandomThrowAuraNum.ElectricalAura:
-					m_wantToThrowElectricalAura = true;
-					break;
+				m_wantToThrowHeatAura = true;
 			}
-			if (m_randomThrow <= (int)RandomThrowAuraNum.ElectricalAura)
+			else if (m_chooseThrowAuraNum <= RandomThrowAuraNum.ELASTICITY_AURA)
 			{
-				m_auraState = ActionState.Using;
+				m_wantToThrowElasticityAura = true;
 			}
+			else
+			{
+				m_wantToThrowElectricalAura = true;
+			}
+			AuraState = ActionState.Using;
 		}
 	}
 

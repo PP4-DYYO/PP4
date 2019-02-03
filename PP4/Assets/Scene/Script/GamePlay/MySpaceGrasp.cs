@@ -83,6 +83,23 @@ public class MySpaceGrasp : MonoBehaviour
 		if (other.tag.Equals(SplasheInfo.TAG))
 			m_splashes.Add(other.gameObject);
 
+		//隕石
+		if (other.tag.Equals(StageInfo.METEORITE_TAG))
+			m_isMeteoriteNear = true;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 重なり続ける判定
+	/// </summary>
+	/// <param name="other">重なったもの</param>
+	void OnTriggerStay(Collider other)
+	{
+		//対象者は除外
+		if (other.transform == Target)
+			return;
+
+		//隕石
 		if (other.tag.Equals(StageInfo.METEORITE_TAG))
 			m_isMeteoriteNear = true;
 	}

@@ -82,11 +82,6 @@ public class MyAiPlayer : MyPlayer
 	}
 
 	/// <summary>
-	/// オーラを投げた
-	/// </summary>
-	bool m_isAuraThrow;
-
-	/// <summary>
 	/// オーラを投げるための乱数生成用
 	/// </summary>
 	int m_randomThrow;
@@ -96,29 +91,13 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	const int UPPER_LIMIT_NUM = 101;
 
-
 	/// <summary>
-	/// 投げるオーラの種類
+	/// オーラのの使用状態
 	/// </summary>
-	public enum RandomThrowAuraNum
-	{
-		HeatAura,
-		ElasticityAura,
-		ElectricalAura
-	}
+	ActionState m_auraState;
 
 	/// <summary>
-	/// オーラを投げられる
-	/// </summary>
-	bool m_ableThrowAura;
-
-	/// <summary>
-	/// オーラの待機時間を数えるか
-	/// </summary>
-	bool m_isAuraTimeCount;
-
-	/// <summary>
-	/// この数値を超えていたらオーラを使える(0.5f)
+	/// この数値以上ならオーラを使える(1f)
 	/// </summary>
 	[SerializeField]
 	float m_auraUseLimit;
@@ -135,43 +114,12 @@ public class MyAiPlayer : MyPlayer
 	float m_auraWaitingTime;
 
 	/// <summary>
-	/// 隕石との距離
+	/// 加速の使用状態
 	/// </summary>
-	float m_meteoriteDistance;
+	ActionState m_SpState;
 
 	/// <summary>
-	/// 隕石のゲームオブジェクト
-	/// </summary>
-	GameObject Meteorite;
-
-	/// <summary>
-	/// 隕石が近くにあるか
-	/// </summary>
-	bool m_isMeteoriteNear;
-
-	/// <summary>
-	/// 隕石を破壊しようとする距離(50f)
-	/// </summary>
-	[SerializeField]
-	float m_breakMeteoriteDistance;
-
-	/// <summary>
-	/// 加速を使える
-	/// </summary>
-	bool m_ableSp;
-
-	/// <summary>
-	/// 加速を使った
-	/// </summary>
-	bool m_isUsedSp;
-
-	/// <summary>
-	/// 加速の待機時間を数えるか
-	/// </summary>
-	bool m_isSpTimeCount;
-
-	/// <summary>
-	/// 加速の使用間隔(5f)
+	/// 加速の使用間隔(10f)
 	/// </summary>
 	[SerializeField]
 	float m_spIntervalTime;
@@ -187,13 +135,33 @@ public class MyAiPlayer : MyPlayer
 	[SerializeField]
 	float m_spUseLimit;
 
-	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 最初の動作
+	/// 投げるオーラの種類
 	/// </summary>
-	void Start()
+	public enum RandomThrowAuraNum
 	{
-		Meteorite = GameObject.Find("Field").GetComponent<MyField>().MeteoriteObject;
+		HeatAura,
+		ElasticityAura,
+		ElectricalAura
+	}
+
+	/// <summary>
+	/// 使用状態
+	/// </summary>
+	public enum ActionState
+	{
+		/// <summary>
+		/// 使用可能状態
+		/// </summary>
+		Waiting,
+		/// <summary>
+		/// 使用中
+		/// </summary>
+		Using,
+		/// <summary>
+		/// 使用後
+		/// </summary>
+		Used
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -237,9 +205,6 @@ public class MyAiPlayer : MyPlayer
 		//オーラ
 		ThinkThrowAuraBall();
 
-		//隕石破壊行動
-		ThinkbreakMeteorite();
-
 		//ボタン入力 
 		ThinkButtonPress();
 	}
@@ -264,40 +229,31 @@ public class MyAiPlayer : MyPlayer
 	void ThinkAcceleration()
 	{
 		//使用後は
-		if (m_isSpTimeCount)
+		if (m_SpState == ActionState.Used)
 		{
 			if (m_spWaitingTime < m_spIntervalTime)
 				m_spWaitingTime += Time.deltaTime;
 			else
 			{
-				m_ableSp = true;
-				m_isSpTimeCount = false;
+				m_SpState = ActionState.Waiting;
 				m_spWaitingTime = 0;
 			}
 		}
 
-		if (!m_isSpTimeCount)
-		{
-			m_ableSp = true;
-		}
-		else
-		{
-			m_ableSp = false;
-		}
-
 		//加速が使えるとき
-		if (m_ableSp)
+		if (m_SpState == ActionState.Waiting || m_SpState == ActionState.Using)
 		{
 			//SPゲージが一定数ある時または隕石が近い時に加速
-			if (GetPercentageOfRemainingSpGauge() >= m_spUseLimit || m_isMeteoriteNear)
+			if (GetPercentageOfRemainingSpGauge() >= m_spUseLimit || SpaceGrasp.MeteoriteNear)
 			{
 				m_isKeepPressingAButton = true;
+				m_SpState = ActionState.Using;
 			}
-			//SPゲージが一定数を切ると再使用まで待機時間発生
+			//使用後は待機時間発生
 			else
 			{
-				m_ableSp = false;
-				m_isSpTimeCount = true;
+				if (m_SpState == ActionState.Using)
+					m_SpState = ActionState.Used;
 				m_isKeepPressingAButton = false;
 			}
 		}
@@ -313,7 +269,12 @@ public class MyAiPlayer : MyPlayer
 
 		//回復ボタンを押す
 		if (m_countTimeInterValOfButtonFire >= m_timeIntervalOfButtonFire)
+		{
 			m_isPushedRecoveryButton = true;
+			m_countTimeInterValOfButtonFire = 0;
+		}
+		else
+			m_isPushedRecoveryButton = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -353,37 +314,32 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	void ThinkThrowAuraBall()
 	{
-		if (m_isAuraTimeCount)
+		//使用後
+		if (m_auraState == ActionState.Used)
 		{
 			if (m_auraWaitingTime < m_auraIntervalTime)
 				m_auraWaitingTime += Time.deltaTime;
 			else
 			{
-				m_isAuraTimeCount = false;
+				m_auraState = ActionState.Waiting;
 				m_auraWaitingTime = 0;
 			}
 		}
 
 		//投げた後は投げたい情報リセット
-		if (m_isAuraThrow)
+		if (m_auraState == ActionState.Using)
 		{
-			m_wantToThrowHeatAura = false;
-			m_wantToThrowElasticityAura = false;
-			m_wantToThrowElectricalAura = false;
-			m_isAuraThrow = false;
-		}
-
-		if (GetPercentageOfRemainingSpGauge() > m_auraUseLimit && !m_isAuraTimeCount)
-		{
-			m_ableThrowAura = true;
-		}
-		else
-		{
-			m_ableThrowAura = false;
+			if (m_wantToThrowHeatAura)
+				m_wantToThrowHeatAura = false;
+			if (m_wantToThrowElasticityAura)
+				m_wantToThrowElasticityAura = false;
+			if (m_wantToThrowElectricalAura)
+				m_wantToThrowElectricalAura = false;
+			m_auraState = ActionState.Used;
 		}
 
 		//オーラが投げられるとき
-		if (m_ableThrowAura)
+		if (m_auraState == ActionState.Waiting && GetPercentageOfRemainingSpGauge() >= m_auraUseLimit)
 		{
 			m_randomThrow = Random.Range(0, UPPER_LIMIT_NUM);
 			switch (m_randomThrow)
@@ -400,25 +356,9 @@ public class MyAiPlayer : MyPlayer
 			}
 			if (m_randomThrow <= (int)RandomThrowAuraNum.ElectricalAura)
 			{
-				m_isAuraThrow = true;
-				m_isAuraTimeCount = true;
+				m_auraState = ActionState.Using;
 			}
 		}
-	}
-
-	//----------------------------------------------------------------------------------------------------
-	/// <summary>
-	/// 隕石の破壊を考える
-	/// </summary>
-	void ThinkbreakMeteorite()
-	{
-		//隕石との距離
-		m_meteoriteDistance = Vector3.Distance(transform.position, Meteorite.transform.position);
-
-		if (m_meteoriteDistance < m_breakMeteoriteDistance)
-			m_isMeteoriteNear = true;
-		else
-			m_isMeteoriteNear = false;
 	}
 
 	//----------------------------------------------------------------------------------------------------

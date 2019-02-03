@@ -38,6 +38,15 @@ public class MySpaceGrasp : MonoBehaviour
 		get { return m_splashes; }
 	}
 
+	/// <summary>
+	/// 隕石が近くにあるか
+	/// </summary>
+	bool m_isMeteoriteNear;
+	public bool MeteoriteNear
+	{
+		get { return m_isMeteoriteNear; }
+	}
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 後フレーム
@@ -73,6 +82,9 @@ public class MySpaceGrasp : MonoBehaviour
 		//水しぶき
 		if (other.tag.Equals(SplasheInfo.TAG))
 			m_splashes.Add(other.gameObject);
+
+		if (other.tag.Equals(StageInfo.METEORITE_TAG))
+			m_isMeteoriteNear = true;
 	}
 
 	//----------------------------------------------------------------------------------------------------
@@ -97,5 +109,9 @@ public class MySpaceGrasp : MonoBehaviour
 			if (m_splashes.Contains(other.gameObject))
 				m_splashes.Remove(other.gameObject);
 		}
+
+		//隕石
+		if (other.tag.Equals(StageInfo.METEORITE_TAG))
+			m_isMeteoriteNear = false;
 	}
 }

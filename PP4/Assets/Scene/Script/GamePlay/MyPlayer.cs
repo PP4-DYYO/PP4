@@ -1529,9 +1529,10 @@ public class MyPlayer : MonoBehaviour
 	/// 隕石の爆風を受ける
 	/// </summary>
 	/// <param name="influenceRate">影響率</param>
-	public void ReceiveBlastOfMeteorite(float influenceRate)
+	/// <param name="isReduceSpGauge">SPゲージを減らす</param>
+	public void ReceiveBlastOfMeteorite(float influenceRate, bool isReduceSpGauge = true)
 	{
-		m_countSpTime += m_spTime * influenceRate * m_spConsumptionRate;
+		m_countSpTime += isReduceSpGauge ? m_spTime * influenceRate * m_spConsumptionRate : 0;
 		m_countSpTime = (m_countSpTime > m_spTime ? m_spTime : m_countSpTime);
 
 		if (influenceRate > 0)

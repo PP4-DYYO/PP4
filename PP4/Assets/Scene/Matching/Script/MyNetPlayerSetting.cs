@@ -756,10 +756,10 @@ public class MyNetPlayerSetting : NetworkBehaviour
 		m_meteoriteDestructionNum = meteoriteDestructionNum;
 
 		//隕石破壊して爆風影響率取得
-		m_workFloat = Game.StageScript.CurrentFieldScript.DestructionOfMeteorite(Game.OperatingPlayerScript.transform.position);
+		m_workFloat = Game.StageScript.CurrentFieldScript.DestructionOfMeteorite(transform.position);
 
 		//隕石の影響
-		Game.OperatingPlayerScript.ReceiveBlastOfMeteorite(m_workFloat);
+		PlayerScript.ReceiveBlastOfMeteorite(m_workFloat, hasAuthority);
 	}
 
 	//----------------------------------------------------------------------------------------------------

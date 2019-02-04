@@ -39,6 +39,15 @@ public class MySpaceGrasp : MonoBehaviour
 	}
 
 	/// <summary>
+	/// コイン
+	/// </summary>
+	List<GameObject> m_coins = new List<GameObject>();
+	public List<GameObject> Coins
+	{
+		get { return m_coins; }
+	}
+
+	/// <summary>
 	/// 隕石が近くにあるか
 	/// </summary>
 	bool m_isMeteoriteNear;
@@ -83,6 +92,10 @@ public class MySpaceGrasp : MonoBehaviour
 		if (other.tag.Equals(SplasheInfo.TAG))
 			m_splashes.Add(other.gameObject);
 
+		//コイン
+		if (other.tag.Equals(ItemInfo.TAG))
+			m_coins.Add(other.gameObject);
+
 		//隕石
 		if (other.tag.Equals(StageInfo.METEORITE_TAG))
 			m_isMeteoriteNear = true;
@@ -125,6 +138,14 @@ public class MySpaceGrasp : MonoBehaviour
 			//削除
 			if (m_splashes.Contains(other.gameObject))
 				m_splashes.Remove(other.gameObject);
+		}
+
+		//コイン
+		if (other.tag.Equals(ItemInfo.TAG))
+		{
+			//削除
+			if (m_coins.Contains(other.gameObject))
+				m_coins.Remove(other.gameObject);
 		}
 
 		//隕石

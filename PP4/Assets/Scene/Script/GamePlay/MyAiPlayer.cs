@@ -54,6 +54,8 @@ public class MyAiPlayer : MyPlayer
 	float m_countTimeInterValOfButtonFire;
 	#endregion
 
+	#region オーラ
+	[Header("オーラ関連")]
 	/// <summary>
 	/// 温熱オーラが投げたい
 	/// </summary>
@@ -108,7 +110,10 @@ public class MyAiPlayer : MyPlayer
 	/// オーラの待機時間
 	/// </summary>
 	float m_auraWaitingTime;
+	#endregion
 
+	[Header("加速関連")]
+	#region
 	/// <summary>
 	/// 加速の使用状態
 	/// </summary>
@@ -116,7 +121,7 @@ public class MyAiPlayer : MyPlayer
 	ActionState SpState;
 
 	/// <summary>
-	/// 加速の使用間隔(10f)
+	/// 加速の使用間隔(5f)
 	/// </summary>
 	[SerializeField]
 	float m_spIntervalTime;
@@ -131,6 +136,69 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	[SerializeField]
 	float m_spUseLimit;
+	#endregion
+
+	[Header("コイン関連")]
+	#region　コイン
+	/// <summary>
+	/// 狙うコインの場所
+	/// </summary>
+	[SerializeField]
+	Vector3 m_targetCoin;
+
+	/// <summary>
+	/// 狙うコインのゲームオブジェクト
+	/// </summary>
+	[SerializeField]
+	GameObject m_targetCoinObject;
+
+	/// <summary>
+	/// 前のコインの所持数
+	/// </summary>
+	[SerializeField]
+	int m_beforeCoinNum;
+
+	/// <summary>
+	/// コインの取得手順
+	/// </summary>
+	public enum GetCoinAction
+	{
+		/// <summary>
+		/// 探す
+		/// </summary>
+		Search,
+		/// <summary>
+		/// 近づく
+		/// </summary>
+		Approach
+	}
+
+	/// <summary>
+	/// コインを取る動作の状態
+	/// </summary>
+	[SerializeField]
+	GetCoinAction CoinAction;
+
+	/// <summary>
+	/// プレイヤーとコインとの距離
+	/// </summary>
+	float playerToCoinDistanceY;
+
+	/// <summary>
+	/// コインを見失う距離
+	/// </summary>
+	const float SEARCH_LIMIT_DISTANCE = 3;
+
+	/// <summary>
+	/// コインを取りに行くときのプレイヤーの速度
+	/// </summary>
+	const float PLAYER_STEP = 10f;
+
+	/// <summary>
+	/// プレイヤーの当たり判定の高さ
+	/// </summary>
+	const float PLAYER_HEIGHT = 1.5f;
+	#endregion
 
 	/// <summary>
 	/// 投げるオーラを決める判断の数値
@@ -197,10 +265,14 @@ public class MyAiPlayer : MyPlayer
 			ThinkingRecovery();
 
 		//衝突回避
-		ThinkAboutCollisionAvoidance();
+		if (CoinAction == GetCoinAction.Search)
+			ThinkAboutCollisionAvoidance();
 
 		//オーラ
 		ThinkThrowAuraBall();
+
+		//コイン取得
+		ThinkGetCoin();
 
 		//ボタン入力 
 		ThinkButtonPress();
@@ -212,8 +284,19 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	void ThinkButtonPress()
 	{
-		//常に上昇ボタンを入力する 
-		m_isKeepPressingRButton = true;
+		//コインを狙っていないときは常に上昇
+		if (CoinAction == GetCoinAction.Search)
+		{
+			m_isKeepPressingRButton = true;
+			m_isKeepPressingLButton = false;
+		}
+
+		else if (CoinAction != GetCoinAction.Search)
+		{
+			m_isKeepPressingRButton = false;
+			m_isKeepPressingLButton = false;
+			transform.position = Vector3.MoveTowards(transform.position, m_targetCoin, PLAYER_STEP * Time.deltaTime);
+		}
 
 		//加速は条件あり
 		ThinkAcceleration();
@@ -238,13 +321,28 @@ public class MyAiPlayer : MyPlayer
 		}
 
 		//加速が使えるとき
-		if (SpState == ActionState.Waiting || SpState == ActionState.Using)
+		if (SpState != ActionState.Used && AuraState != ActionState.Using)
 		{
 			//SPゲージが一定数ある時または隕石が近い時に加速
-			if (AuraState != ActionState.Using && (GetPercentageOfRemainingSpGauge() > m_spUseLimit || SpaceGrasp.MeteoriteNear))
+			if (GetPercentageOfRemainingSpGauge() > m_spUseLimit || SpaceGrasp.MeteoriteNear)
 			{
-				m_isKeepPressingAButton = true;
-				SpState = ActionState.Using;
+				//コインを見つけていない場合
+				if (CoinAction == GetCoinAction.Search)
+				{
+					m_isKeepPressingAButton = true;
+					SpState = ActionState.Using;
+				}
+
+				//隕石が近くにある場合
+				if (SpaceGrasp.MeteoriteNear)
+				{
+					if (!m_isKeepPressingAButton)
+						m_isKeepPressingAButton = true;
+					if (SpState != ActionState.Using)
+						SpState = ActionState.Using;
+					m_spWaitingTime = 0;
+					ResetCoinAction();
+				}
 			}
 
 			//使用後は待機時間発生
@@ -353,6 +451,57 @@ public class MyAiPlayer : MyPlayer
 			}
 			AuraState = ActionState.Using;
 		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// コインの取得を考える
+	/// </summary>
+	void ThinkGetCoin()
+	{
+		foreach (var coins in SpaceGrasp.Coins)
+		{
+			//加速を使っていないかつコイン探索中
+			if (CoinAction == GetCoinAction.Search && SpState != ActionState.Using)
+			{
+				//コインを見つける
+				if (coins.activeSelf == true)
+				{
+					CoinAction = GetCoinAction.Approach;
+					m_targetCoinObject = coins;
+					m_targetCoin = coins.transform.position;
+					m_beforeCoinNum = NumOfCoins;
+				}
+			}
+		}
+
+		if (CoinAction != GetCoinAction.Search)
+		{
+			playerToCoinDistanceY = transform.position.y - m_targetCoin.y;
+		}
+
+		if (CoinAction == GetCoinAction.Approach)
+		{
+			if (m_targetCoinObject.activeSelf == true)
+			{
+				//距離が3より大きい
+				if (m_beforeCoinNum != NumOfCoins || Mathf.Abs(playerToCoinDistanceY) > SEARCH_LIMIT_DISTANCE)
+				{
+					ResetCoinAction();
+				}
+			}
+			else
+			{
+				//ターゲットが消えた
+				ResetCoinAction();
+			}
+		}
+	}
+
+	void ResetCoinAction()
+	{
+		m_targetCoin = Vector3.zero;
+		CoinAction = GetCoinAction.Search;
 	}
 
 	//----------------------------------------------------------------------------------------------------

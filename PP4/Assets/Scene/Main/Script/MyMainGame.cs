@@ -116,6 +116,12 @@ public class MyMainGame : MyGame
 	float m_timeToWaitForPeople;
 
 	/// <summary>
+	/// サーバ接続を確認する時間
+	/// </summary>
+	[SerializeField]
+	float m_timeToCheckServerConnection;
+
+	/// <summary>
 	/// 人が集まり状態遷移する時間
 	/// </summary>
 	[SerializeField]
@@ -175,6 +181,11 @@ public class MyMainGame : MyGame
 	/// 人が集まった時間
 	/// </summary>
 	float m_timeWhenPeopleGathered;
+
+	/// <summary>
+	/// サーバ確認フラグ
+	/// </summary>
+	bool m_isCheckServer;
 
 	/// <summary>
 	/// 整列するプレイヤーの初期位置
@@ -885,6 +896,16 @@ public class MyMainGame : MyGame
 	{
 		//人が集まっていない
 		m_timeWhenPeopleGathered = -1;
+
+		//サーバのチェック
+		if(!m_isCheckServer && m_countTheTimeOfTheState >= m_timeToCheckServerConnection)
+		{
+			m_isCheckServer = true;
+
+			//一つ目のサーバでないandプレイヤーが1人
+			if (!m_netManager.IsFirstConnection() && m_numOfPlayersPrev == 1)
+				m_netManager.StopConnection();
+		}
 
 		//整列中
 		if (!OperatingNetPlayerSetting.IsReady)

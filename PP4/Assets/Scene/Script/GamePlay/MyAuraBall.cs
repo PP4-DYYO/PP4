@@ -216,7 +216,10 @@ public class MyAuraBall : MonoBehaviour
 
 		//終了
 		if (m_countTravelTime >= m_travelTime)
+		{
 			EraseAura();
+			return;
+		}
 
 		m_countTravelTime += Time.deltaTime;
 

@@ -310,7 +310,7 @@ public class MyGameInfo : MySingleton<MyGameInfo>
 	/// <param name="isPlayTutorial">チュートリアルをプレイした</param>
 	public void SaveIsPlayTutorial(bool isPlayTutorial)
 	{
-		PlayerPrefs.SetInt(PlayerPrefsKeys.IS_PLAY_TUTORIAL, isPlayTutorial ? PlayerPrefsKeys.TRUE : PlayerPrefsKeys.TRUE);
+		PlayerPrefs.SetInt(PlayerPrefsKeys.IS_PLAY_TUTORIAL, isPlayTutorial ? PlayerPrefsKeys.TRUE : PlayerPrefsKeys.FALSE);
 	}
 
 	//----------------------------------------------------------------------------------------------------

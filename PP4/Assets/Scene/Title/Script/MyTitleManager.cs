@@ -298,6 +298,17 @@ public class MyTitleManager : MonoBehaviour
 	float m_elapsedTime;
 
 	/// <summary>
+	/// ループ回数
+	/// </summary>
+	[SerializeField]
+	int m_numOfLoops;
+
+	/// <summary>
+	/// ループ回数を数える
+	/// </summary>
+	int m_countNumOfLoops;
+
+	/// <summary>
 	/// コルーチン
 	/// </summary>
 	IEnumerator Coroutine;
@@ -325,6 +336,8 @@ public class MyTitleManager : MonoBehaviour
 		//左のサーファーの状態
 		m_leftSurfingStartPos = LeftSurfingCharacter.transform.position;
 		m_endFrontMove = false;
+
+		m_countNumOfLoops = 0;
 
 		//BGM
 		MySoundManager.Instance.Play(BgmCollection.Title);
@@ -632,7 +645,12 @@ public class MyTitleManager : MonoBehaviour
 		{
 			m_elapsedTime = 0;
 			m_endTitle = false;
-			Restart();
+			m_countNumOfLoops++;
+
+			if (m_countNumOfLoops >= m_numOfLoops)
+				MySceneManager.Instance.ChangeScene(MyScene.Pv);
+			else
+				Restart();
 		}
 	}
 

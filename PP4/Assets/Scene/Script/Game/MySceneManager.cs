@@ -27,6 +27,7 @@ public enum MyScene
 	Tutorial,
 	Matching,
 	Main,
+	Pv,
 	Non,
 }
 

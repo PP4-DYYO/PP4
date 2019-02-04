@@ -834,7 +834,13 @@ public class MyMainGame : MyGame
 	{
 		//人が集まった時間
 		if (m_timeWhenPeopleGathered == -1)
+		{
 			m_timeWhenPeopleGathered = m_countTheTimeOfTheState;
+
+			//人材募集の停止
+			m_netManager.matchMaker.SetMatchAttributes(
+				(UnityEngine.Networking.Types.NetworkID)m_netManager.NetworkIdInUse, false, 0, m_netManager.OnSetMatchAttributes);
+		}
 
 		//状態遷移する時間
 		if (m_countTheTimeOfTheState >= m_timeWhenPeopleGathered + m_timeWhenPeopleGatherAndChangeState)
@@ -1787,11 +1793,13 @@ public class MyMainGame : MyGame
 			//再戦表示
 			MainUi.ShowRematch();
 
-			//AIキャラクターの削除とバトル中フラグ
+			//AIキャラクターの削除とバトル中フラグと人材募集開始
 			if (OperatingNetPlayerSetting.GetNetPlayerNum() == 0)
 			{
 				OperatingNetPlayerSetting.SpawnAiCharacter(false);
 				OperatingNetPlayerSetting.CmdIsDuringBattle(false);
+				m_netManager.matchMaker.SetMatchAttributes(
+					(UnityEngine.Networking.Types.NetworkID)m_netManager.NetworkIdInUse, true, 0, m_netManager.OnSetMatchAttributes);
 			}
 
 			m_countRematchWaitingTime = 0;

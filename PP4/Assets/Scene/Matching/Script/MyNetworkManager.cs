@@ -67,6 +67,10 @@ public class MyNetworkManager : NetworkManager
 	/// 使用中のネットワークID
 	/// </summary>
 	UInt64 m_networkIdInUse;
+	public UInt64 NetworkIdInUse
+	{
+		get { return m_networkIdInUse; }
+	}
 
 	/// <summary>
 	/// 使用不可のネットワークID
@@ -181,6 +185,20 @@ public class MyNetworkManager : NetworkManager
 	public bool IsConnection()
 	{
 		return m_isCreateRoom || m_isJoinRoom || !m_isStandbyState;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 一つ目の接続か
+	/// </summary>
+	/// <returns>一つ目の接続か</returns>
+	public bool IsFirstConnection()
+	{
+		//更新
+		m_match.ListMatches(0, 20, "", true, 0, 0, OnMatchList);
+
+		//一つ目の接続
+		return matchInfo.networkId == matches[0].networkId;
 	}
 
 	//----------------------------------------------------------------------------------------------------

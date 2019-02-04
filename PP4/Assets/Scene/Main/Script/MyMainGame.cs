@@ -809,6 +809,7 @@ public class MyMainGame : MyGame
 
 			//変数
 			m_timeWhenPeopleGathered = -1;
+			m_isCheckServer = false;
 
 			//BGM
 			MySoundManager.Instance.Play(BgmCollection.Matching);
@@ -1778,8 +1779,9 @@ public class MyMainGame : MyGame
 		{
 			m_isDisplayPodium = true;
 
-			//表彰台の完全表示
+			//表彰台の完全表示と表彰
 			Stage.CurrentFieldScript.MovePodium(1);
+			Stage.CurrentFieldScript.HonorPlayer(OperatingNetPlayerSetting.transform.position, m_isWin);
 
 			//SE
 			MySoundManager.Instance.Play(SeCollection.Result);

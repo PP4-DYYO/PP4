@@ -103,6 +103,24 @@ public class MyField : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	GameObject Podium;
+
+	/// <summary>
+	/// 表彰
+	/// </summary>
+	[SerializeField]
+	GameObject Honor;
+
+	/// <summary>
+	/// 勝ちの表彰
+	/// </summary>
+	[SerializeField]
+	GameObject HonorOfWin;
+
+	/// <summary>
+	/// 負けの表彰
+	/// </summary>
+	[SerializeField]
+	GameObject HonorOfLose;
 	#endregion
 
 	#region 情報
@@ -375,6 +393,10 @@ public class MyField : MonoBehaviour
 		//表彰台を隠す
 		Podium.transform.position = m_posToHidePodium;
 
+		//表彰の非表示
+		HonorOfWin.SetActive(false);
+		HonorOfLose.SetActive(false);
+
 		//嵐を表示
 		ShowStorm();
 
@@ -556,5 +578,17 @@ public class MyField : MonoBehaviour
 	public void MovePodium(float movementRatio)
 	{
 		Podium.transform.position = m_initPosOfPodium + ((m_targetPosOfPodium - m_initPosOfPodium) * movementRatio);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// プレイヤーを表彰する
+	/// </summary>
+	/// <param name="pos">表彰位置</param>
+	/// <param name="isWin">勝ち</param>
+	public void HonorPlayer(Vector3 pos, bool isWin = true)
+	{
+		Honor.transform.position = pos;
+		(isWin ? HonorOfWin : HonorOfLose).SetActive(true);
 	}
 }

@@ -47,7 +47,7 @@ public class MySplasheWater : MonoBehaviour
 	/// <summary>
 	/// 水しぶきが発生してからの経過時間
 	/// </summary>
-	public float m_splasheLivingTime;
+	float m_splasheLivingTime;
 
 	/// <summary>
 	/// 水しぶきを大きくする値(Z方向)
@@ -124,6 +124,11 @@ public class MySplasheWater : MonoBehaviour
 	ParticleSystem.MainModule SplashParticleMainModule;
 
 	/// <summary>
+	/// 水しぶきのパーティクルシステムのStartColor
+	/// </summary>
+	ParticleSystem.MinMaxGradient SplashParticleMinMaxGradient;
+
+	/// <summary>
 	/// 水しぶきのパーティクルシステムのモジュールがうごいているか
 	/// </summary>
 	bool m_isParticleModuleMoving;
@@ -144,6 +149,11 @@ public class MySplasheWater : MonoBehaviour
 	/// </summary>
 	float m_loopStopTime;
 
+	/// <summary>
+	/// 作業用のColor
+	/// </summary>
+	Color m_workColor;
+
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 水しぶきの動き
@@ -154,6 +164,7 @@ public class MySplasheWater : MonoBehaviour
 		tag = SplasheInfo.TRANS_TAG;
 		m_isParticleModuleMoving = true;
 		SplashParticleMainModule = SplashParticle.main;
+		SplashParticleMinMaxGradient = SplashParticle.main.startColor;
 		m_loopStopTime = SplashParticleMainModule.duration + m_addNum;
 	}
 
@@ -171,8 +182,8 @@ public class MySplasheWater : MonoBehaviour
 				MySplasheDestroy();
 			}
 
-			//パーティクルのループの設定
-			ParticleLoop();
+			//パーティクルの設定
+			ParticleProcess();
 
 			//タグの調整
 			TagControl();
@@ -189,7 +200,7 @@ public class MySplasheWater : MonoBehaviour
 				{
 					m_changedBody.x = Body.transform.localScale.x;
 					m_changedBody.y = Body.transform.localScale.y;
-					m_changedBody.z = Body.transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime);
+					m_changedBody.z = Body.transform.localScale.z - (m_splasheScaleZ / m_splasheSmallerTime) * Time.deltaTime;
 
 					Body.transform.localScale = m_changedBody;
 				}
@@ -197,23 +208,19 @@ public class MySplasheWater : MonoBehaviour
 			//空中
 			else
 			{
-				//x、yがまだ小さくなれるとき
-				if (Body.transform.localScale.x - m_splasheXYSizeChange > 0)
-				{
-					//x、yは小さく、zは大きく変更される
-					m_changedBody.x = Body.transform.localScale.x - m_splasheXYSizeChange;
-					m_changedBody.y = Body.transform.localScale.y - m_splasheXYSizeChange;
-					m_changedBody.z = Body.transform.localScale.z + m_splasheSizeChange;
-					Body.transform.localScale = m_changedBody;
-				}
+				//x、yは小さく、zは大きく変更される
+				m_changedBody.x = Body.transform.localScale.x - m_splasheXYSizeChange * Time.deltaTime;
+				m_changedBody.y = Body.transform.localScale.y;
+				m_changedBody.z = Body.transform.localScale.z + m_splasheSizeChange * Time.deltaTime;
+
+				//マイナスのVector3回避
+				if (m_changedBody.x < 0)
+					m_changedBody.x = m_changedBody.y;
 				else
-				{
-					//x、yは同じサイズのまま、zだけ大きく変更される
-					m_changedBody.x = Body.transform.localScale.x;
-					m_changedBody.y = Body.transform.localScale.y;
-					m_changedBody.z = Body.transform.localScale.z + m_splasheSizeChange;
-					Body.transform.localScale = m_changedBody;
-				}
+					m_changedBody.y = m_changedBody.x;
+
+				//スケールの更新
+				Body.transform.localScale = m_changedBody;
 				m_splasheScaleZ = Body.transform.localScale.z;
 			}
 			m_splasheLivingTime += Time.deltaTime;
@@ -273,16 +280,23 @@ public class MySplasheWater : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
-	/// 水しぶきパーティクルのループの設定
+	/// 水しぶきパーティクルの設定
 	/// </summary>
-	void ParticleLoop()
+	void ParticleProcess()
 	{
 		//一定時間経過か着地でループが止まる
 		if (m_splasheLifeTime - m_splasheLivingTime <= m_loopStopTime && m_isParticleModuleMoving || m_isfallen)
 			m_isParticleModuleMoving = false;
 
+		//ループ制御
 		if (SplashParticleMainModule.loop != m_isParticleModuleMoving)
 			SplashParticleMainModule.loop = m_isParticleModuleMoving;
+
+		//色の反映
+		m_workColor = SplashParticleMinMaxGradient.color;
+		m_workColor.a = 1 - Mathf.Pow((m_splasheLivingTime / m_splasheLifeTime), 2);
+		SplashParticleMinMaxGradient.color = m_workColor;
+		SplashParticleMainModule.startColor = SplashParticleMinMaxGradient;
 	}
 
 	//----------------------------------------------------------------------------------------------------

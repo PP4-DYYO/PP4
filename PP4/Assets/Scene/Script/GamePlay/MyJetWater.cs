@@ -82,9 +82,9 @@ public class MyJetWater : MonoBehaviour
 	Vector3 m_splasheDistance;
 
 	/// <summary>
-	/// 水しぶきのオブジェクトの配列(100個用意する)
+	/// 水しぶきのオブジェクトの配列(75個用意する)
 	/// </summary>
-	MySplashe[] Splashes = new MySplashe[100];
+	MySplashe[] Splashes = new MySplashe[75];
 
 	/// <summary>
 	/// 水しぶきの番号
@@ -176,6 +176,7 @@ public class MyJetWater : MonoBehaviour
 				m_countFiringIntervalTime = 0;
 			}
 		}
+
 		//水しぶきの操作
 		ChangeSplasheMovement();
 	}
@@ -203,6 +204,7 @@ public class MyJetWater : MonoBehaviour
 		{
 			if (!Splashes[m_index].SplasheWaterScript.isDisplay)
 				continue;
+
 			if (m_index == 0)
 			{
 				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
@@ -212,18 +214,6 @@ public class MyJetWater : MonoBehaviour
 			{
 				Splashes[m_index].SplasheWaterScript.transform.LookAt(Splashes[m_index].SplasheWaterScript.transform.position +
 					(Splashes[m_index].SplasheWaterScript.transform.position - Splashes[m_index - 1].SplasheWaterScript.transform.position));
-			}
-			//空中にあればサイズ変更
-			if (Splashes[m_index].SplasheWaterScript.transform.position.y > 0)
-			{
-				m_splasheScale = Splashes[m_index].SplasheWaterScript.transform.localScale;
-
-				m_splasheIndex = m_index - m_splasheNum;
-				if (m_splasheIndex < 0)
-					m_splasheIndex += Splashes.Length;
-				m_splasheScale.z = m_splasheMinimumSize + (Splashes.Length - m_splasheIndex) / m_splasheSmollerAmount;
-
-				Splashes[m_index].SplasheWaterScript.transform.localScale = m_splasheScale;
 			}
 		}
 	}

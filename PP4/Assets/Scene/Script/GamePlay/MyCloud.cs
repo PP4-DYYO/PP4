@@ -34,6 +34,10 @@ enum CloudType
 	/// 金雲
 	/// </summary>
 	GoldCloud,
+	/// <summary>
+	/// 速度
+	/// </summary>
+	Speed,
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -126,6 +130,29 @@ public class MyCloud : MonoBehaviour
 	/// </summary>
 	[SerializeField]
 	Vector3 m_windForce;
+
+	/// <summary>
+	/// 回転時間
+	/// </summary>
+	[SerializeField]
+	float m_rotationTime;
+
+	/// <summary>
+	/// 回転軸
+	/// </summary>
+	[SerializeField]
+	Vector3 m_axisOfRotation;
+
+	/// <summary>
+	/// 回転角度
+	/// </summary>
+	[SerializeField]
+	int m_rotateAngle;
+
+	/// <summary>
+	/// 回転時間を数える
+	/// </summary>
+	float m_countRotationTime;
 	#endregion
 
 	/// <summary>
@@ -150,6 +177,9 @@ public class MyCloud : MonoBehaviour
 			case CloudType.WindCloud:
 				break;
 			case CloudType.GoldCloud:
+				break;
+			case CloudType.Speed:
+				SpeedCloudProcess();
 				break;
 		}
 	}
@@ -194,6 +224,25 @@ public class MyCloud : MonoBehaviour
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 速度雲の処理
+	/// </summary>
+	void SpeedCloudProcess()
+	{
+		if (m_countRotationTime == -1)
+			return;
+
+		m_countRotationTime += Time.deltaTime;
+
+		//回転
+		transform.Rotate(m_axisOfRotation, m_rotateAngle * Time.deltaTime);
+
+		//終了
+		if (m_countRotationTime >= m_rotationTime)
+			m_countRotationTime = -1;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// 重なり続ける判定
 	/// </summary>
 	/// <param name="other">重なったもの</param>
@@ -212,6 +261,9 @@ public class MyCloud : MonoBehaviour
 				WindCloudProcess(other.gameObject);
 				break;
 			case CloudType.GoldCloud:
+				break;
+			case CloudType.Speed:
+				SpeedCloudTriggerStay(other.gameObject);
 				break;
 		}
 	}
@@ -249,6 +301,27 @@ public class MyCloud : MonoBehaviour
 
 		//風力
 		target.transform.position += m_windForce * Time.deltaTime;
+
+		//SE
+		MySoundManager.Instance.Play(SeCollection.WindCloud, true, true, transform.position);
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 速度雲処理
+	/// </summary>
+	/// <param name="target">影響を受ける対象</param>
+	void SpeedCloudTriggerStay(GameObject target)
+	{
+		//Rigitbodyなし
+		if (!target.GetComponent<Rigidbody>())
+			return;
+
+		//風力
+		target.transform.position += m_windForce * Time.deltaTime;
+
+		//回転開始
+		m_countRotationTime = 0;
 
 		//SE
 		MySoundManager.Instance.Play(SeCollection.WindCloud, true, true, transform.position);

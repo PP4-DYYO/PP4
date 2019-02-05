@@ -309,6 +309,35 @@ public class MyTitleManager : MonoBehaviour
 	int m_countNumOfLoops;
 
 	/// <summary>
+	/// メッセージ
+	/// </summary>
+	[SerializeField]
+	Text Message;
+
+	/// <summary>
+	/// メッセージの最小サイズ
+	/// </summary>
+	[SerializeField]
+	Vector3 m_messageMinSize;
+
+	/// <summary>
+	/// メッセージの拡縮
+	/// </summary>
+	[SerializeField]
+	float m_messageScale;
+
+	/// <summary>
+	/// メッセージの速度
+	/// </summary>
+	[SerializeField]
+	float m_messageSpeed;
+
+	/// <summary>
+	/// メッセージ用の経過時間
+	/// </summary>
+	float m_elapsedTimeForMessage;
+
+	/// <summary>
 	/// コルーチン
 	/// </summary>
 	IEnumerator Coroutine;
@@ -632,6 +661,11 @@ public class MyTitleManager : MonoBehaviour
 		}
 		StartMessage.color =
 			new Color(StartMessage.color.r, StartMessage.color.g, StartMessage.color.b, m_messagAlphaColor);
+
+		//メッセージ
+		m_elapsedTimeForMessage += Time.deltaTime;
+		Message.rectTransform.localScale =
+			Vector3.one * m_messageScale * (1 + Mathf.Cos(m_elapsedTimeForMessage * m_messageSpeed)) / 2 + m_messageMinSize;
 	}
 
 	//----------------------------------------------------------------------------------------------------

@@ -223,6 +223,16 @@ public class MyAiPlayer : MyPlayer
 	const float SEARCH_LIMIT_DISTANCE = 3;
 
 	/// <summary>
+	/// コインに近づく時間の制限
+	/// </summary>
+	const float APPROACH_LIMIT_TIME = 7;
+
+	/// <summary>
+	/// コインに近づいている時間
+	/// </summary>
+	float m_approachTime;
+
+	/// <summary>
 	/// コインを取りに行くときのプレイヤーの速度
 	/// </summary>
 	const float PLAYER_STEP = 10f;
@@ -280,10 +290,10 @@ public class MyAiPlayer : MyPlayer
 				AILevel = 1;
 				break;
 			case 2:
-				AILevel = 2;
+				AILevel = 0;
 				break;
 			case 3:
-				AILevel = 0;
+				AILevel = 2;
 				break;
 		}
 
@@ -551,6 +561,8 @@ public class MyAiPlayer : MyPlayer
 
 		if (CoinAction == GetCoinAction.Approach)
 		{
+			m_approachTime += Time.deltaTime;
+
 			if (m_targetCoinObject.activeSelf == true)
 			{
 				//距離が3より大きい
@@ -564,11 +576,22 @@ public class MyAiPlayer : MyPlayer
 				//ターゲットが消えた
 				ResetCoinAction();
 			}
+
+			//コインに近づく時間の制限
+			if (m_approachTime > APPROACH_LIMIT_TIME)
+			{
+				ResetCoinAction();
+			}
 		}
 	}
 
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// コイン探索のリセット
+	/// </summary>
 	void ResetCoinAction()
 	{
+		m_approachTime = 0;
 		m_targetCoin = Vector3.zero;
 		CoinAction = GetCoinAction.Search;
 	}

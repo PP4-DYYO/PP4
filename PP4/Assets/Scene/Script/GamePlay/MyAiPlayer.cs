@@ -28,6 +28,29 @@ public class MyAiPlayer : MyPlayer
 	MyField MyFieldScript;
 	#endregion
 
+	#region AIの設定
+	/// <summary>
+	/// AIの数
+	/// </summary>
+	static int s_aiCount;
+
+	/// <summary>
+	/// AIプレイヤーの最大人数
+	/// </summary>
+	const int MAX_AI_PLAYER_NUM = 3;
+
+	/// <summary>
+	/// AIの強さの段階(0,1,2)
+	/// </summary>
+	int AILevel;
+
+	/// <summary>
+	/// AIの強さによる倍率
+	/// </summary>
+	[SerializeField]
+	float[] LevelMagni;
+	#endregion
+
 	#region 能力
 	[Header("能力")]
 	/// <summary>
@@ -35,6 +58,16 @@ public class MyAiPlayer : MyPlayer
 	/// </summary>
 	[SerializeField]
 	float m_distanceAtWhichRiskOfCollisionIsFelt;
+
+	/// <summary>
+	/// レベルを決めるパワーの段階
+	/// </summary>
+	struct Power
+	{
+		public const int LEVEL_ONE = 3000;
+		public const int LEVEL_TWO = 5000;
+		public const int LEVEL_THREE = 7000;
+	}
 
 	/// <summary>
 	/// 行動可能半径
@@ -231,6 +264,38 @@ public class MyAiPlayer : MyPlayer
 
 	//----------------------------------------------------------------------------------------------------
 	/// <summary>
+	/// 初期設定
+	/// </summary>
+	void Start()
+	{
+		s_aiCount++;
+		if (s_aiCount > MAX_AI_PLAYER_NUM)
+		{
+			s_aiCount = MAX_AI_PLAYER_NUM;
+		}
+
+		switch (s_aiCount)
+		{
+			case 1:
+				AILevel = 1;
+				break;
+			case 2:
+				AILevel = 2;
+				break;
+			case 3:
+				AILevel = 0;
+				break;
+		}
+
+		//レベルによるステータス変更
+		m_timeIntervalOfButtonFire *= LevelMagni[AILevel];
+		m_spIntervalTime *= LevelMagni[AILevel];
+		m_auraIntervalTime *= LevelMagni[AILevel];
+		m_spUseLimit *= LevelMagni[AILevel];
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
 	/// フレーム
 	/// </summary>
 	void Update()
@@ -320,36 +385,40 @@ public class MyAiPlayer : MyPlayer
 			}
 		}
 
-		//加速が使えるとき
-		if (SpState != ActionState.Used && AuraState != ActionState.Using)
+		//加速
+		if (SpState != ActionState.Used)
 		{
-			//SPゲージが一定数ある時または隕石が近い時に加速
-			if (GetPercentageOfRemainingSpGauge() > m_spUseLimit || SpaceGrasp.MeteoriteNear)
+			//隕石回避行動を最優先
+			if (SpaceGrasp.MeteoriteNear && GetPercentageOfRemainingSpGauge() > m_spUseLimit)
 			{
-				//コインを見つけていない場合
-				if (CoinAction == GetCoinAction.Search)
-				{
+				if (!m_isKeepPressingAButton)
 					m_isKeepPressingAButton = true;
+				if (SpState != ActionState.Using)
 					SpState = ActionState.Using;
-				}
-
-				//隕石が近くにある場合
-				if (SpaceGrasp.MeteoriteNear)
-				{
-					if (!m_isKeepPressingAButton)
-						m_isKeepPressingAButton = true;
-					if (SpState != ActionState.Using)
-						SpState = ActionState.Using;
-					m_spWaitingTime = 0;
-					ResetCoinAction();
-				}
+				m_spWaitingTime = 0;
+				ResetCoinAction();
 			}
 
-			//使用後は待機時間発生
-			if (SpState == ActionState.Using && GetPercentageOfRemainingSpGauge() <= m_spUseLimit)
+			//オーラを使っていなければ加速が使える
+			else if (AuraState != ActionState.Using)
 			{
-				SpState = ActionState.Used;
-				m_isKeepPressingAButton = false;
+				//SPゲージが一定数ある時または隕石が近い時に加速
+				if (GetPercentageOfRemainingSpGauge() > m_spUseLimit)
+				{
+					//コインを見つけていない場合
+					if (CoinAction == GetCoinAction.Search)
+					{
+						m_isKeepPressingAButton = true;
+						SpState = ActionState.Using;
+					}
+				}
+
+				//使用後は待機時間発生
+				if (SpState == ActionState.Using && GetPercentageOfRemainingSpGauge() <= m_spUseLimit)
+				{
+					SpState = ActionState.Used;
+					m_isKeepPressingAButton = false;
+				}
 			}
 		}
 	}
@@ -511,5 +580,15 @@ public class MyAiPlayer : MyPlayer
 	protected override void GenerateWind()
 	{
 		return;
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/// <summary>
+	/// 消えるときに実行される
+	/// </summary>
+	private void OnDestroy()
+	{
+		if (s_aiCount != 0)
+			s_aiCount = 0;
 	}
 }
